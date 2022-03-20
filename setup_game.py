@@ -16,7 +16,7 @@ from game_map import GameWorld
 import input_handlers
 
 # Load the background image and remove the alpha channel.
-background_image = tcod.image.load("menu_background.png")[:, :, :3]
+background_image = tcod.image.load("img\menu_background.png")[:, :, :3]
 
 
 def new_game() -> Engine:
@@ -27,9 +27,6 @@ def new_game() -> Engine:
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
-
-    max_monsters_per_room = 2
-    max_items_per_room = 2
 
     player = copy.deepcopy(entity_factories.player)
 
@@ -42,16 +39,27 @@ def new_game() -> Engine:
         room_max_size=room_max_size,
         map_width=map_width,
         map_height=map_height,
-        max_monsters_per_room=max_monsters_per_room,
-        max_items_per_room=max_items_per_room,
     )
 
     engine.game_world.generate_floor()
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+        "Welcome to L.U.R.K.E.R.", color.welcome_text
     )
+
+    knife = copy.deepcopy(entity_factories.kitchen_knife)
+    shirt = copy.deepcopy(entity_factories.shirt)
+
+    knife.parent = player.inventory
+    shirt.parent = player.inventory
+
+    player.inventory.items.append(knife)
+    player.equipment.toggle_equip(knife, add_message=False)
+
+    player.inventory.items.append(shirt)
+    player.equipment.toggle_equip(shirt, add_message=False)
+
     return engine
 
 

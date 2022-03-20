@@ -15,6 +15,7 @@ from actions import (
 )
 import color
 import exceptions
+import traceback
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -206,7 +207,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=7,
+            height=15,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -226,11 +227,43 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         )
 
         console.print(
-            x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}"
+            x=x + 1,
+            y=y + 5,
+            string=f"Head: {self.engine.player.equipment.head.name if self.engine.player.equipment.head else None}"
         )
         console.print(
-            x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}"
+            x=x + 1,
+            y=y + 6,
+            string=f"Armor: {self.engine.player.equipment.armor.name if self.engine.player.equipment.armor else None}"
         )
+        console.print(
+            x=x + 1,
+            y=y + 7,
+            string=f"Legs: {self.engine.player.equipment.legs.name if self.engine.player.equipment.legs else None}"
+        )
+        console.print(
+            x=x + 1,
+            y=y + 8,
+            string=f"Feet: {self.engine.player.equipment.feet.name if self.engine.player.equipment.feet else None}"
+        )
+
+        console.print(
+            x=x + 1,
+            y=y + 10,
+            string=f"Roubles: {self.engine.player.currency.roubles}"
+        )
+
+        console.print(
+            x=x + 1,
+            y=y + 12,
+            string=f"Attack: {self.engine.player.fighter.power}"
+        )
+        console.print(
+            x=x + 1,
+            y=y + 13,
+            string=f"Defense: {self.engine.player.fighter.defense}"
+        )
+        
 
 class LevelUpEventHandler(AskUserEventHandler):
     TITLE = "Level Up"
@@ -300,6 +333,70 @@ class LevelUpEventHandler(AskUserEventHandler):
         """
         return None
 
+class EscapeMenuEventHandler(AskUserEventHandler):
+    TITLE = "PAUSE MENU"
+
+    def on_render(self, console: tcod.Console) -> None:
+        super().on_render(console)
+
+        if self.engine.player.x <= 30:
+            x = 40
+        else:
+            x = 0
+
+        console.draw_frame(
+            x=x,
+            y=0,
+            width=35,
+            height=30,
+            title=self.TITLE,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+
+        console.print(
+            x=x + 1,
+            y=4,
+            string=f"q) Save and Quit",
+        )
+        console.print(
+            x=x + 1,
+            y=5,
+            string=f"l) Load Game",
+        )
+        console.print(
+            x=x + 1,
+            y=6,
+            string=f"r) Restart",
+        )
+
+    def ev_keydown(
+        self, event: tcod.event.KeyDown
+    ) -> Optional[BaseEventHandler]:
+        if event.sym == tcod.event.K_q:
+            raise SystemExit()
+        elif event.sym == tcod.event.K_l:
+            try:
+                return MainGameEventHandler(load_game("savegame.sav"))
+            except FileNotFoundError:
+                return PopupMessage(self, "No saved game to load.")
+            except Exception as exc:
+                traceback.print_exc()  # Print to stderr.
+                return PopupMessage(self, f"Failed to load save:\n{exc}")
+        elif event.sym == tcod.event.K_r:
+            return MainGameEventHandler(self.engine)
+        
+        return super().ev_keydown(event)
+
+    def ev_mousebuttondown(
+        self, event: tcod.event.MouseButtonDown
+    ) -> Optional[ActionOrHandler]:
+        """
+        Don't allow the player to click to exit the menu, like normal.
+        """
+        return None
+
 class InventoryEventHandler(AskUserEventHandler):
     """This handler lets the user select an item.
 
@@ -328,7 +425,7 @@ class InventoryEventHandler(AskUserEventHandler):
 
         y = 0
 
-        width = len(self.TITLE) + 4
+        width = len(self.TITLE) + 6
 
         console.draw_frame(
             x=x,
@@ -344,7 +441,15 @@ class InventoryEventHandler(AskUserEventHandler):
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
-                console.print(x + 1, y + i + 1, f"({item_key}) {item.name}")
+                
+                is_equipped = self.engine.player.equipment.item_is_equipped(item)
+
+                item_string = f"({item_key}) {item.name}"
+
+                if is_equipped:
+                    item_string = f"{item_string} (E)"
+
+                console.print(x + 1, y + i + 1, item_string)
         else:
             console.print(x + 1, y + 1, "(Empty)")
 
@@ -372,8 +477,13 @@ class InventoryActivateHandler(InventoryEventHandler):
     TITLE = "Select an item to use"
 
     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
-        """Return the action for the selected item."""
-        return item.consumable.get_action(self.engine.player)
+        if item.consumable:
+            # Return the action for the selected item.
+            return item.consumable.get_action(self.engine.player)
+        elif item.equippable:
+            return actions.EquipAction(self.engine.player, item)
+        else:
+            return None
 
 
 class InventoryDropHandler(InventoryEventHandler):
@@ -513,7 +623,7 @@ class MainGameEventHandler(EventHandler):
             action = WaitAction(player)
 
         elif key == tcod.event.K_ESCAPE:
-            raise SystemExit()
+            return EscapeMenuEventHandler(self.engine)
         elif key == tcod.event.K_v:
             return HistoryViewer(self.engine)
 
@@ -524,6 +634,10 @@ class MainGameEventHandler(EventHandler):
             return InventoryActivateHandler(self.engine)
         elif key == tcod.event.K_d:
             return InventoryDropHandler(self.engine)
+
+        elif key == tcod.event.K_r:
+            action = actions.ReloadAction(player, player.equipment.weapon)
+
         elif key == tcod.event.K_c:
             return CharacterScreenEventHandler(self.engine)
         elif key == tcod.event.K_SLASH:

@@ -55,10 +55,16 @@ class Engine:
             total_width=20,
         )
 
-        render_functions.render_dungeon_level(
+        render_functions.render_bunker_level(
             console=console,
-            dungeon_level=self.game_world.current_floor,
+            bunker_level=self.game_world.current_floor,
             location=(0, 47),
+        )
+
+        render_functions.render_rouble_amount(
+            console=console,
+            roubles=self.player.currency.roubles,
+            location=(0, 48),
         )
 
         render_functions.render_names_at_mouse_location(

@@ -5,6 +5,8 @@ from typing import Optional, Tuple, TYPE_CHECKING
 import color
 import exceptions
 
+from equipment_types import EquipmentType
+
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Actor, Entity, Item
@@ -69,11 +71,39 @@ class ItemAction(Action):
 
     def perform(self) -> None:
         """Invoke the items ability, this action will be given to provide context."""
-        self.item.consumable.activate(self)
+        if self.item.consumable:
+            self.item.consumable.activate(self)
 
 class DropItem(ItemAction):
     def perform(self) -> None:
+        if self.entity.equipment.item_is_equipped(self.item):
+            self.entity.equipment.toggle_equip(self.item)
+
         self.entity.inventory.drop(self.item)
+
+class EquipAction(Action):
+    def __init__(self, entity: Actor, item: Item):
+        super().__init__(entity)
+
+        self.item = item
+
+    def perform(self) -> None:
+        self.entity.equipment.toggle_equip(self.item)
+
+class ReloadAction(Action):
+    """Reload the currently equipped ranged weapon"""
+
+    def __init__(self, entity: Actor, item: Item):
+        super().__init__(entity)
+
+        self.item = item
+
+    def perform(self) -> None:
+        if self.entity.equipment.item_is_equipped(self.item) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
+            self.engine.message_log.add_message(f"You reload the {self.item.name}!")
+            return
+        else:
+            raise exceptions.Impossible("You can't reload your weapon.")
 
 class WaitAction(Action):
     def perform(self) -> None:

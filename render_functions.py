@@ -35,15 +35,25 @@ def render_bar(
         x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text
     )
 
-def render_dungeon_level(
-    console: Console, dungeon_level: int, location: Tuple[int, int]
+def render_bunker_level(
+    console: Console, bunker_level: int, location: Tuple[int, int]
 ) -> None:
     """
     Render the level the player is currently on, at the given location.
     """
     x, y = location
 
-    console.print(x=x, y=y, string=f"Dungeon level: {dungeon_level}")
+    console.print(x=x, y=y, string=f"Bunker level: {bunker_level}")
+
+def render_rouble_amount(
+    console: Console, roubles: int, location: Tuple[int, int]
+) -> None:
+    """
+    Render the player's rouble amount.
+    """
+    x, y = location
+    console.print(x=x, y=y, string=f"Rs:")
+    console.print(x=x+4, y=y, string=f"{roubles}", fg=color.roubles_text)
 
 def render_names_at_mouse_location(
     console: Console, x: int, y: int, engine: Engine
