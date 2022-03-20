@@ -50,10 +50,10 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         self.engine = engine
 
     def handle_events(self) -> None:
-+       raise NotImplementedError()
+        raise NotImplementedError()
 
-+   def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
-+       raise SystemExit()
+    def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
+        raise SystemExit()
 
 class MainGameEventHandler(EventHandler):
     def handle_events(self) -> None:
