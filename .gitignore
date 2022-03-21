@@ -1,3 +1,5 @@
 # Saved games
 *.sav
 mortem/**
+__pycache__/**
+components/__pycache__/**
