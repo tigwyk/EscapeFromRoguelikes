@@ -7,10 +7,17 @@ from components.level import Level
 from components.currency import Currency
 from entity import Actor, Item
 
+from russian_names import RussianNames
+import random
+
+#names = RussianNames(count=1, patronymic=False, name_reduction=True, transliterate=True)
+scav_names = RussianNames(count=100, patronymic=False, name_reduction=True, transliterate=True).get_batch()
+
 player = Actor(
     char="@",
     color=(255, 255, 255),
-    name="Player",
+    name=RussianNames().get_person(patronymic=False, transliterate=True, uppercase=True),
+    #name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=30, base_defense=1, base_power=2),
@@ -25,7 +32,7 @@ rat = Actor(
     name="Giant Rat",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=3, base_defense=0, base_power=3),
+    fighter=Fighter(hp=3, base_defense=0, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=10),
     currency=Currency(roubles=0),
@@ -36,7 +43,7 @@ dog = Actor(
     name="Mutated Dog",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=7, base_defense=0, base_power=3),
+    fighter=Fighter(hp=7, base_defense=0, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=17),
     currency=Currency(roubles=0),
@@ -44,10 +51,11 @@ dog = Actor(
 scav = Actor(
     char="s",
     color=(63, 127, 63),
-    name="Scavenger",
+    #name="Scavenger",
+    name=random.choice(scav_names),
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=10, base_defense=0, base_power=4),
+    fighter=Fighter(hp=10, base_defense=0, base_power=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
     currency=Currency(roubles=5),
@@ -58,7 +66,7 @@ raider = Actor(
     name="Raider",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=16, base_defense=1, base_power=5),
+    fighter=Fighter(hp=16, base_defense=1, base_power=6),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=100),
     currency=Currency(roubles=50),

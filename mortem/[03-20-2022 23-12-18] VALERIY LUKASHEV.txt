@@ -1,0 +1,79 @@
+
+--------------------------------------------------------------
+ L.U.R.K.E.R. (0.1.2) roguelike post-mortem character dump
+--------------------------------------------------------------
+ VALERIY LUKASHEV, level 1 Human L.U.R.K.E.R.
+ was murdered by Mutated Dog, a level 1
+
+-- Special levels --------------------------------------------
+
+ Bunker levels generated : 1
+
+-- Awards ----------------------------------------------------
+
+ None
+
+-- Graveyard -------------------------------------------------
+
+ None
+
+-- Statistics ------------------------------------------------
+
+ Health 0/30  Experience 55
+ Base power 2  Base defense 1
+
+-- Traits ----------------------------------------------------
+
+ None
+
+-- Equipment -------------------------------------------------
+
+ [a] [ Armor      ]   Tattered Shirt
+ [b] [ Weapon     ]   Kitchen Knife 
+ [c] [ Legs       ]   None
+ [d] [ Feet       ]   None
+
+-- Inventory -------------------------------------------------
+
+ Kitchen Knife 
+ Tattered Shirt 
+
+-- Resistances -----------------------------------------------
+
+ None
+
+-- Kills -----------------------------------------------------
+
+-- History ---------------------------------------------------
+
+ None
+
+-- Messages --------------------------------------------------
+
+ Welcome to L.U.R.K.E.R.
+ You are VALERIY LUKASHEV.
+ V. uliticheva attacks VALERIY LUKASHEV for 3 hit points.
+ Valeriy lukashev attacks V. Uliticheva for 4 hit points.
+ V. uliticheva attacks VALERIY LUKASHEV for 3 hit points.
+ Valeriy lukashev attacks V. Uliticheva for 4 hit points.
+ V. uliticheva attacks VALERIY LUKASHEV for 3 hit points.
+ Giant rat attacks VALERIY LUKASHEV for 2 hit points.
+ Valeriy lukashev attacks V. Uliticheva for 4 hit points.
+ V. Uliticheva is dead!
+ You gain 35 experience points.
+ You find 5 roubles.
+ Giant rat attacks VALERIY LUKASHEV for 2 hit points. (x2)
+ Valeriy lukashev attacks Giant Rat for 4 hit points.
+ Giant Rat is dead!
+ You gain 10 experience points.
+ Mutated dog attacks VALERIY LUKASHEV for 2 hit points.
+ Giant rat attacks VALERIY LUKASHEV for 2 hit points.
+ Mutated dog attacks VALERIY LUKASHEV for 2 hit points.
+ Giant rat attacks VALERIY LUKASHEV for 2 hit points.
+ Mutated dog attacks VALERIY LUKASHEV for 2 hit points.
+ Valeriy lukashev attacks Giant Rat for 4 hit points.
+ Giant Rat is dead!
+ You gain 10 experience points.
+ Mutated dog attacks VALERIY LUKASHEV for 2 hit points. (x3)
+-- General ---------------------------------------------------
+

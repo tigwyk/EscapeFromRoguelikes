@@ -48,6 +48,10 @@ def new_game() -> Engine:
         "Welcome to L.U.R.K.E.R.", color.welcome_text
     )
 
+    engine.message_log.add_message(
+        f"You are {player.name}.", color.red
+    )
+
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
 

@@ -169,6 +169,8 @@ class MeleeAction(ActionWithDirection):
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color
             )
+        self.entity.fighter.fighting = target
+        target.fighter.fighting = self.entity
 
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:

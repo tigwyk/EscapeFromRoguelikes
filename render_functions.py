@@ -55,6 +55,18 @@ def render_rouble_amount(
     console.print(x=x, y=y, string=f"Rs:")
     console.print(x=x+4, y=y, string=f"{roubles}", fg=color.roubles_text)
 
+def render_ammo_status(
+    console: Console, ammo: int, max_ammo: int, location: Tuple[int, int]
+) -> None:
+    """
+    Render the player's weapon ammo status.  
+    """
+    x, y = location
+    ammo_color = color.red if ammo == 0 else color.white
+    if(max_ammo == 0):
+        return
+    console.print(x=x, y=y, string=f"Ammo: {ammo}/{max_ammo}", fg=ammo_color)
+
 def render_names_at_mouse_location(
     console: Console, x: int, y: int, engine: Engine
 ) -> None:

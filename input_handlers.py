@@ -207,7 +207,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=15,
+            height=18,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -250,17 +250,23 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=y + 10,
-            string=f"Roubles: {self.engine.player.currency.roubles}"
+            string=f"Weapon: {self.engine.player.equipment.weapon.name if self.engine.player.equipment.weapon else None}"
         )
 
         console.print(
             x=x + 1,
             y=y + 12,
+            string=f"Roubles: {self.engine.player.currency.roubles}"
+        )
+
+        console.print(
+            x=x + 1,
+            y=y + 14,
             string=f"Attack: {self.engine.player.fighter.power}"
         )
         console.print(
             x=x + 1,
-            y=y + 13,
+            y=y + 15,
             string=f"Defense: {self.engine.player.fighter.defense}"
         )
         
@@ -624,6 +630,8 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.K_ESCAPE:
             return EscapeMenuEventHandler(self.engine)
+        elif key == tcod.event.K_F1:
+            return player.fighter.die()
         elif key == tcod.event.K_v:
             return HistoryViewer(self.engine)
 
@@ -685,6 +693,57 @@ class HistoryViewer(EventHandler):
         log_console.draw_frame(0, 0, log_console.width, log_console.height)
         log_console.print_box(
             0, 0, log_console.width, 1, "┤Message history├", alignment=tcod.CENTER
+        )
+
+        # Render the message log using the cursor parameter.
+        self.engine.message_log.render_messages(
+            log_console,
+            1,
+            1,
+            log_console.width - 2,
+            log_console.height - 2,
+            self.engine.message_log.messages[: self.cursor + 1],
+        )
+        log_console.blit(console, 3, 3)
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[MainGameEventHandler]:
+        # Fancy conditional movement to make it feel right.
+        if event.sym in CURSOR_Y_KEYS:
+            adjust = CURSOR_Y_KEYS[event.sym]
+            if adjust < 0 and self.cursor == 0:
+                # Only move from the top to the bottom when you're on the edge.
+                self.cursor = self.log_length - 1
+            elif adjust > 0 and self.cursor == self.log_length - 1:
+                # Same with bottom to top movement.
+                self.cursor = 0
+            else:
+                # Otherwise move while staying clamped to the bounds of the history log.
+                self.cursor = max(0, min(self.cursor + adjust, self.log_length - 1))
+        elif event.sym == tcod.event.K_HOME:
+            self.cursor = 0  # Move directly to the top message.
+        elif event.sym == tcod.event.K_END:
+            self.cursor = self.log_length - 1  # Move directly to the last message.
+        else:  # Any other key moves back to the main game state.
+            return MainGameEventHandler(self.engine)
+        return None
+
+class PostMortemViewer(EventHandler):
+    """Print the post-mortem on a larger window which can be navigated."""
+
+    def __init__(self, engine: Engine):
+        super().__init__(engine)
+        self.log_length = len(engine.message_log.messages)
+        self.cursor = self.log_length - 1
+
+    def on_render(self, console: tcod.Console) -> None:
+        super().on_render(console)  # Draw the main state as the background.
+
+        log_console = tcod.Console(console.width - 6, console.height - 6)
+
+        # Draw a frame with a custom banner title.
+        log_console.draw_frame(0, 0, log_console.width, log_console.height)
+        log_console.print_box(
+            0, 0, log_console.width, 1, "┤Post-Mortem├", alignment=tcod.CENTER
         )
 
         # Render the message log using the cursor parameter.

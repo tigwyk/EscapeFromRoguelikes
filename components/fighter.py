@@ -12,12 +12,17 @@ if TYPE_CHECKING:
 
 class Fighter(BaseComponent):
     parent: Actor
+    fighting: Actor
+    killer: Actor
 
     def __init__(self, hp: int, base_defense: int, base_power: int):
         self.max_hp = hp
         self._hp = hp
         self.base_defense = base_defense
         self.base_power = base_power
+        self.fighting = None
+        self.killer = None
+        self.victims = []
 
     @property
     def hp(self) -> int:
@@ -56,10 +61,13 @@ class Fighter(BaseComponent):
             death_message = "You died!"
             death_message_color = color.player_die
             roubles_to_reward = 0
+            self.engine.player.fighter.killer = self.engine.player.fighter.fighting
+            self.engine.dump_character_log()
         else:
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
             roubles_to_reward = self.parent.currency.roubles
+            self.victims.append(self.parent.name)
 
         self.parent.char = "%"
         self.parent.color = (191, 0, 0)
