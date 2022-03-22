@@ -71,10 +71,10 @@ raider = Actor(
     level=Level(xp_given=100),
     currency=Currency(roubles=50),
 )
-mutant = Actor(
+mutant1 = Actor(
     char="M",
     color=(0, 127, 0),
-    name="Mutant",
+    name="Mutant ",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=20, base_defense=2, base_power=7),
