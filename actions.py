@@ -90,6 +90,16 @@ class EquipAction(Action):
     def perform(self) -> None:
         self.entity.equipment.toggle_equip(self.item)
 
+class FireAction(Action):
+    def __init__(self, entity: Actor, item: Item):
+        super().__init__(entity)
+
+        self.item = item
+
+    def perform(self) -> None:
+        if(self.entity.equipment.weapon and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
+            self.entity.equipment.weapon.equippable.get_action(self.entity)
+
 class ReloadAction(Action):
     """Reload the currently equipped ranged weapon"""
 
@@ -154,7 +164,7 @@ class MeleeAction(ActionWithDirection):
 
         damage = self.entity.fighter.power - target.fighter.defense
 
-        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
+        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.weapon.name if self.entity.equipment.weapon is not None else 'their fists'}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
         else:

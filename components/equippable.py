@@ -4,9 +4,17 @@ from typing import TYPE_CHECKING
 
 from components.base_component import BaseComponent
 from equipment_types import EquipmentType
+from exceptions import Impossible
+from input_handlers import (
+    ActionOrHandler,
+    AreaRangedAttackHandler,
+    SingleRangedAttackHandler,
+)
+import actions
+import color
 
 if TYPE_CHECKING:
-    from entity import Item
+    from entity import Actor, Item
 
 
 class Equippable(BaseComponent):
@@ -28,6 +36,31 @@ class Equippable(BaseComponent):
 
         self.max_ammo = max_ammo
         self.ammo = self.max_ammo
+
+    def get_action(self, consumer: Actor) -> SingleRangedAttackHandler:
+        self.engine.message_log.add_message(
+            "Select a target location.", color.needs_target
+        )
+        return SingleRangedAttackHandler(
+            self.engine,
+            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+        )
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        target = action.target_actor
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise Impossible("You cannot target an area that you cannot see.")
+        if not target:
+            raise Impossible("You must select an enemy to target.")
+        if target is consumer:
+            raise Impossible("You cannot confuse yourself!")
+
+        self.engine.message_log.add_message(
+            f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
+            color.status_effect_applied,
+        )
 
 
 class Knife(Equippable):

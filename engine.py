@@ -111,7 +111,7 @@ class Engine:
                 post_mortem_lines.append(f' was murdered by the invisible forces of the zone\n')
             post_mortem_lines.append('\n')
             post_mortem_lines.append('-- Special levels --------------------------------------------\n\n')
-            post_mortem_lines.append(f' Bunker levels generated : {self.game_world.current_floor}\n\n')
+            post_mortem_lines.append(f' Bunker levels explored : {self.game_world.current_floor}\n\n')
             post_mortem_lines.append('-- Awards ----------------------------------------------------\n\n')
             post_mortem_lines.append(' None\n\n')
             post_mortem_lines.append('-- Graveyard -------------------------------------------------\n\n')
@@ -144,7 +144,8 @@ class Engine:
             post_mortem_lines.append(' None\n\n')
             post_mortem_lines.append('-- Kills -----------------------------------------------------\n\n')
             for victim in self.player.fighter.victims:
-                post_mortem_lines.append(f' {victim.name}')
+                post_mortem_lines.append(f' {victim}\n')
+            post_mortem_lines.append('\n')
             post_mortem_lines.append('-- History ---------------------------------------------------\n\n')
             post_mortem_lines.append(' None\n\n')
             post_mortem_lines.append('-- Messages --------------------------------------------------\n\n')
@@ -160,6 +161,5 @@ class Engine:
             self.display_postmortem_log(save_filename)
 
     def display_postmortem_log(self, filename):
-        print(filename)
         pass
                 

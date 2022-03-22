@@ -11,7 +11,8 @@ from actions import (
     Action,
     BumpAction,
     PickupAction,
-    WaitAction
+    WaitAction,
+    FireAction
 )
 import color
 import exceptions
@@ -215,58 +216,61 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         )
 
         console.print(
-            x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}"
+            x=x + 1, y=y + 1, string=f"Name: {self.engine.player.name}"
         )
         console.print(
-            x=x + 1, y=y + 2, string=f"XP: {self.engine.player.level.current_xp}"
+            x=x + 1, y=y + 2, string=f"Level: {self.engine.player.level.current_level}"
+        )
+        console.print(
+            x=x + 1, y=y + 3, string=f"XP: {self.engine.player.level.current_xp}"
         )
         console.print(
             x=x + 1,
-            y=y + 3,
+            y=y + 4,
             string=f"XP for next Level: {self.engine.player.level.experience_to_next_level}",
         )
 
         console.print(
             x=x + 1,
-            y=y + 5,
+            y=y + 6,
             string=f"Head: {self.engine.player.equipment.head.name if self.engine.player.equipment.head else None}"
         )
         console.print(
             x=x + 1,
-            y=y + 6,
+            y=y + 7,
             string=f"Armor: {self.engine.player.equipment.armor.name if self.engine.player.equipment.armor else None}"
         )
         console.print(
             x=x + 1,
-            y=y + 7,
+            y=y + 8,
             string=f"Legs: {self.engine.player.equipment.legs.name if self.engine.player.equipment.legs else None}"
         )
         console.print(
             x=x + 1,
-            y=y + 8,
+            y=y + 9,
             string=f"Feet: {self.engine.player.equipment.feet.name if self.engine.player.equipment.feet else None}"
         )
 
         console.print(
             x=x + 1,
-            y=y + 10,
+            y=y + 11,
             string=f"Weapon: {self.engine.player.equipment.weapon.name if self.engine.player.equipment.weapon else None}"
         )
 
         console.print(
             x=x + 1,
-            y=y + 12,
+            y=y + 13,
             string=f"Roubles: {self.engine.player.currency.roubles}"
         )
 
         console.print(
             x=x + 1,
-            y=y + 14,
+            y=y + 15,
             string=f"Attack: {self.engine.player.fighter.power}"
         )
         console.print(
             x=x + 1,
-            y=y + 15,
+            y=y + 16,
             string=f"Defense: {self.engine.player.fighter.defense}"
         )
         
@@ -634,6 +638,9 @@ class MainGameEventHandler(EventHandler):
             return player.fighter.die()
         elif key == tcod.event.K_v:
             return HistoryViewer(self.engine)
+
+        elif key == tcod.event.K_f:
+            action = FireAction(player, player.equipment.weapon)
 
         elif key == tcod.event.K_g:
             action = PickupAction(player)

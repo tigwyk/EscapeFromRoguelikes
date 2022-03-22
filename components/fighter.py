@@ -67,7 +67,7 @@ class Fighter(BaseComponent):
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
             roubles_to_reward = self.parent.currency.roubles
-            self.victims.append(self.parent.name)
+            self.engine.player.fighter.victims.append(self.parent.name)
 
         self.parent.char = "%"
         self.parent.color = (191, 0, 0)
