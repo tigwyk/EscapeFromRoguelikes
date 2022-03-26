@@ -26,4 +26,6 @@ bar_empty = (0x40, 0x10, 0x10)
 menu_title = (255, 255, 63)
 menu_text = white
 
-roubles_text = green
+roubles_add_text = green
+roubles_remove_text = red
+roubles_display_text = green

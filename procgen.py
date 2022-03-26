@@ -6,7 +6,7 @@ from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
 import tcod
 
 import entity_factories
-from game_map import GameMap
+from maps import GameMap
 import tile_types
 
 if TYPE_CHECKING:
@@ -26,19 +26,19 @@ max_monsters_by_floor = [
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [(entity_factories.medkit, 35)],
-    2: [(entity_factories.throwing_sand, 10), (entity_factories.combat_knife, 15)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5), (entity_factories.pistol, 2)],
-    6: [(entity_factories.grenade, 25), (entity_factories.body_armor, 15), (entity_factories.rusty_helmet, 25)],
+    2: [(entity_factories.throwing_sand, 10), (entity_factories.combat_knife, 15), (entity_factories.rusty_helmet, 5)],
+    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5), (entity_factories.pistol, 2), (entity_factories.rusty_helmet, 25)],
+    6: [(entity_factories.grenade, 25), (entity_factories.body_armor, 15)],
     8: [(entity_factories.hiking_boots, 2)],
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [(entity_factories.rat, 80),(entity_factories.dog, 10),(entity_factories.scav, 5)],
-    1: [(entity_factories.scav, 30),(entity_factories.dog, 20)],
+    1: [(entity_factories.scav, 20),(entity_factories.dog, 20)],
     2: [(entity_factories.scav, 50),(entity_factories.dog, 25)],
     3: [(entity_factories.raider, 15)],
-    5: [(entity_factories.mutant, 30)],
-    7: [(entity_factories.mutant, 60)],
+    5: [(entity_factories.mutant1, 30),(entity_factories.mutant2, 10)],
+    7: [(entity_factories.mutant1, 60),(entity_factories.mutant2, 30)],
 }
 
 def get_max_value_for_floor(
@@ -108,7 +108,7 @@ class RectangularRoom:
             and self.y2 >= other.y1
         )
 
-def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) -> None:
+def place_dungeon_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) -> None:
     number_of_monsters = random.randint(
         0, get_max_value_for_floor(max_monsters_by_floor, floor_number)
     )
@@ -130,6 +130,7 @@ def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) 
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
             entity.spawn(dungeon, x, y)
 
+
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]
 ) -> Iterator[Tuple[int, int]]:
@@ -148,6 +149,15 @@ def tunnel_between(
         yield x, y
     for x, y in tcod.los.bresenham((corner_x, corner_y), (x2, y2)).tolist():
         yield x, y
+
+
+def generate_overworld(colormap, mtiles, map_width, map_height, engine, noise_zoom=1, noise_octaves=10,
+    ) -> GameMap:
+    """Generate a new overworld map."""
+    player = engine.player
+    overworld = GameMap(engine, map_width, map_height, entities=[player])
+    
+    return overworld
 
 def generate_dungeon(
     max_rooms: int,
@@ -193,7 +203,7 @@ def generate_dungeon(
 
             center_of_last_room = new_room.center
 
-        place_entities(new_room, dungeon, engine.game_world.current_floor)
+        place_dungeon_entities(new_room, dungeon, engine.game_world.current_floor)
         
         dungeon.tiles[center_of_last_room] = tile_types.down_stairs
         dungeon.downstairs_location = center_of_last_room

@@ -21,6 +21,14 @@ tile_dt = np.dtype(
     ]
 )
 
+overworld_tile_dt = np.dtype(
+    [
+        ("walkable", np.bool),  # True if this tile can be walked over.
+        ("transparent", np.bool),  # True if this tile doesn't block FOV.
+        ("height", float),  # Graphics for when this tile is not in FOV.
+        ("biomeId", int),  # Graphics for when the tile is in FOV.
+    ]
+)
 
 def new_tile(
     *,  # Enforce the use of keywords, so that parameter order doesn't matter.
@@ -31,6 +39,16 @@ def new_tile(
 ) -> np.ndarray:
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
+
+def new_overworld_tile(
+    *,  # Enforce the use of keywords, so that parameter order doesn't matter.
+    walkable: int,
+    transparent: int,
+    height: float,
+    biomeId: int
+) -> np.ndarray:
+    """Helper function for defining individual tile types """
+    return np.array((walkable, transparent, height, biomeId), dtype=overworld_tile_dt)
 
 # SHROUD represents unexplored, unseen tiles
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
@@ -52,4 +70,35 @@ down_stairs = new_tile(
     transparent=True,
     dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
     light=(ord(">"), (255, 255, 255), (200, 180, 50)),
+)
+
+swamp = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (255, 255, 204)),
+    light=(ord(" "), (255, 255, 255), (255, 255, 102)),
+)
+plains = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (204, 204, 153)),
+    light=(ord(" "), (255, 255, 255), (255, 195, 0)),
+)
+forest = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (0, 100, 0)),
+    light=(ord(" "), (255, 255, 255), (144, 238, 144)),
+)
+hills = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord("^"), (255, 255, 255), (0, 0, 100)),
+    light=(ord("^"), (255, 255, 255), (130, 110, 50)),
+)
+mountains = new_tile(
+    walkable=False,
+    transparent=False,
+    dark=(ord("^"), (255, 255, 255), (50, 50, 150)),
+    light=(ord("^"), (255, 255, 255), (200, 180, 50)),
 )

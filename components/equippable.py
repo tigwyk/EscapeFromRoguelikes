@@ -37,16 +37,16 @@ class Equippable(BaseComponent):
         self.max_ammo = max_ammo
         self.ammo = self.max_ammo
 
-    def get_action(self, consumer: Actor) -> SingleRangedAttackHandler:
+    def get_fire_action(self, actor: Actor) -> SingleRangedAttackHandler:
         self.engine.message_log.add_message(
             "Select a target location.", color.needs_target
         )
         return SingleRangedAttackHandler(
             self.engine,
-            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+            callback=lambda xy: actions.FireAction(actor, self.parent, xy),
         )
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: actions.FireAction) -> None:
         consumer = action.entity
         target = action.target_actor
 
@@ -55,7 +55,7 @@ class Equippable(BaseComponent):
         if not target:
             raise Impossible("You must select an enemy to target.")
         if target is consumer:
-            raise Impossible("You cannot confuse yourself!")
+            raise Impossible("You cannot shoot yourself!")
 
         self.engine.message_log.add_message(
             f"The eyes of the {target.name} look vacant, as it starts to stumble around!",

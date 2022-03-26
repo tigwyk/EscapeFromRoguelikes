@@ -34,7 +34,8 @@ class Currency(BaseComponent):
 
         self.roubles += amount
 
-        self.engine.message_log.add_message(f"You find {amount} roubles.", color.roubles_text)
+        self.engine.message_log.add_message(f"You find {amount} roubles.", color.roubles_add_text)
 
     def take_roubles(self, amount: int) -> None:
         self.roubles -= amount
+        self.engine.message_log.add_message(f"You lose {amount} roubles.", color.roubles_remove_text)

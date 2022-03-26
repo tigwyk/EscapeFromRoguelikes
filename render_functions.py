@@ -7,7 +7,7 @@ import color
 if TYPE_CHECKING:
     from tcod import Console
     from engine import Engine
-    from game_map import GameMap
+    from maps import GameMap
 
 def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
     if not game_map.in_bounds(x, y) or not game_map.visible[x, y]:
@@ -53,7 +53,7 @@ def render_rouble_amount(
     """
     x, y = location
     console.print(x=x, y=y, string=f"Rs:")
-    console.print(x=x+4, y=y, string=f"{roubles}", fg=color.roubles_text)
+    console.print(x=x+4, y=y, string=f"{roubles}", fg=color.roubles_display_text)
 
 def render_ammo_status(
     console: Console, ammo: int, max_ammo: int, location: Tuple[int, int]

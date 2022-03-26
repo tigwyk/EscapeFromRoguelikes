@@ -17,11 +17,11 @@ from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
     from entity import Actor
-    from game_map import GameMap, GameWorld
+    from maps import GameMap, DungeonWorld
 
 class Engine:
     game_map: GameMap
-    game_world: GameWorld
+    game_world: DungeonWorld
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
@@ -143,8 +143,11 @@ class Engine:
             post_mortem_lines.append('-- Resistances -----------------------------------------------\n\n')
             post_mortem_lines.append(' None\n\n')
             post_mortem_lines.append('-- Kills -----------------------------------------------------\n\n')
-            for victim in self.player.fighter.victims:
-                post_mortem_lines.append(f' {victim}\n')
+            counted_victim_list = {i:self.player.fighter.victims.count(i) for i in self.player.fighter.victims}
+            unique_victim_list = set(counted_victim_list.keys())
+            for victim in unique_victim_list:
+                count = 'x'+str(counted_victim_list[victim]) if counted_victim_list[victim] >= 2 else f''
+                post_mortem_lines.append(f' {victim} {count}\n')
             post_mortem_lines.append('\n')
             post_mortem_lines.append('-- History ---------------------------------------------------\n\n')
             post_mortem_lines.append(' None\n\n')

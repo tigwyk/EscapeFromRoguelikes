@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import copy
 import math
+from time import time
+from russian_names import RussianNames
+import random
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 
 from render_order import RenderOrder
@@ -15,7 +18,7 @@ if TYPE_CHECKING:
     from components.inventory import Inventory
     from components.level import Level
     from components.currency import Currency
-    from game_map import GameMap
+    from maps import GameMap
 
 T = TypeVar("T", bound="Entity")
 
@@ -56,6 +59,8 @@ class Entity:
     def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
+        if(type(clone) == Actor and clone.gen_name):
+            clone.name = Actor.generate_russian_name(clone)
         clone.x = x
         clone.y = y
         clone.parent = gamemap
@@ -99,6 +104,7 @@ class Actor(Entity):
         inventory: Inventory,
         level: Level,
         currency: Currency,
+        gen_name: bool = False
     ):
         super().__init__(
             x=x,
@@ -127,10 +133,18 @@ class Actor(Entity):
         self.currency = currency
         self.currency.parent = self
 
+        self.gen_name = gen_name
+
+        # if(gen_name):
+        #     self.name = self.generate_russian_name()
+
     @property
     def is_alive(self) -> bool:
         """Returns True as long as this actor can perform actions."""
         return bool(self.ai)
+
+    def generate_russian_name(self) -> str:
+        return RussianNames(patronymic=False, name_reduction=True, transliterate=True).get_person()
 
 class Item(Entity):
     def __init__(

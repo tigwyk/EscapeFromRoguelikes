@@ -8,10 +8,6 @@ from components.currency import Currency
 from entity import Actor, Item
 
 from russian_names import RussianNames
-import random
-
-#names = RussianNames(count=1, patronymic=False, name_reduction=True, transliterate=True)
-scav_names = RussianNames(count=100, patronymic=False, name_reduction=True, transliterate=True).get_batch()
 
 player = Actor(
     char="@",
@@ -40,7 +36,7 @@ rat = Actor(
 dog = Actor(
     char="d",
     color=(63, 127, 63),
-    name="Mutated Dog",
+    name="Mutant Dog",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=7, base_defense=0, base_power=4),
@@ -52,13 +48,14 @@ scav = Actor(
     char="s",
     color=(63, 127, 63),
     #name="Scavenger",
-    name=random.choice(scav_names),
+    #name=Actor.generate_russian_name(),
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=10, base_defense=0, base_power=5),
-    inventory=Inventory(capacity=0),
+    inventory=Inventory(capacity=5),
     level=Level(xp_given=35),
     currency=Currency(roubles=5),
+    gen_name=True
 )
 raider = Actor(
     char="R",
@@ -67,18 +64,29 @@ raider = Actor(
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=16, base_defense=1, base_power=6),
-    inventory=Inventory(capacity=0),
+    inventory=Inventory(capacity=5),
     level=Level(xp_given=100),
     currency=Currency(roubles=50),
 )
 mutant1 = Actor(
-    char="M",
+    char="m",
     color=(0, 127, 0),
-    name="Mutant ",
+    name="Mutant Human",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=20, base_defense=2, base_power=7),
-    inventory=Inventory(capacity=0),
+    fighter=Fighter(hp=20, base_defense=2, base_power=9),
+    inventory=Inventory(capacity=5),
+    level=Level(xp_given=125),
+    currency=Currency(roubles=0),
+)
+mutant2 = Actor(
+    char="M",
+    color=(0, 127, 0),
+    name="Large Mutant Human",
+    ai_cls=HostileEnemy,
+    equipment=Equipment(),
+    fighter=Fighter(hp=20, base_defense=2, base_power=12),
+    inventory=Inventory(capacity=5),
     level=Level(xp_given=125),
     currency=Currency(roubles=0),
 )
@@ -90,16 +98,16 @@ throwing_sand = Item(
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 grenade = Item(
-    char="~",
-    color=(255, 0, 0),
+    char="!",
+    color=(127, 0, 255),
     name="Grenade",
     consumable=consumable.GrenadeDamageConsumable(damage=12, radius=3),
 )
 medkit = Item(
-    char="!",
-    color=(127, 0, 255),
+    char="+",
+    color=(255, 0, 0),
     name="Medkit",
-    consumable=consumable.HealingConsumable(amount=4),
+    consumable=consumable.HealingConsumable(amount=6),
 )
 lightning_scroll = Item(
     char="~",

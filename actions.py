@@ -98,7 +98,7 @@ class FireAction(Action):
 
     def perform(self) -> None:
         if(self.entity.equipment.weapon and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
-            self.entity.equipment.weapon.equippable.get_action(self.entity)
+            self.entity.equipment.weapon.equippable.get_fire_action(self.entity)
 
 class ReloadAction(Action):
     """Reload the currently equipped ranged weapon"""

@@ -12,8 +12,9 @@ import tcod
 import color
 from engine import Engine
 import entity_factories
-from game_map import GameWorld
+from maps import DungeonWorld, OverWorldGenerator
 import input_handlers
+# import sound
 
 # Load the background image and remove the alpha channel.
 background_image = tcod.image.load("img\menu_background.png")[:, :, :3]
@@ -24,6 +25,9 @@ def new_game() -> Engine:
     map_width = 80
     map_height = 43
 
+    # map_width = 1024
+    # map_height = 1024
+
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
@@ -32,7 +36,7 @@ def new_game() -> Engine:
 
     engine = Engine(player=player)
 
-    engine.game_world = GameWorld(
+    engine.game_world = DungeonWorld(
         engine=engine,
         max_rooms=max_rooms,
         room_min_size=room_min_size,
@@ -40,7 +44,12 @@ def new_game() -> Engine:
         map_width=map_width,
         map_height=map_height,
     )
-
+    # engine.game_world = OverWorldGenerator(
+    #     engine=engine,
+    #     map_width=map_width,
+    #     map_height=map_height,
+    # )
+    # engine.game_world.regular()
     engine.game_world.generate_floor()
     engine.update_fov()
 
@@ -76,6 +85,8 @@ def load_game(filename: str) -> Engine:
 
 class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
+
+    # sound.main_menu_music()
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
