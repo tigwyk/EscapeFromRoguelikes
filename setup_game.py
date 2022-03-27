@@ -6,6 +6,7 @@ import lzma
 import pickle
 import traceback
 from typing import Optional
+from main import main
 
 import tcod
 
@@ -14,7 +15,7 @@ from engine import Engine
 import entity_factories
 from maps import DungeonWorld, OverWorldGenerator
 import input_handlers
-# import sound
+import sound
 
 # Load the background image and remove the alpha channel.
 background_image = tcod.image.load("img\menu_background.png")[:, :, :3]
@@ -63,15 +64,20 @@ def new_game() -> Engine:
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
+    pistol = copy.deepcopy(entity_factories.pistol)
 
     knife.parent = player.inventory
     shirt.parent = player.inventory
+    pistol.parent = player.inventory
 
     player.inventory.items.append(knife)
-    player.equipment.toggle_equip(knife, add_message=False)
+    # player.equipment.toggle_equip(knife, add_message=False)
 
     player.inventory.items.append(shirt)
     player.equipment.toggle_equip(shirt, add_message=False)
+
+    player.inventory.items.append(pistol)
+    player.equipment.toggle_equip(pistol, add_message=False)
 
     return engine
 
@@ -86,7 +92,8 @@ def load_game(filename: str) -> Engine:
 class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
 
-    # sound.main_menu_music()
+    def __init__(self):
+        self.main_menu_music = sound.main_menu_music()
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
@@ -135,6 +142,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()  # Print to stderr.
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
+            sound.play_sound('new_game')
+            self.main_menu_music.pause()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None

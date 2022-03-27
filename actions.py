@@ -4,6 +4,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
 import exceptions
+import sound
 
 from equipment_types import EquipmentType
 
@@ -91,14 +92,33 @@ class EquipAction(Action):
         self.entity.equipment.toggle_equip(self.item)
 
 class FireAction(Action):
-    def __init__(self, entity: Actor, item: Item):
+    def __init__(
+        self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
+    ):
         super().__init__(entity)
-
+        if(entity.equipment.weapon is None or entity.equipment.weapon.equippable.equipment_type != EquipmentType.RANGED_WEAPON or item != entity.equipment.weapon):
+            return
+        
+        self.entity = entity
         self.item = item
+        print(f"FireAction, Item: {self.entity.equipment.weapon.name}")
+        print(f"FireAction, entity.equipment.weapon: {self.entity.equipment.weapon.name}")
+        if not target_xy:
+            if(entity.fighter.target):
+                target_xy = entity.fighter.target.x, entity.fighter.target.y
+            else:
+                target_xy = entity.x, entity.y
+        self.target_xy = target_xy
+
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_actor_at_location(*self.target_xy)
 
     def perform(self) -> None:
-        if(self.entity.equipment.weapon and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
-            self.entity.equipment.weapon.equippable.get_fire_action(self.entity)
+        """Invoke the items ability, this action will be given to provide context."""
+        if(self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and self.item == self.entity.equipment.weapon):
+            self.item.equippable.activate(self)
 
 class ReloadAction(Action):
     """Reload the currently equipped ranged weapon"""
@@ -111,6 +131,8 @@ class ReloadAction(Action):
     def perform(self) -> None:
         if self.entity.equipment.item_is_equipped(self.item) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
             self.engine.message_log.add_message(f"You reload the {self.item.name}!")
+            self.item.equippable.ammo = self.item.equippable.max_ammo
+            sound.play_sound('reload')
             return
         else:
             raise exceptions.Impossible("You can't reload your weapon.")
@@ -126,6 +148,7 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
+            sound.play_sound('stairs')
             self.engine.message_log.add_message(
                 "You descend the staircase.", color.descend
             )
@@ -201,7 +224,10 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
-            return MeleeAction(self.entity, self.dx, self.dy).perform()
-
+            if(self.entity.equipment and self.entity.equipment.weapon):
+                if(self.entity.equipment.weapon.equippable.equipment_type != EquipmentType.RANGED_WEAPON):
+                    return MeleeAction(self.entity, self.dx, self.dy).perform()
+            else:
+                return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()

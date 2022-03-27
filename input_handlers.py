@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
+from equipment_types import EquipmentType
 
 import tcod
 
@@ -611,6 +612,34 @@ class AreaRangedAttackHandler(SelectIndexHandler):
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
+     
+class SingleAimedRangedAttackHandler(SelectIndexHandler):
+    """Handles targeting a single enemy. Only the enemy selected will be affected."""
+
+    def __init__(
+        self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
+    ):
+        super().__init__(engine)
+
+        self.callback = callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        """Highlight the tile under the cursor."""
+        super().on_render(console)
+
+        x, y = self.engine.mouse_location
+        # Draw a rectangle around the targeted area, so the player can see the affected tiles.
+        # console.draw_rect(
+        #     x=x,
+        #     y=y,
+        #     ch=0,
+        #     width=0,
+        #     height=1,
+        #     fg=color.red,
+        # )
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback((x, y))
 
 class MainGameEventHandler(EventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
@@ -640,7 +669,7 @@ class MainGameEventHandler(EventHandler):
             return HistoryViewer(self.engine)
 
         elif key == tcod.event.K_f:
-            action = FireAction(player, player.equipment.weapon)
+            action =  player.equipment.weapon.equippable.get_fire_action(player) if player.equipment.weapon is not None else None
 
         elif key == tcod.event.K_g:
             action = PickupAction(player)

@@ -9,9 +9,11 @@ from input_handlers import (
     ActionOrHandler,
     AreaRangedAttackHandler,
     SingleRangedAttackHandler,
+    SingleAimedRangedAttackHandler,
 )
 import actions
 import color
+import sound
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -37,30 +39,51 @@ class Equippable(BaseComponent):
         self.max_ammo = max_ammo
         self.ammo = self.max_ammo
 
-    def get_fire_action(self, actor: Actor) -> SingleRangedAttackHandler:
+    def get_fire_action(self, actor: Actor) -> SingleAimedRangedAttackHandler:
+        if(self.equipment_type != EquipmentType.RANGED_WEAPON):
+            return
         self.engine.message_log.add_message(
             "Select a target location.", color.needs_target
         )
-        return SingleRangedAttackHandler(
+        return SingleAimedRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.FireAction(actor, self.parent, xy),
         )
 
     def activate(self, action: actions.FireAction) -> None:
-        consumer = action.entity
+        actor = action.entity
         target = action.target_actor
 
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("You cannot target an area that you cannot see.")
         if not target:
             raise Impossible("You must select an enemy to target.")
-        if target is consumer:
+        if target is actor:
             raise Impossible("You cannot shoot yourself!")
+        if self.ammo < 1:
+            raise Impossible("Not enough ammo. Try reloading.")
 
-        self.engine.message_log.add_message(
-            f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
-            color.status_effect_applied,
-        )
+        damage = actor.fighter.power - target.fighter.defense
+
+        attack_desc = f"{actor.name.capitalize()} shoots {target.name} with {actor.equipment.weapon.name if actor.equipment.weapon is not None else 'their fists'}"
+        if actor is self.engine.player:
+            attack_color = color.player_atk
+        else:
+            attack_color = color.enemy_atk
+
+        if damage > 0:
+            self.engine.message_log.add_message(
+                f"{attack_desc} for {damage} hit points.", attack_color
+            )
+            target.fighter.hp -= damage
+        else:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but does no damage.", attack_color
+            )
+        self.ammo = self.ammo - 1
+        actor.fighter.fighting = target
+        target.fighter.fighting = actor
+        sound.play_sound('pistol_shot')
 
 
 class Knife(Equippable):

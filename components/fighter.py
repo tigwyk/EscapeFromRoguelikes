@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import color
+import sound
 from components.base_component import BaseComponent
 from render_order import RenderOrder
 
@@ -63,6 +64,9 @@ class Fighter(BaseComponent):
             roubles_to_reward = 0
             self.engine.player.fighter.killer = self.engine.player.fighter.fighting
             self.engine.dump_character_log()
+            sound.play_sound('death')
+            sound.play_sound('game_over')
+            self.engine.menu_music.pause()
         else:
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
