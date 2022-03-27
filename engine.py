@@ -41,7 +41,7 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
-            radius=8,
+            radius=6,
         )
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
@@ -62,20 +62,20 @@ class Engine:
         render_functions.render_bunker_level(
             console=console,
             bunker_level=self.game_world.current_floor,
-            location=(0, 47),
+            location=(1, 47),
         )
 
         render_functions.render_rouble_amount(
             console=console,
             roubles=self.player.currency.roubles,
-            location=(0, 48),
+            location=(1, 48),
         )
         if self.player.equipment.weapon != None and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
             render_functions.render_ammo_status(
                 console=console,
                 ammo=self.player.equipment.weapon.equippable.ammo,
                 max_ammo=self.player.equipment.weapon.equippable.max_ammo,
-                location=(0, 49),
+                location=(1, 49),
             )
 
         render_functions.render_names_at_mouse_location(

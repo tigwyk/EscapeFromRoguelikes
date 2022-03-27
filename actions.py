@@ -101,8 +101,9 @@ class FireAction(Action):
         
         self.entity = entity
         self.item = item
-        print(f"FireAction, Item: {self.entity.equipment.weapon.name}")
-        print(f"FireAction, entity.equipment.weapon: {self.entity.equipment.weapon.name}")
+        # print(f"FireAction, Item: {self.entity.equipment.weapon.name}")
+        # print(f"FireAction, entity.equipment.weapon: {self.entity.equipment.weapon.name}")
+        
         if not target_xy:
             if(entity.fighter.target):
                 target_xy = entity.fighter.target.x, entity.fighter.target.y

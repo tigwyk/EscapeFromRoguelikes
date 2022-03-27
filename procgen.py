@@ -151,7 +151,14 @@ def tunnel_between(
         yield x, y
 
 
-def generate_overworld(colormap, mtiles, map_width, map_height, engine, noise_zoom=1, noise_octaves=10,
+def generate_overworld(
+    colormap,
+    mtiles, 
+    map_width: int, 
+    map_height: int, 
+    engine: Engine, 
+    noise_zoom: int=1, 
+    noise_octaves: int=10,
     ) -> GameMap:
     """Generate a new overworld map."""
     player = engine.player

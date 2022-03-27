@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from typing import Iterable, Iterator, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 from tcod.console import Console
@@ -9,6 +9,7 @@ import tcod.color
 from random import randint
 import itertools
 
+from scipy.spatial import cKDTree as KDTree
 
 from entity import Actor, Item
 import tile_types
@@ -39,6 +40,7 @@ class GameMap:
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
+        
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
         self.visible = np.full(
@@ -61,6 +63,15 @@ class GameMap:
             entity
             for entity in self.entities
             if isinstance(entity, Actor) and entity.is_alive
+        )
+    
+    @property
+    def enemies(self) -> Iterator[Actor]:
+        """Iterate over this maps living actors."""
+        yield from (
+            entity
+            for entity in self.entities
+            if isinstance(entity, Actor) and entity.is_alive and entity != self.engine.player
         )
 
     @property
@@ -86,6 +97,31 @@ class GameMap:
                 return actor
 
         return None
+    
+    def find_closest_kdtree(self, character: Actor, enemies: KDTree) -> Tuple[int, int]:
+        """
+        Finds the closest enemy in enemies
+
+        :param character: An (x, y) representing the position of the character\n
+        :param enemies: A KDTree that represent enemies
+
+        :return: A tuple (x, y) of the closest enemy
+        """
+        _, i = enemies.query([(character.x,character.y)], 1)
+        return i[0]
+
+    def find_closest_enemy_radius(self, character: Actor, enemies: KDTree, radius: int) -> Tuple[int, int]:
+        
+        i = enemies.query_ball_point((character.x, character.y),radius)
+        if(i):
+            print(f"find_closest_enemy_radius {i[0]}")
+            return i[0]
+        else:
+            print(f"find_closest_enemy_radius None")
+            return None
+
+    def update_enemies_tree(self):
+        self.engine.game_map.enemies_tree = KDTree([(e.x,e.y) for e in self.engine.game_map.enemies])
 
     def in_bounds(self, x: int, y: int) -> bool:
         """Return True if x and y are inside of the bounds of this map."""
@@ -157,6 +193,11 @@ class DungeonWorld:
             map_height=self.map_height,
             engine=self.engine,
         )
+        print(f"floor {self.current_floor} entities: {[i.name for i in self.engine.game_map.enemies]}")
+        print(f"floor {self.current_floor} items: {[i.name for i in self.engine.game_map.items]}")
+        # self.engine.game_map.enemies_tree = KDTree([(e.x,e.y) for e in self.engine.game_map.enemies])
+        self.engine.game_map.update_enemies_tree()
+        print(f"floor {self.current_floor} enemies_tree: {self.engine.game_map.enemies_tree}")
 
 class OverWorldGenerator(object):
   """Randomly generates a new world with terrain and objects"""

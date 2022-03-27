@@ -66,7 +66,6 @@ class Fighter(BaseComponent):
             self.engine.dump_character_log()
             sound.play_sound('death')
             sound.play_sound('game_over')
-            self.engine.menu_music.pause()
         else:
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
