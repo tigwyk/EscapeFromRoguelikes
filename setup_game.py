@@ -5,10 +5,9 @@ import copy
 import lzma
 import pickle
 import traceback
+from turtle import back
 from typing import Optional
 from main import main
-
-import urizen as uz
 
 import tcod
 
@@ -20,7 +19,8 @@ import input_handlers
 import sound
 
 # Load the background image and remove the alpha channel.
-background_image = tcod.image.load("img\menu_background.png")[:, :, :3]
+# background_image = tcod.image.load(".\img\menu_background.png")[:, :, :3]
+background_image = tcod.image.load(".\img\menu_background2.png")[:, :, :3]
 
 
 def new_game() -> Engine:

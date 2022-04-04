@@ -9,8 +9,6 @@ import tcod.color
 from random import randint
 import itertools
 
-import urizen as uz
-
 from scipy.spatial import cKDTree as KDTree
 
 from entity import Actor, Item
