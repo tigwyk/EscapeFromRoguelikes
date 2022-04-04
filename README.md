@@ -1,8 +1,9 @@
 # L.U.R.K.E.R.
 
-A roguelike::
+A roguelike:
 
+```
 Movement: NumPad  / Arrow Keys
 Fire: F
-
+```
  
