@@ -3,9 +3,9 @@
 A roguelike:
 
 ```
-Movement  :  NumPad  / Arrow Keys / VIM keys
-Fire      :  f
-Inventory :  i
-Drop Item :  d
+Movement/Attack  :  NumPad  / Arrow Keys / VIM keys
+Fire             :  f
+Inventory        :  i
+Drop Item        :  d
 ```
  
