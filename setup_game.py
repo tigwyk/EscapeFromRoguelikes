@@ -111,7 +111,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height - 2,
-            "By Lee Ingram",
+            "By Tigwyk",
             fg=color.menu_title,
             alignment=tcod.CENTER,
         )
