@@ -7,6 +7,8 @@ from russian_names import RussianNames
 import random
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 
+from pprint import pprint
+
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
@@ -18,6 +20,7 @@ if TYPE_CHECKING:
     from components.inventory import Inventory
     from components.level import Level
     from components.currency import Currency
+    from components.ammo_container import AmmoContainer
     from maps import GameMap
 
 T = TypeVar("T", bound="Entity")
@@ -59,8 +62,13 @@ class Entity:
     def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
-        if(type(clone) == Actor and clone.gen_name):
-            clone.name = Actor.generate_russian_name(clone)
+        if(type(clone) == Actor):
+            if(clone.gen_name):
+                clone.name = Actor.generate_russian_name(clone)
+            # pprint(vars(clone))
+            if(clone.inventory):
+                if(clone.inventory.items):
+                    print(f"Items: {clone.inventory.items}")
         clone.x = x
         clone.y = y
         clone.parent = gamemap
@@ -157,6 +165,7 @@ class Item(Entity):
         name: str = "<Unnamed>",
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
+        ammo_container: Optional[AmmoContainer] = None,
     ):
         super().__init__(
             x=x,
@@ -177,3 +186,8 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+
+        self.ammo_container = ammo_container
+
+        if self.ammo_container:
+            self.ammo_container.parent = self

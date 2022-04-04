@@ -41,7 +41,7 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
-            radius=6,
+            radius=4,
         )
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
@@ -100,7 +100,7 @@ class Engine:
             killer = self.player.fighter.killer
             post_mortem_header_text = """
 --------------------------------------------------------------
- L.U.R.K.E.R. (0.1.2) roguelike post-mortem character dump
+ L.U.R.K.E.R. (0.1.7) roguelike post-mortem character dump
 --------------------------------------------------------------
 """
             post_mortem_lines = []
@@ -129,6 +129,7 @@ class Engine:
             else:
                 ammo_text = f''
             post_mortem_lines.append(f' [b] [ Weapon     ]   {self.player.equipment.weapon.name if self.player.equipment.weapon else None} {ammo_text}\n')
+            post_mortem_lines.append(f' [c] [ Head       ]   {self.player.equipment.head.name if self.player.equipment.head else None}\n')
             post_mortem_lines.append(f' [c] [ Legs       ]   {self.player.equipment.legs.name if self.player.equipment.legs else None}\n')
             post_mortem_lines.append(f' [d] [ Feet       ]   {self.player.equipment.feet.name if self.player.equipment.feet else None}\n')
             post_mortem_lines.append('\n')
@@ -138,7 +139,7 @@ class Engine:
             unique_inventory_list = set(counted_inventory_list.keys())
             for item in unique_inventory_list:
                 count = 'x'+str(counted_inventory_list[item]) if counted_inventory_list[item] >= 2 else f''
-                post_mortem_lines.append(f' {item} {count}\n')
+                post_mortem_lines.append(f' {item.capitalize()} {count}\n')
             post_mortem_lines.append('\n')
             post_mortem_lines.append('-- Resistances -----------------------------------------------\n\n')
             post_mortem_lines.append(' None\n\n')

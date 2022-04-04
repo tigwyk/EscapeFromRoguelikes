@@ -55,8 +55,7 @@ MOVE_KEYS = {
 
 WAIT_KEYS = {
     tcod.event.K_PERIOD,
-    tcod.event.K_KP_5,
-    tcod.event.K_CLEAR,
+    tcod.event.K_w,
 }
 
 CONFIRM_KEYS = {
@@ -68,6 +67,12 @@ FIRE_CONFIRM_KEYS = {
     tcod.event.K_RETURN,
     tcod.event.K_KP_ENTER,
     tcod.event.K_f,
+}
+
+LOOK_KEYS = {
+    tcod.event.K_SLASH,
+    tcod.event.K_KP_5,
+    tcod.event.K_CLEAR,
 }
 
 ActionOrHandler = Union[Action, "BaseEventHandler"]
@@ -209,13 +214,14 @@ class CharacterScreenEventHandler(AskUserEventHandler):
 
         y = 0
 
-        width = len(self.TITLE) + 4
+        # width = len(self.TITLE) + 4
+        width = 30
 
         console.draw_frame(
             x=x,
             y=y,
             width=width,
-            height=18,
+            height=26,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -240,7 +246,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=y + 6,
-            string=f"Head: {self.engine.player.equipment.head.name if self.engine.player.equipment.head else None}"
+            string=f"Head : {self.engine.player.equipment.head.name if self.engine.player.equipment.head else None}"
         )
         console.print(
             x=x + 1,
@@ -250,12 +256,12 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=y + 8,
-            string=f"Legs: {self.engine.player.equipment.legs.name if self.engine.player.equipment.legs else None}"
+            string=f"Legs : {self.engine.player.equipment.legs.name if self.engine.player.equipment.legs else None}"
         )
         console.print(
             x=x + 1,
             y=y + 9,
-            string=f"Feet: {self.engine.player.equipment.feet.name if self.engine.player.equipment.feet else None}"
+            string=f"Feet : {self.engine.player.equipment.feet.name if self.engine.player.equipment.feet else None}"
         )
 
         console.print(
@@ -461,10 +467,13 @@ class InventoryEventHandler(AskUserEventHandler):
                 
                 is_equipped = self.engine.player.equipment.item_is_equipped(item)
 
-                item_string = f"({item_key}) {item.name}"
+                item_string = f"({item_key}) {item.name.capitalize()}"
 
                 if is_equipped:
                     item_string = f"{item_string} (E)"
+
+                if item.ammo_container:
+                    item_string = f"{item_string} {item.ammo_container.ammo}/{item.ammo_container.max_ammo}"
 
                 console.print(x + 1, y + i + 1, item_string)
         else:
@@ -582,13 +591,17 @@ class FireSelectIndexHandler(AskUserEventHandler):
             if self.engine.game_map.visible[e]:
                 visible_enemies.append(e)
         # print(f"Visible enemies: {visible_enemies}")
-        # nearest_enemy_coords = e_coords[self.engine.game_map.find_closest_kdtree(self.engine.player,self.engine.game_map.enemies_tree)]
-        nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,8)
-        if(nearest_enemy_in_tree is not None):
-            nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
-            if(nearest_enemy_coords in visible_enemies):
-                # print(f"Closest enemy: {nearest_enemy_coords}")
-                engine.mouse_location = nearest_enemy_coords
+        if(len(visible_enemies)>0):
+            # nearest_enemy_coords = e_coords[self.engine.game_map.find_closest_kdtree(self.engine.player,self.engine.game_map.enemies_tree)]
+            nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,8)
+            print(f"{nearest_enemy_in_tree.parent.name}")
+            if(nearest_enemy_in_tree is not None):
+                nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
+                if(nearest_enemy_coords in visible_enemies):
+                    # print(f"Closest enemy: {nearest_enemy_coords}")
+                    engine.mouse_location = nearest_enemy_coords
+                else:
+                    engine.mouse_location = player.x, player.y
             else:
                 engine.mouse_location = player.x, player.y
         else:
@@ -765,10 +778,11 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.K_c:
             return CharacterScreenEventHandler(self.engine)
-        elif key == tcod.event.K_SLASH:
+        elif key in LOOK_KEYS:
             return LookHandler(self.engine)
 
         # No valid key was pressed
+        # print(key)
         return action
 
 class GameOverEventHandler(EventHandler):

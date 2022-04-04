@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
-    from game_map import GameMap
+    from maps import GameMap
 
 
 class BaseComponent:

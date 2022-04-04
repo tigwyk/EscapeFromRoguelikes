@@ -25,10 +25,10 @@ class Equippable(BaseComponent):
     def __init__(
         self,
         equipment_type: EquipmentType,
+        ammo: int = 0,
         power_bonus: int = 0,
         defense_bonus: int = 0,
-        ammo_type: str = "None",
-        ammo: int = 0,
+        ammo_type: str = "None",        
         max_ammo: int = 0,
     ):
         self.equipment_type = equipment_type
@@ -37,7 +37,12 @@ class Equippable(BaseComponent):
         self.defense_bonus = defense_bonus
 
         self.max_ammo = max_ammo
-        self.ammo = self.max_ammo
+        if(ammo):
+            self.ammo = ammo
+        else:
+            self.ammo = max_ammo
+
+        self.ammo_type = ammo_type
 
     def get_fire_action(self, actor: Actor) -> SingleAimedRangedAttackHandler:
         if(self.equipment_type != EquipmentType.RANGED_WEAPON):
@@ -100,7 +105,7 @@ class Handgun(Equippable):
 
 class Shotgun(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.RANGED_WEAPON, power_bonus=7, max_ammo=4, ammo_type="12g shell")
+        super().__init__(equipment_type=EquipmentType.RANGED_WEAPON, power_bonus=7, max_ammo=4, ammo_type="12g")
 
 class Rifle(Equippable):
     def __init__(self) -> None:

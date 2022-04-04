@@ -9,6 +9,8 @@ import tcod.color
 from random import randint
 import itertools
 
+import urizen as uz
+
 from scipy.spatial import cKDTree as KDTree
 
 from entity import Actor, Item
@@ -78,6 +80,9 @@ class GameMap:
     def items(self) -> Iterator[Item]:
         yield from (entity for entity in self.entities if isinstance(entity, Item))
 
+    def get_size(self):
+        return self.width, self.height
+
     def get_blocking_entity_at_location(
         self, location_x: int, location_y: int,
     ) -> Optional[Entity]:
@@ -114,14 +119,17 @@ class GameMap:
         
         i = enemies.query_ball_point((character.x, character.y),radius)
         if(i):
-            print(f"find_closest_enemy_radius {i[0]}")
+            # print(f"find_closest_enemy_radius {i[0]}")
             return i[0]
         else:
-            print(f"find_closest_enemy_radius None")
+            # print(f"find_closest_enemy_radius None")
             return None
 
     def update_enemies_tree(self):
-        self.engine.game_map.enemies_tree = KDTree([(e.x,e.y) for e in self.engine.game_map.enemies])
+        if(len(list(self.engine.game_map.enemies))):
+            self.engine.game_map.enemies_tree = KDTree([(e.x,e.y) for e in self.engine.game_map.enemies])
+        else:
+            self.engine.game_map.enemies_tree = None
 
     def in_bounds(self, x: int, y: int) -> bool:
         """Return True if x and y are inside of the bounds of this map."""
@@ -193,11 +201,10 @@ class DungeonWorld:
             map_height=self.map_height,
             engine=self.engine,
         )
-        print(f"floor {self.current_floor} entities: {[i.name for i in self.engine.game_map.enemies]}")
-        print(f"floor {self.current_floor} items: {[i.name for i in self.engine.game_map.items]}")
-        # self.engine.game_map.enemies_tree = KDTree([(e.x,e.y) for e in self.engine.game_map.enemies])
+        # print(f"floor {self.current_floor} entities: {[i.name for i in self.engine.game_map.enemies]}")
+        # print(f"floor {self.current_floor} items: {[i.name for i in self.engine.game_map.items]}")
         self.engine.game_map.update_enemies_tree()
-        print(f"floor {self.current_floor} enemies_tree: {self.engine.game_map.enemies_tree}")
+        # print(f"floor {self.current_floor} enemies_tree: {self.engine.game_map.enemies_tree}")
 
 class OverWorldGenerator(object):
   """Randomly generates a new world with terrain and objects"""
@@ -207,86 +214,24 @@ class OverWorldGenerator(object):
             engine: Engine,
             map_width: int,
             map_height: int,
+            current_floor: int = 0
         ):
         self.engine = engine
 
         self.map_width = map_width
         self.map_height = map_height
 
+        self.current_floor = current_floor
 
-  def regular(self):
+
+  def generate_world(self):
     from procgen import generate_overworld
     """Randomly generate a new world with some water, swamps, hills, some objects etc"""
 
-    idx = [ 0 , 15, 75, 90, 101 ] # indexes of the keys 
-    col = [ tcod.color.Color(0,100,100),
-            tcod.color.Color(0,75,0), 
-            tcod.color.Color(50,150,0), 
-            tcod.color.Color(150,120,80), 
-            tcod.color.Color(180,180,180)]
-
-    map=tcod.color_gen_map(col,idx)
-
-    tiles = zip(idx, [[tile_types.swamp, tile_types.plains],
-                      [tile_types.plains, tile_types.forest], 
-                      [tile_types.hills, tile_types.forest],
-                      [tile_types.hills, tile_types.hills, tile_types.mountains],
-                      [tile_types.hills, tile_types.mountains,tile_types.mountains]])
-
-    self.engine.game_map = self.__generate(map, tiles)
-    
-  def __generate(self, colormap, mtiles, noise_zoom=1, noise_octaves=10):
-    WORLD_WIDTH = self.map_width
-    WORLD_HEIGHT = self.map_height
-    SCALE = noise_zoom*1.0
-
-    map = GameMap(self.engine, self.map_width, self.map_height, entities=[self.engine.player])
-
-    noise = tcod.noise.Noise(
-        dimensions=2,
-        algorithm=tcod.noise.Algorithm.SIMPLEX,
-        seed=42
+    self.engine.game_map = generate_overworld(
+        map_width=self.map_width,
+        map_height=self.map_height,
+        engine=self.engine,
     )
-
-    hm = noise[tcod.noise.grid(shape=(map.width,map.height), scale=SCALE)]
-    hm1 = noise[tcod.noise.grid(shape=(map.width,map.height), scale=SCALE)]
-    hm2 = noise[tcod.noise.grid(shape=(map.width,map.height), scale=SCALE)]
-    
-    hm[:] = hm1[:] * hm2[:]
-    hm = (hm + 1.0) * 0.5 #normalize
-    print(f"Normalized heightmap: {hm}")
-
-    #Initialize Tiles with Map values
-
-    # make coordinate grid on [0,1]^2
-    x_idx = np.linspace(0, 1, map.width)
-    y_idx = np.linspace(0, 1, map.height)
-    world_x, world_y = np.meshgrid(x_idx, y_idx)
-
-    map.tiles = np.zeros((map.width,map.height))
-    # apply perlin noise, instead of np.vectorize, consider using itertools.starmap()
-    map.tiles = itertools.starmap(noise.get_point, (map.width/SCALE,map.height/SCALE))
-    print('- Tiles Initialized -')
-    print(map)
-    # for x in range(map.width):
-    #     for y in range(map.height):
-    #         print(f"Coords: {x},{y}")
-    #         print(f"World Tile: {map.tiles.next()}")
-            
-            # if World[x][y].height <= 0.2:
-            #     World[x][y].biomeID = 0
-
-            # if World[x][y].temp <= 0.2 and World[x][y].height > 0.15:
-            #     World[x][y].biomeID = randint(11,13)
-
-            # if World[x][y].height > 0.6:
-            #     World[x][y].biomeID = 9
-            # if World[x][y].height > 0.9:
-            #     World[x][y].biomeID = 10
-                  
-            
-    print('- BiomeIDs Atributed -')
-
-    return map
 
   

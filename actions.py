@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
+from components import ammo_container
 import exceptions
 import sound
 
@@ -129,12 +130,48 @@ class ReloadAction(Action):
 
         self.item = item
 
+    def filter_ammo_containers(item):
+        return True if item.ammo_container is not None else False
+
     def perform(self) -> None:
-        if self.entity.equipment.item_is_equipped(self.item) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
-            self.engine.message_log.add_message(f"You reload the {self.item.name}!")
-            self.item.equippable.ammo = self.item.equippable.max_ammo
-            sound.play_sound('reload')
-            return
+        if self.entity.equipment.item_is_equipped(self.item) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and (self.item.equippable.ammo < self.item.equippable.max_ammo):
+            # print(f"Player's items from reload action: {self.entity.inventory.items}")
+            ammo_containers = []
+            for item in self.entity.inventory.items:
+                if item.ammo_container:
+                    ammo_containers.append(item)
+            if(ammo_containers):
+                compatible_ammo = []
+                for ammo in ammo_containers:
+                    if(ammo.ammo_container.ammo_type == self.item.equippable.ammo_type):
+                        compatible_ammo.append(ammo)
+                    if(compatible_ammo):
+                        print(f"Ammo containers in inventory: {ammo_containers}")
+                        for mag in compatible_ammo:
+                            if(mag.ammo_container.ammo > 0):
+                                ammo_needed = self.item.equippable.max_ammo - self.item.equippable.ammo
+                                print(f"Ammo in first spare mag: {mag.ammo_container.ammo}")
+                                print(f"Ammo needed: {ammo_needed}")
+                                if(ammo_needed <= mag.ammo_container.ammo):
+                                    new_ammo_amount = mag.ammo_container.ammo - ammo_needed
+                                    print(f"Remaining ammo in {mag.name}: {new_ammo_amount}")
+                                    mag.ammo_container.ammo = new_ammo_amount
+                                else:
+                                    ammo_needed -= mag.ammo_container.ammo
+                                    print(f"Ammo still needed? {ammo_needed}")
+                                    mag.ammo_container.ammo = 0
+                                print(f"Adding ammo: {ammo_needed}")
+                                self.item.equippable.ammo += ammo_needed
+                                self.engine.message_log.add_message(f"You reload the {self.item.name}!")
+                                sound.play_sound('reload')
+                                if(mag.ammo_container.ammo < 1):
+                                        mag.ammo_container.consume()  
+                                    
+                        return
+                    else:
+                        raise exceptions.Impossible(f"You don't have any compatible ammo for your {item.name}.")
+            else:
+                raise exceptions.Impossible("You don't have any spare ammo.")
         else:
             raise exceptions.Impossible("You can't reload your weapon.")
 

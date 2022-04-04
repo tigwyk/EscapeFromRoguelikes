@@ -8,6 +8,8 @@ import traceback
 from typing import Optional
 from main import main
 
+import urizen as uz
+
 import tcod
 
 import color
@@ -50,7 +52,7 @@ def new_game() -> Engine:
     #     map_width=map_width,
     #     map_height=map_height,
     # )
-    # engine.game_world.regular()
+    # engine.game_world.generate_world()
     engine.game_world.generate_floor()
     engine.update_fov()
 
@@ -71,13 +73,13 @@ def new_game() -> Engine:
     pistol.parent = player.inventory
 
     player.inventory.items.append(knife)
-    # player.equipment.toggle_equip(knife, add_message=False)
+    player.equipment.toggle_equip(knife, add_message=False)
 
     player.inventory.items.append(shirt)
     player.equipment.toggle_equip(shirt, add_message=False)
 
-    player.inventory.items.append(pistol)
-    player.equipment.toggle_equip(pistol, add_message=False)
+    # player.inventory.items.append(pistol)
+    # player.equipment.toggle_equip(pistol, add_message=False)
 
     return engine
 

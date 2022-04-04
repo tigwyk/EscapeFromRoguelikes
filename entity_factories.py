@@ -1,5 +1,5 @@
 from components.ai import HostileEnemy
-from components import consumable, equippable
+from components import consumable, equippable, ammo_container
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -94,68 +94,92 @@ mutant2 = Actor(
 throwing_sand = Item(
     char="~",
     color=(207, 63, 255),
-    name="Sand (throwing)",
+    name="sand (throwing)",
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 grenade = Item(
     char="!",
     color=(127, 0, 255),
-    name="Grenade",
+    name="grenade",
     consumable=consumable.GrenadeDamageConsumable(damage=12, radius=3),
 )
 medkit = Item(
-    char="+",
+    # char="+",
+    char="♥",
     color=(255, 0, 0),
-    name="Medkit",
+    name="medkit",
     consumable=consumable.HealingConsumable(amount=6),
 )
 lightning_scroll = Item(
     char="~",
     color=(255, 255, 0),
-    name="Lightning Scroll",
+    name="seeker drone",
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
 )
 
+makarov_mag = Item(
+    char="=",
+    color=(139, 69, 19),
+    name="pistol magazine",
+    ammo_container=ammo_container.AmmoMag(ammo=6,max_ammo=6,ammo_type="9x18mm")
+)
+
+shotgun_shells_box = Item(
+    char="=",
+    color=(139, 69, 19),
+    name="shotgun shells",
+    ammo_container=ammo_container.AmmoMag(ammo=6,max_ammo=6,ammo_type="12g")
+)
+
+shotgun_slugs_box = Item(
+    char="=",
+    color=(139, 69, 19),
+    name="shotgun slugs",
+    ammo_container=ammo_container.AmmoMag(ammo=6,max_ammo=6,ammo_type="12g")
+)
+
 kitchen_knife = Item(
-    char="/", color=(0, 191, 255), name="Kitchen Knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Knife()
 )
 
 combat_knife = Item(
-    char="/", color=(0, 191, 255), name="Combat Knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Knife()
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
+sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Sword())
 
-pistol = Item(char="/", color=(0, 191, 255), name="Makarov Pistol", equippable=equippable.Handgun())
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Handgun())
+
+shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Shotgun())
 
 shirt = Item(
     char="[",
     color=(139, 69, 19),
-    name="Tattered Shirt",
+    name="tattered shirt",
     equippable=equippable.Shirt(),
 )
 
 body_armor = Item(
-    char="[", color=(139, 69, 19), name="Body Armor", equippable=equippable.BodyArmor()
+    char="[", color=(139, 69, 19), name="body armor", equippable=equippable.BodyArmor()
 )
 
 rusty_helmet = Item(
     char="[",
     color=(139, 69, 19),
-    name="Rusty Helmet",
+    name="rusty helmet",
     equippable=equippable.BasicHelmet(),
 )
 
 tough_denim_jeans = Item(
     char="[",
     color=(139, 69, 19),
-    name="Tough Denim Jeans",
+    name="tough denim jeans",
     equippable=equippable.Pants(),
 )
 
 hiking_boots = Item(
     char="[",
     color=(139, 69, 19),
-    name="Hiking Boots",
+    name="hiking boots",
     equippable=equippable.Boots(),
 )
