@@ -593,8 +593,8 @@ class FireSelectIndexHandler(AskUserEventHandler):
         # print(f"Visible enemies: {visible_enemies}")
         if(len(visible_enemies)>0):
             # nearest_enemy_coords = e_coords[self.engine.game_map.find_closest_kdtree(self.engine.player,self.engine.game_map.enemies_tree)]
-            nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,8)
-            print(f"{nearest_enemy_in_tree.parent.name}")
+            nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,4)
+            # print(f"{nearest_enemy_in_tree.parent.name}")
             if(nearest_enemy_in_tree is not None):
                 nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
                 if(nearest_enemy_coords in visible_enemies):
@@ -757,8 +757,6 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.K_ESCAPE:
             return EscapeMenuEventHandler(self.engine)
-        elif key == tcod.event.K_F1:
-            return player.fighter.die()
         elif key == tcod.event.K_v:
             return HistoryViewer(self.engine)
 

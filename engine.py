@@ -70,6 +70,11 @@ class Engine:
             roubles=self.player.currency.roubles,
             location=(1, 48),
         )
+        render_functions.render_coordinates(
+            console=console,
+            coords=(self.player.x,self.player.y),
+            location=(71, 48),
+        )
         if self.player.equipment.weapon != None and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
             render_functions.render_ammo_status(
                 console=console,

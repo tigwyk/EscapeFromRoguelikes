@@ -146,21 +146,21 @@ class ReloadAction(Action):
                     if(ammo.ammo_container.ammo_type == self.item.equippable.ammo_type):
                         compatible_ammo.append(ammo)
                     if(compatible_ammo):
-                        print(f"Ammo containers in inventory: {ammo_containers}")
+                        # print(f"Ammo containers in inventory: {ammo_containers}")
                         for mag in compatible_ammo:
                             if(mag.ammo_container.ammo > 0):
                                 ammo_needed = self.item.equippable.max_ammo - self.item.equippable.ammo
-                                print(f"Ammo in first spare mag: {mag.ammo_container.ammo}")
-                                print(f"Ammo needed: {ammo_needed}")
+                                # print(f"Ammo in first spare mag: {mag.ammo_container.ammo}")
+                                # print(f"Ammo needed: {ammo_needed}")
                                 if(ammo_needed <= mag.ammo_container.ammo):
                                     new_ammo_amount = mag.ammo_container.ammo - ammo_needed
-                                    print(f"Remaining ammo in {mag.name}: {new_ammo_amount}")
+                                    # print(f"Remaining ammo in {mag.name}: {new_ammo_amount}")
                                     mag.ammo_container.ammo = new_ammo_amount
                                 else:
                                     ammo_needed -= mag.ammo_container.ammo
-                                    print(f"Ammo still needed? {ammo_needed}")
+                                    # print(f"Ammo still needed? {ammo_needed}")
                                     mag.ammo_container.ammo = 0
-                                print(f"Adding ammo: {ammo_needed}")
+                                # print(f"Adding ammo: {ammo_needed}")
                                 self.item.equippable.ammo += ammo_needed
                                 self.engine.message_log.add_message(f"You reload the {self.item.name}!")
                                 sound.play_sound('reload')

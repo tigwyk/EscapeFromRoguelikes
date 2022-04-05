@@ -187,18 +187,29 @@ class DungeonWorld:
         self.current_floor = current_floor
 
     def generate_floor(self) -> None:
+        from procgen import generate_bsp_dungeon
         from procgen import generate_dungeon
 
         self.current_floor += 1
-
-        self.engine.game_map = generate_dungeon(
-            max_rooms=self.max_rooms,
-            room_min_size=self.room_min_size,
-            room_max_size=self.room_max_size,
-            map_width=self.map_width,
-            map_height=self.map_height,
-            engine=self.engine,
-        )
+        
+        if(self.current_floor % 3):
+            self.engine.game_map = generate_dungeon(
+                max_rooms=self.max_rooms,
+                room_min_size=self.room_min_size,
+                room_max_size=self.room_max_size,
+                map_width=self.map_width,
+                map_height=self.map_height,
+                engine=self.engine,
+            )
+        else:
+            self.engine.game_map = generate_bsp_dungeon(
+                max_rooms=self.max_rooms,
+                room_min_size=self.room_min_size,
+                room_max_size=self.room_max_size,
+                map_width=self.map_width,
+                map_height=self.map_height,
+                engine=self.engine,
+            )
         # print(f"floor {self.current_floor} entities: {[i.name for i in self.engine.game_map.enemies]}")
         # print(f"floor {self.current_floor} items: {[i.name for i in self.engine.game_map.items]}")
         self.engine.game_map.update_enemies_tree()

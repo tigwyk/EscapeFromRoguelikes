@@ -66,11 +66,11 @@ def new_game() -> Engine:
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
-    pistol = copy.deepcopy(entity_factories.pistol)
+    # pistol = copy.deepcopy(entity_factories.pistol)
 
     knife.parent = player.inventory
     shirt.parent = player.inventory
-    pistol.parent = player.inventory
+    # pistol.parent = player.inventory
 
     player.inventory.items.append(knife)
     player.equipment.toggle_equip(knife, add_message=False)

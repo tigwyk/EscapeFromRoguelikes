@@ -66,7 +66,7 @@ class Equippable(BaseComponent):
         if target is actor:
             raise Impossible("You cannot shoot yourself!")
         if self.ammo < 1:
-            raise Impossible("Not enough ammo. Try reloading.")
+            raise Impossible("Not enough ammo. Reload!")
 
         damage = actor.fighter.power - target.fighter.defense
 

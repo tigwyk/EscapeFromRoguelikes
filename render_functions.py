@@ -67,6 +67,16 @@ def render_ammo_status(
         return
     console.print(x=x, y=y, string=f"Ammo: {ammo}/{max_ammo}", fg=ammo_color)
 
+def render_coordinates(
+    console: Console, coords: Tuple[int, int], location: Tuple[int, int]
+) -> None:
+    """
+    Render the player's weapon ammo status.  
+    """
+    x, y = location
+    xx, yy = coords
+    console.print(x=x, y=y, string=f"({xx},{yy})", fg=color.white)
+
 def render_names_at_mouse_location(
     console: Console, x: int, y: int, engine: Engine
 ) -> None:
