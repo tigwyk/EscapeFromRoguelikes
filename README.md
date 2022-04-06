@@ -9,6 +9,8 @@ Inventory        :  i
 Get Item         :  g
 Drop Item        :  d
 Look             :  / or Numpad 5
+Character Screen :  c
+Message Log      :  v
 ```
  
 Music by Ethan Hamman
