@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import lzma
 import pickle
+import random
 from datetime import datetime
 from pathlib import Path
 import os.path
@@ -108,8 +109,9 @@ class Engine:
  L.U.R.K.E.R. (0.1.7) roguelike post-mortem character dump
 --------------------------------------------------------------
 """
+            before_event_text = ['in a past life', 'before the event', "outside the zone"]
             post_mortem_lines = []
-            post_mortem_lines.append(f' {self.player.name}, level {self.player.level.current_level} Human L.U.R.K.E.R.\n')
+            post_mortem_lines.append(f' {self.player.name}, level {self.player.level.current_level} Human and {self.player.lore.previous_job} {random.choice(before_event_text)},\n')
             if killer != None:
                 post_mortem_lines.append(f' was murdered by {killer.name}, a level {killer.level.current_level}\n')
             else:
@@ -129,7 +131,7 @@ class Engine:
             post_mortem_lines.append(' None\n\n')
             post_mortem_lines.append('-- Equipment -------------------------------------------------\n\n')
             post_mortem_lines.append(f' [a] [ Armor      ]   {self.player.equipment.armor.name if self.player.equipment.armor else None}\n')
-            if(self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
+            if(self.player.equipment.weapon and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
                 ammo_text = f'[{self.player.equipment.weapon.equippable.ammo}/{self.player.equipment.weapon.equippable.max_ammo}]'
             else:
                 ammo_text = f''

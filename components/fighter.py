@@ -79,6 +79,15 @@ class Fighter(BaseComponent):
         self.parent.name = f"remains of {self.parent.name}"
         self.parent.render_order = RenderOrder.CORPSE
 
+        if(self.parent.inventory and self.parent.inventory.items):
+            while self.parent.inventory.items:
+                item = self.parent.inventory.items.pop()
+                item.x = self.parent.x
+                item.y = self.parent.y
+                item.parent = self.engine.game_map
+                self.engine.game_map.entities.add(item)
+                
+
         self.engine.message_log.add_message(death_message, death_message_color)
 
         self.engine.player.level.add_xp(self.parent.level.xp_given)

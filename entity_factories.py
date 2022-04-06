@@ -1,10 +1,11 @@
-from components.ai import HostileEnemy
+from components.ai import HostileEnemy, HostileHumanEnemy
 from components import consumable, equippable, ammo_container
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from components.currency import Currency
+from components.lore import Lore
 from entity import Actor, Item
 
 from russian_names import RussianNames
@@ -20,6 +21,7 @@ player = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     currency=Currency(roubles=100),
+    lore=Lore()
 )
 
 rat = Actor(
@@ -47,21 +49,21 @@ dog = Actor(
 scav = Actor(
     char="s",
     color=(63, 127, 63),
-    #name="Scavenger",
-    #name=Actor.generate_russian_name(),
-    ai_cls=HostileEnemy,
+    name="Scavenger",
+    ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=10, base_defense=0, base_power=5),
+    fighter=Fighter(hp=10, base_defense=0, base_power=3),
     inventory=Inventory(capacity=5),
     level=Level(xp_given=35),
     currency=Currency(roubles=5),
-    gen_name=True
+    gen_name=True,
+    gen_kit=True
 )
 raider = Actor(
     char="R",
     color=(0, 127, 0),
     name="Raider",
-    ai_cls=HostileEnemy,
+    ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=16, base_defense=1, base_power=6),
     inventory=Inventory(capacity=5),
@@ -72,7 +74,7 @@ mutant1 = Actor(
     char="m",
     color=(0, 127, 0),
     name="Mutant Human",
-    ai_cls=HostileEnemy,
+    ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=20, base_defense=2, base_power=9),
     inventory=Inventory(capacity=5),
@@ -83,7 +85,7 @@ mutant2 = Actor(
     char="M",
     color=(0, 127, 0),
     name="Large Mutant Human",
-    ai_cls=HostileEnemy,
+    ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=20, base_defense=2, base_power=12),
     inventory=Inventory(capacity=5),

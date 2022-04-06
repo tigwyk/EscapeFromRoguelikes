@@ -5,6 +5,8 @@ import math
 from time import time
 from russian_names import RussianNames
 import random
+import entity_factories
+
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 
 from pprint import pprint
@@ -21,6 +23,7 @@ if TYPE_CHECKING:
     from components.level import Level
     from components.currency import Currency
     from components.ammo_container import AmmoContainer
+    from components.lore import Lore
     from maps import GameMap
 
 T = TypeVar("T", bound="Entity")
@@ -66,9 +69,8 @@ class Entity:
             if(clone.gen_name):
                 clone.name = Actor.generate_russian_name(clone)
             # pprint(vars(clone))
-            if(clone.inventory):
-                if(clone.inventory.items):
-                    print(f"Items: {clone.inventory.items}")
+            if(clone.inventory and clone.gen_kit):
+                Actor.generate_kit(clone)
         clone.x = x
         clone.y = y
         clone.parent = gamemap
@@ -112,7 +114,9 @@ class Actor(Entity):
         inventory: Inventory,
         level: Level,
         currency: Currency,
-        gen_name: bool = False
+        lore: Lore = None,
+        gen_name: bool = False,
+        gen_kit: bool = False
     ):
         super().__init__(
             x=x,
@@ -141,7 +145,13 @@ class Actor(Entity):
         self.currency = currency
         self.currency.parent = self
 
+        if(lore):
+            self.lore = lore
+            self.lore.parent = self
+
         self.gen_name = gen_name
+
+        self.gen_kit = gen_kit
 
         # if(gen_name):
         #     self.name = self.generate_russian_name()
@@ -153,6 +163,25 @@ class Actor(Entity):
 
     def generate_russian_name(self) -> str:
         return RussianNames(patronymic=False, name_reduction=True, transliterate=True).get_person()
+    
+    def generate_kit(self):
+        print(f"Generate kit? {self.gen_kit}")
+        knife = copy.deepcopy(entity_factories.kitchen_knife)
+        shirt = copy.deepcopy(entity_factories.shirt)
+        pistol = copy.deepcopy(entity_factories.pistol)
+
+        knife.parent = self.inventory
+        shirt.parent = self.inventory
+        pistol.parent = self.inventory
+
+        self.inventory.items.append(knife)
+        # self.equipment.toggle_equip(knife, add_message=False)
+
+        self.inventory.items.append(shirt)
+        self.equipment.toggle_equip(shirt, add_message=False)
+
+        self.inventory.items.append(pistol)
+        self.equipment.toggle_equip(pistol, add_message=False)
 
 class Item(Entity):
     def __init__(
