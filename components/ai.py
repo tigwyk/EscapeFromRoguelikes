@@ -138,10 +138,10 @@ class HostileHumanEnemy(BaseAI):
             if self.entity.equipment.weapon is None:
                 if(len(melee_weapons)):
                     self.entity.equipment.toggle_equip(melee_weapons[0], add_message=False)
-                    print(f"Equipping {melee_weapons[0].name}")
+                    # print(f"Equipping {melee_weapons[0].name}")
                 elif(len(ranged_weapons)):
                     self.entity.equipment.toggle_equip(ranged_weapons[0], add_message=False)
-                    print(f"Equipping {ranged_weapons[0].name}")
+                    # print(f"Equipping {ranged_weapons[0].name}")
 
 
 
@@ -149,7 +149,7 @@ class HostileHumanEnemy(BaseAI):
             if self.entity.equipment.weapon:
                 if distance > 1 and distance <= 3 and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
                     for roll in dice.roll('d20'):
-                        print(f"Fire roll: {roll}")
+                        # print(f"Fire roll: {roll}")
                         if roll > 15:
                             return FireAction(self.entity, self.entity.equipment.weapon, (target.x, target.y)).perform()
                 if distance <= 1 and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
