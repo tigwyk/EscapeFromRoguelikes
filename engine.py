@@ -106,7 +106,7 @@ class Engine:
             killer = self.player.fighter.killer
             post_mortem_header_text = """
 --------------------------------------------------------------
- L.U.R.K.E.R. (0.1.7) roguelike post-mortem character dump
+ L.U.R.K.E.R. roguelike post-mortem character dump
 --------------------------------------------------------------
 """
             before_event_text = ['in a past life', 'before the event', "outside the zone"]
