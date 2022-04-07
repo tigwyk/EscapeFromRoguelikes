@@ -165,23 +165,26 @@ class Actor(Entity):
         return RussianNames(patronymic=False, name_reduction=True, transliterate=True).get_person()
     
     def generate_kit(self):
-        print(f"Generate kit? {self.gen_kit}")
-        knife = copy.deepcopy(entity_factories.kitchen_knife)
+        print(f"Generating kit...")
+        
         shirt = copy.deepcopy(entity_factories.shirt)
-        pistol = copy.deepcopy(entity_factories.pistol)
-
-        knife.parent = self.inventory
         shirt.parent = self.inventory
-        pistol.parent = self.inventory
-
-        self.inventory.items.append(knife)
-        # self.equipment.toggle_equip(knife, add_message=False)
-
         self.inventory.items.append(shirt)
         self.equipment.toggle_equip(shirt, add_message=False)
+        
+        if(random.choice([True,False,True,True])):
+            knife = copy.deepcopy(entity_factories.kitchen_knife)
+            knife.parent = self.inventory
+            self.inventory.items.append(knife)
+            self.equipment.toggle_equip(knife, add_message=False)
+        else:
+            pistol = copy.deepcopy(entity_factories.pistol)
+            pistol.parent = self.inventory
+            self.inventory.items.append(pistol)
+            self.equipment.toggle_equip(pistol, add_message=False)
 
-        self.inventory.items.append(pistol)
-        self.equipment.toggle_equip(pistol, add_message=False)
+
+        
 
 class Item(Entity):
     def __init__(

@@ -4,6 +4,7 @@ from typing import Optional, TYPE_CHECKING
 
 from components.base_component import BaseComponent
 from equipment_types import EquipmentType
+from sound import play_sound
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -84,6 +85,8 @@ class Equipment(BaseComponent):
 
         if add_message:
             self.equip_message(item.name)
+            if(item.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
+                play_sound('reload')
 
     def unequip_from_slot(self, slot: str, add_message: bool) -> None:
         current_item = getattr(self, slot)
