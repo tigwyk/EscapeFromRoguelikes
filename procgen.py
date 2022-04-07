@@ -145,7 +145,7 @@ def place_labs_entities(room: RectangularRoom, dungeon: GameMap, floor_number: i
         0, get_max_value_for_floor(max_items_by_floor, floor_number)
     )
     
-    bonus = random.randint(0, floor_number/2)
+    bonus = random.randint(0, int(floor_number/2))
     number_of_items += bonus
     number_of_monsters += bonus
 

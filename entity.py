@@ -67,10 +67,10 @@ class Entity:
         clone = copy.deepcopy(self)
         if(type(clone) == Actor):
             if(clone.gen_name):
-                clone.name = Actor.generate_russian_name(clone)
-            # pprint(vars(clone))
+                clone.name = clone.generate_russian_name()
+
             if(clone.inventory and clone.gen_kit):
-                Actor.generate_kit(clone)
+                clone.generate_kit()
         clone.x = x
         clone.y = y
         clone.parent = gamemap
