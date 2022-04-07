@@ -137,6 +137,7 @@ class MainMenu(input_handlers.BaseEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:
             try:
+                self.main_menu_music.pause() if self.main_menu_music.playing else None
                 return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
@@ -145,7 +146,7 @@ class MainMenu(input_handlers.BaseEventHandler):
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
             sound.play_sound('new_game')
-            self.main_menu_music.pause()
+            self.main_menu_music.pause() if self.main_menu_music.playing else None
             return input_handlers.MainGameEventHandler(new_game())
 
         return None
