@@ -1,23 +1,28 @@
 from __future__ import annotations
 
-import os
-
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 from equipment_types import EquipmentType
 
 import tcod
 
-import actions
 from actions import (
     Action,
     BumpAction,
     PickupAction,
     WaitAction,
-    FireAction
+    FireAction,
+    ReloadAction,
+    TakeStairsAction,
+    EquipAction,
+    DropItemAction
 )
 import color
 import exceptions
 import traceback
+import os
+import sys
+import psutil
+import logging
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -359,6 +364,21 @@ class LevelUpEventHandler(AskUserEventHandler):
 class EscapeMenuEventHandler(AskUserEventHandler):
     TITLE = "PAUSE MENU"
 
+    
+    def restart_game(self) -> None:
+        """Handle restarting a finished game."""
+        if os.path.exists("savegame.sav"):
+            os.remove("savegame.sav")  # Deletes the active save file.
+        # try:
+        #     p = psutil.Process(os.getpid())
+        #     for handler in p.open_files() + p.connections():
+        #         os.close(handler.fd)
+        # except Exception as e:
+        #     logging.error(e)
+
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
     def on_render(self, console: tcod.Console) -> None:
         super().on_render(console)
 
@@ -401,14 +421,14 @@ class EscapeMenuEventHandler(AskUserEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_l:
             try:
-                return MainGameEventHandler(load_game("savegame.sav"))
+                return MainGameEventHandler(("savegame.sav"))
             except FileNotFoundError:
                 return PopupMessage(self, "No saved game to load.")
             except Exception as exc:
                 traceback.print_exc()  # Print to stderr.
                 return PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_r:
-            return MainGameEventHandler(self.engine)
+            self.restart_game()
         
         return super().ev_keydown(event)
 
@@ -507,7 +527,7 @@ class InventoryActivateHandler(InventoryEventHandler):
             # Return the action for the selected item.
             return item.consumable.get_action(self.engine.player)
         elif item.equippable:
-            return actions.EquipAction(self.engine.player, item)
+            return EquipAction(self.engine.player, item)
         else:
             return None
 
@@ -519,7 +539,7 @@ class InventoryDropHandler(InventoryEventHandler):
 
     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
         """Drop this item."""
-        return actions.DropItem(self.engine.player, item)
+        return DropItemAction(self.engine.player, item)
 
 class SelectIndexHandler(AskUserEventHandler):
     """Handles asking the user for an index on the map."""
@@ -747,7 +767,7 @@ class MainGameEventHandler(EventHandler):
         if key == tcod.event.K_PERIOD and modifier & (
             tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
         ):
-            return actions.TakeStairsAction(player)
+            return TakeStairsAction(player)
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
@@ -772,7 +792,7 @@ class MainGameEventHandler(EventHandler):
             return InventoryDropHandler(self.engine)
 
         elif key == tcod.event.K_r:
-            action = actions.ReloadAction(player, player.equipment.weapon)
+            action = ReloadAction(player, player.equipment.weapon)
 
         elif key == tcod.event.K_c:
             return CharacterScreenEventHandler(self.engine)
@@ -790,12 +810,29 @@ class GameOverEventHandler(EventHandler):
             os.remove("savegame.sav")  # Deletes the active save file.
         raise exceptions.QuitWithoutSaving()  # Avoid saving a finished game.
 
+    def on_restart(self) -> None:
+        """Handle restarting a finished game."""
+        if os.path.exists("savegame.sav"):
+            os.remove("savegame.sav")  # Deletes the active save file.
+        # try:
+        #     p = psutil.Process(os.getpid())
+        #     for handler in p.open_files() + p.connections():
+        #         os.close(handler.fd)
+        # except Exception as e:
+        #     logging.error(e)
+
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
     def ev_quit(self, event: tcod.event.Quit) -> None:
         self.on_quit()
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> None:
         if event.sym == tcod.event.K_ESCAPE:
             self.on_quit()
+        
+        if event.sym == tcod.event.K_r:
+            self.on_restart()
 
 CURSOR_Y_KEYS = {
     tcod.event.K_UP: -1,
