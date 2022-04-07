@@ -111,7 +111,7 @@ class Engine:
 """
             before_event_text = ['in a past life', 'before the event', "outside the zone"]
             post_mortem_lines = []
-            post_mortem_lines.append(f' {self.player.name}, level {self.player.level.current_level} Human and {self.player.lore.previous_job} {random.choice(before_event_text)},\n')
+            post_mortem_lines.append(f' {self.player.name}, level {self.player.level.current_level} {self.player.role.name if self.player.role else None} and {self.player.lore.previous_job} {random.choice(before_event_text)},\n')
             if killer != None:
                 post_mortem_lines.append(f' was murdered by {killer.name}, a level {killer.level.current_level}\n')
             else:
