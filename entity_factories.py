@@ -9,6 +9,7 @@ from components.lore import Lore
 from entity import Actor, Item
 
 from russian_names import RussianNames
+import random
 
 player = Actor(
     char="@",
@@ -22,7 +23,7 @@ player = Actor(
     level=Level(level_up_base=200),
     currency=Currency(roubles=100),
     lore=Lore(),
-    role=roles.Scavenger()
+    role=random.choice([roles.Scavenger(),roles.Scientist(),roles.Soldier()])
 )
 
 rat = Actor(
@@ -154,6 +155,10 @@ sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.
 pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Handgun())
 
 shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Shotgun())
+
+rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Rifle())
+
+assault_rifle = Item(char="/", color=(0, 191, 255), name="AK-74n automatic rifle", equippable=equippable.Rifle())
 
 shirt = Item(
     char="[",
