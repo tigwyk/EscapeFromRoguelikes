@@ -19,10 +19,12 @@ from equipment_types import EquipmentType
 if TYPE_CHECKING:
     from entity import Actor
     from maps import GameMap, DungeonWorld
+    from camera import Camera
 
 class Engine:
     game_map: GameMap
     game_world: DungeonWorld
+    camera: Camera
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()

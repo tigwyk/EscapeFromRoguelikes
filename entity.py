@@ -4,6 +4,7 @@ import copy
 import math
 from time import time
 from russian_names import RussianNames
+from camera import Camera
 import random
 import entity_factories
 
