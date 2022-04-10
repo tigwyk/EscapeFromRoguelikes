@@ -8,6 +8,8 @@ import exceptions
 import input_handlers
 import setup_game
 
+FLAGS = tcod.context.SDL_WINDOW_FULLSCREEN_DESKTOP | tcod.context.SDL_WINDOW_MAXIMIZED
+
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
     """If the current event handler has an active Engine then save it."""
     if isinstance(handler, input_handlers.EventHandler):
@@ -33,6 +35,7 @@ def main() -> None:
         tileset=tileset,
         title="L.U.R.K.E.R.",
         vsync=True,
+        sdl_window_flags=FLAGS,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
         try:
