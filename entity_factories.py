@@ -156,10 +156,6 @@ pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=e
 
 shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Shotgun())
 
-rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Rifle())
-
-assault_rifle = Item(char="/", color=(0, 191, 255), name="AK-74n automatic rifle", equippable=equippable.Rifle())
-
 shirt = Item(
     char="[",
     color=(139, 69, 19),
