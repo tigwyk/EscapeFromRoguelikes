@@ -122,7 +122,7 @@ class GameMap:
         half_height = int(height / 2)
         origin_x = x - half_width
         origin_y = y - half_height
-        print(f'player: ({x}, {y}), modifier: {half_width}, {half_height}, origin: ({origin_x}, {origin_y})')
+        # print(f'player: ({x}, {y}), modifier: {half_width}, {half_height}, origin: ({origin_x}, {origin_y})')
         if origin_x < 0:
             origin_x = 0
         if origin_y < 0:

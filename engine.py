@@ -157,10 +157,10 @@ class Engine:
             console.print(equip_x, equip_y + 1, item_name)
             equip_y += 2
         
-        log_pane_x = sub_pane_x
-        log_pane_y = equip_pane_y + equip_pane_height
-        log_pane_width = sub_pane_width
-        log_pane_height = info_pane_height - log_pane_y - 1
+        log_pane_x = 0
+        log_pane_y = 0 + self.game_world.viewport_height
+        log_pane_width = self.game_world.viewport_width
+        log_pane_height = console.height - log_pane_y - 1
         render_functions.draw_window(console, log_pane_x, log_pane_y, log_pane_width, log_pane_height, '')
 
         self.message_log.render(console=console,x=log_pane_x+1,y=log_pane_y+1,width=log_pane_width-2,height=log_pane_height-2)

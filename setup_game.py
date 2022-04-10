@@ -31,7 +31,7 @@ def new_game() -> Engine:
     map_width = 256
     map_height = 256
     viewport_width = 180
-    viewport_height = 137
+    viewport_height = 106
 
     room_max_size = 10
     room_min_size = 6
