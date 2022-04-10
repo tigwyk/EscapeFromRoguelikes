@@ -130,7 +130,7 @@ class HostileHumanEnemy(BaseAI):
             melee_weapons = []
             ranged_weapons = []
             for item in self.entity.inventory.items:
-                if item.equippable.equipment_type == EquipmentType.WEAPON:
+                if item.equippable.equipment_type == EquipmentType.MELEE_WEAPON:
                     melee_weapons.append(item)
                 if item.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
                     ranged_weapons.append(item)
@@ -156,7 +156,7 @@ class HostileHumanEnemy(BaseAI):
                     self.entity.equipment.toggle_equip(self.entity.equipment.weapon, add_message=False)
                 if distance <= 1:
                     if self.entity.equipment.weapon:
-                        if self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.WEAPON:
+                        if self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.MELEE_WEAPON:
                             return MeleeAction(self.entity, dx, dy).perform()
                     else:
                         return MeleeAction(self.entity, dx, dy).perform()    

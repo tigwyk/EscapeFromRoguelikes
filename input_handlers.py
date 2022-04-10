@@ -485,7 +485,9 @@ class InventoryEventHandler(AskUserEventHandler):
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
                 
-                is_equipped = self.engine.player.equipment.item_is_equipped(item)
+                if(item.equippable):
+                    print(f"Item? {item.name}")
+                    is_equipped = self.engine.player.equipment.item_is_equipped(item.equippable.equipment_type)
 
                 item_string = f"({item_key}) {item.name.capitalize()}"
 

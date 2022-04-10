@@ -6,7 +6,8 @@ from components.inventory import Inventory
 from components.level import Level
 from components.currency import Currency
 from components.lore import Lore
-from entity import Actor, Item
+from components.lightsource import LightSource
+from entity import Actor, Item, Entity, Container
 
 from russian_names import RussianNames
 
@@ -21,7 +22,8 @@ player = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     currency=Currency(roubles=100),
-    lore=Lore()
+    lore=Lore(),
+    light_source=LightSource(radius=15),
 )
 
 rat = Actor(
@@ -189,3 +191,11 @@ hiking_boots = Item(
     name="hiking boots",
     equippable=equippable.Boots(),
 )
+
+light = Entity(char=' ', color=(255,255,255), name='', light_source=LightSource(radius=2))
+
+container_box = Container(char=' ',
+                             color=(128,128,128),
+                             name='weapons box',
+                             inventory=Inventory(capacity=5),
+                             )

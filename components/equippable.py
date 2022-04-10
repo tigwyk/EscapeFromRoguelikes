@@ -93,11 +93,11 @@ class Equippable(BaseComponent):
 
 class Knife(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=2)
+        super().__init__(equipment_type=EquipmentType.MELEE_WEAPON, power_bonus=2)
 
 class Sword(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4)
+        super().__init__(equipment_type=EquipmentType.MELEE_WEAPON, power_bonus=4)
 
 class Handgun(Equippable):
     def __init__(self) -> None:

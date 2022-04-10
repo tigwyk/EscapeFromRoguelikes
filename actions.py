@@ -78,7 +78,7 @@ class ItemAction(Action):
 
 class DropItemAction(ItemAction):
     def perform(self) -> None:
-        if self.entity.equipment.item_is_equipped(self.item):
+        if self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type):
             self.entity.equipment.toggle_equip(self.item)
 
         self.entity.inventory.drop(self.item)
@@ -134,7 +134,7 @@ class ReloadAction(Action):
         return True if item.ammo_container is not None else False
 
     def perform(self) -> None:
-        if self.entity.equipment.item_is_equipped(self.item) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and (self.item.equippable.ammo < self.item.equippable.max_ammo):
+        if self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and (self.item.equippable.ammo < self.item.equippable.max_ammo):
             # print(f"Player's items from reload action: {self.entity.inventory.items}")
             ammo_containers = []
             for item in self.entity.inventory.items:

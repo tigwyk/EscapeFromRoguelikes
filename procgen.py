@@ -326,7 +326,7 @@ def generate_bsp_dungeon(
 
     return map
 
-def generate_overworld(
+def generate_random_overworld(
     map_width: int,
     map_height: int,
     engine: Engine,

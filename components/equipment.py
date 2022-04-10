@@ -10,10 +10,24 @@ if TYPE_CHECKING:
     from entity import Actor, Item
 
 
+class ItemSlot:
+  def __init__(self, equipment_type, slot_name, item=None):
+    self.equipment_type = equipment_type
+    self.slot_name = slot_name
+    self.item = item
+
 class Equipment(BaseComponent):
     parent: Actor
 
     def __init__(self, weapon: Optional[Item] = None, armor: Optional[Item] = None, head: Optional[Item] = None, legs: Optional[Item] = None, feet: Optional[Item] = None):
+        self.item_slots = [
+      ItemSlot(EquipmentType.MELEE_WEAPON, 'Melee Weapon'),
+      ItemSlot(EquipmentType.RANGED_WEAPON, 'Ranged Weapon'),
+      ItemSlot(EquipmentType.ARMOR, 'Armor'),
+      ItemSlot(EquipmentType.HEAD, 'Head'),
+      ItemSlot(EquipmentType.LEGS, 'Legs'),
+      ItemSlot(EquipmentType.FEET, 'Feet'),
+    ]
         self.weapon = weapon
         self.armor = armor
         self.head = head
@@ -21,49 +35,32 @@ class Equipment(BaseComponent):
         self.feet = feet
 
     @property
-    def defense_bonus(self) -> int:
+    def defense_bonus(self):
         bonus = 0
-
-        if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.defense_bonus
-
-        if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.defense_bonus
-
-        if self.head is not None and self.head.equippable is not None:
-            bonus += self.head.equippable.defense_bonus
-        
-        if self.legs is not None and self.legs.equippable is not None:
-            bonus += self.legs.equippable.defense_bonus
-        
-        if self.feet is not None and self.feet.equippable is not None:
-            bonus += self.feet.equippable.defense_bonus
-
+        for item_slot in self.item_slots:
+            if item_slot.item:
+                bonus += item_slot.item.equippable.defense_bonus
         return bonus
 
     @property
-    def power_bonus(self) -> int:
+    def power_bonus(self):
         bonus = 0
-
-        if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.power_bonus
-
-        if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.power_bonus
-
-        if self.head is not None and self.head.equippable is not None:
-            bonus += self.head.equippable.power_bonus
-        
-        if self.legs is not None and self.legs.equippable is not None:
-            bonus += self.legs.equippable.power_bonus
-        
-        if self.feet is not None and self.feet.equippable is not None:
-            bonus += self.feet.equippable.power_bonus
-
+        for item_slot in self.item_slots:
+            if item_slot.item:
+                bonus += item_slot.item.equippable.power_bonus
         return bonus
 
-    def item_is_equipped(self, item: Item) -> bool:
-        return self.weapon == item or self.armor == item or self.head == item or self.legs == item or self.feet == item
+    def item_is_equipped(self, equipment_type: EquipmentType) -> bool:
+        for slot in self.item_slots:
+            if slot.equipment_type == equipment_type and slot.item is not None:
+                return True
+        return False
+
+    def get_item_in_slot(self, equipment_type):
+        for slot in self.item_slots:
+            if slot.equipment_type == equipment_type and slot.item is not None:
+                return slot.item
+        return None
 
     def unequip_message(self, item_name: str) -> None:
         self.parent.gamemap.engine.message_log.add_message(
@@ -75,43 +72,33 @@ class Equipment(BaseComponent):
             f"You equip the {item_name}."
         )
 
-    def equip_to_slot(self, slot: str, item: Item, add_message: bool) -> None:
-        current_item = getattr(self, slot)
+    def equip_to_slot(self, item: Item, add_message: bool) -> None:
+        for item_slot in self.item_slots:
+            if item_slot.equipment_type == item.equippable.equipment_type:
+                if item_slot.item:
+                    self.unequip_from_slot(item_slot.equipment_type, add_message=add_message)
+                item_slot.item = item
+                if add_message:
+                    self.equip_message(item.name)
+                if(item.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
+                    # print(f"Playing reload equip sound for {self.parent.name}")
+                    # print(f"Player is? {self.engine.player}")
+                    # play_sound('reload')
+                    pass
 
-        if current_item is not None:
-            self.unequip_from_slot(slot, add_message)
+    def unequip_from_slot(self, equipment_type: EquipmentType, add_message: bool) -> None:
+        for item_slot in self.item_slots:
+            if item_slot.equipment_type == equipment_type:
+                if add_message:
+                    self.unequip_message(item_slot.item.name)
+                item_slot.item = None
+                break
 
-        setattr(self, slot, item)
-
-        if add_message:
-            self.equip_message(item.name)
-            if(item.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
-                play_sound('reload')
-
-    def unequip_from_slot(self, slot: str, add_message: bool) -> None:
-        current_item = getattr(self, slot)
-
-        if add_message:
-            self.unequip_message(current_item.name)
-
-        setattr(self, slot, None)
-
-    def toggle_equip(self, equippable_item: Item, add_message: bool = True) -> None:
-        if (
-            equippable_item.equippable
-            and (equippable_item.equippable.equipment_type == EquipmentType.WEAPON or equippable_item.equippable.equipment_type == EquipmentType.RANGED_WEAPON)
-        ):
-            slot = "weapon"
-        elif equippable_item.equippable.equipment_type == EquipmentType.HEAD:
-            slot = "head"
-        elif equippable_item.equippable.equipment_type == EquipmentType.LEGS:
-            slot = "legs"
-        elif equippable_item.equippable.equipment_type == EquipmentType.FEET:
-            slot = "feet"
-        else:
-            slot = "armor"
-
-        if getattr(self, slot) == equippable_item:
-            self.unequip_from_slot(slot, add_message)
-        else:
-            self.equip_to_slot(slot, equippable_item, add_message)
+    def toggle_equip(self, item, add_message=True):
+        for item_slot in self.item_slots:
+            if item_slot.equipment_type == item.equippable.equipment_type:
+                if item_slot.item == item:
+                    self.unequip_from_slot(equipment_type=item.equippable.equipment_type, add_message=add_message)
+                else:
+                    self.equip_to_slot(item=item, add_message=add_message)
+                break

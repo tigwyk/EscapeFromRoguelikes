@@ -14,7 +14,7 @@ import tcod
 import color
 from engine import Engine
 import entity_factories
-from maps import DungeonWorld, OverWorldGenerator
+from maps import GameWorld
 import input_handlers
 import sound
 
@@ -25,11 +25,13 @@ background_image = tcod.image.load(".\img\menu_background2.png")[:, :, :3]
 
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
-    map_width = 80
-    map_height = 43
+    # map_width = 80
+    # map_height = 43
 
-    # map_width = 1024
-    # map_height = 1024
+    map_width = 256
+    map_height = 256
+    viewport_width = 180
+    viewport_height = 137
 
     room_max_size = 10
     room_min_size = 6
@@ -39,22 +41,20 @@ def new_game() -> Engine:
 
     engine = Engine(player=player)
 
-    engine.game_world = DungeonWorld(
+    engine.game_world = GameWorld(
         engine=engine,
         max_rooms=max_rooms,
         room_min_size=room_min_size,
         room_max_size=room_max_size,
+        viewport_width=viewport_width,
+        viewport_height=viewport_height,
         map_width=map_width,
         map_height=map_height,
     )
-    # engine.game_world = OverWorldGenerator(
-    #     engine=engine,
-    #     map_width=map_width,
-    #     map_height=map_height,
-    # )
     # engine.game_world.generate_world()
     engine.game_world.generate_floor()
     engine.update_fov()
+    engine.update_light_levels()
 
     engine.message_log.add_message(
         "Welcome to L.U.R.K.E.R.", color.welcome_text
