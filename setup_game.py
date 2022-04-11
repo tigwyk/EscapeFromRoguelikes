@@ -33,9 +33,9 @@ def new_game() -> Engine:
     viewport_width = 180
     viewport_height = 106
 
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
+    room_max_size = 25
+    room_min_size = 8
+    max_rooms = 75
 
     player = copy.deepcopy(entity_factories.player)
 

@@ -57,7 +57,6 @@ class Engine:
         for light in [self.player]:
             if light == self.player:
                 light_walls = True
-                print(f"Yes")
             else:
                 light_walls = self.game_map.visible[light.x][light.y]
             coords = self.game_map.get_coords_in_radius(light.x, light.y, light.light_source.radius)
@@ -87,9 +86,6 @@ class Engine:
         info_pane_height = self.game_world.viewport_height
         # This is debug info.  Remove it later
         info_pane_title = f'({self.player.x},{self.player.y})'
-        # render_functions.draw_window(console, info_pane_x, 0, info_pane_width, info_pane_height, info_pane_title)
-
-        # self.message_log.render(console=console, x=21, y=65, width=50, height=5)
 
         sub_pane_x = info_pane_x + 1
         sub_pane_width = info_pane_width - 2
@@ -104,7 +100,7 @@ class Engine:
             console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
-            total_width=20,
+            total_width=70,
             location=(bar_pane_x+1,bar_pane_y + 1),
         )
 

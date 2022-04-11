@@ -486,8 +486,11 @@ class InventoryEventHandler(AskUserEventHandler):
                 item_key = chr(ord("a") + i)
                 
                 if(item.equippable):
-                    print(f"Item? {item.name}")
-                    is_equipped = self.engine.player.equipment.item_is_equipped(item.equippable.equipment_type)
+                    # print(f"Item? {item.name}")
+                    is_equipped = (self.engine.player.equipment.item_is_equipped(item.equippable.equipment_type) and self.engine.player.equipment.get_item_in_slot(item.equippable.equipment_type) == item)
+                    # print(f"Is equipped? {is_equipped}")
+                else:
+                    is_equipped = False
 
                 item_string = f"({item_key}) {item.name.capitalize()}"
 
@@ -783,7 +786,7 @@ class MainGameEventHandler(EventHandler):
             return HistoryViewer(self.engine)
 
         elif key == tcod.event.K_f:
-            action =  player.equipment.weapon.equippable.get_fire_action(player) if player.equipment.weapon is not None else None
+            action =  player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.get_fire_action(player) if player.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON) else None
 
         elif key == tcod.event.K_g:
             action = PickupAction(player)
@@ -794,7 +797,7 @@ class MainGameEventHandler(EventHandler):
             return InventoryDropHandler(self.engine)
 
         elif key == tcod.event.K_r:
-            action = ReloadAction(player, player.equipment.weapon)
+            action = ReloadAction(player, player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON))
 
         elif key == tcod.event.K_c:
             return CharacterScreenEventHandler(self.engine)

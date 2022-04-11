@@ -19,8 +19,8 @@ def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
 
 
 def main() -> None:
-    screen_width = 100
-    screen_height = 70
+    screen_width = 80
+    screen_height = 50
 
     tileset = tcod.tileset.load_tilesheet(
         # "img\dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -38,7 +38,12 @@ def main() -> None:
         vsync=True,
         sdl_window_flags=FLAGS,
     ) as context:
-        root_console = context.new_console(order="F")
+        root_console = context.new_console(
+            min_columns=screen_width,
+            min_rows=screen_height,
+            order="F",
+            # magnification=1.5,
+            )
         try:
             while True:
                 root_console.clear()

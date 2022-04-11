@@ -7,6 +7,8 @@ from components import ammo_container
 import exceptions
 import sound
 
+from pprint import pprint
+
 from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
@@ -118,8 +120,9 @@ class FireAction(Action):
         return self.engine.game_map.get_actor_at_location(*self.target_xy)
 
     def perform(self) -> None:
+        pprint(vars(self))
         """Invoke the items ability, this action will be given to provide context."""
-        if(self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and self.item == self.entity.equipment.weapon):
+        if(self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type) and self.entity.equipment.get_item_in_slot(self.item.equippable.equipment_type) == self.item):
             self.item.equippable.activate(self)
 
 class ReloadAction(Action):
@@ -134,7 +137,10 @@ class ReloadAction(Action):
         return True if item.ammo_container is not None else False
 
     def perform(self) -> None:
-        if self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and (self.item.equippable.ammo < self.item.equippable.max_ammo):
+        if(not self.item):
+            raise exceptions.Impossible("You can't reload your weapon.")
+
+        if self.item.equippable.ammo < self.item.equippable.max_ammo:
             # print(f"Player's items from reload action: {self.entity.inventory.items}")
             ammo_containers = []
             for item in self.entity.inventory.items:
