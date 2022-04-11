@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 import tcod
 from tcod.console import Console
 from tcod.map import compute_fov
+import color
 
 import exceptions
 from message_log import MessageLog
@@ -94,13 +95,13 @@ class Engine:
         bar_pane_y = 1
         bar_pane_width = sub_pane_width
         bar_pane_height = 5
-        render_functions.draw_window(console, bar_pane_x, bar_pane_y, bar_pane_width, bar_pane_height, '')
+        render_functions.draw_window(console, bar_pane_x, bar_pane_y, bar_pane_width, bar_pane_height, 'Vitals')
 
         render_functions.render_bar(
             console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
-            total_width=70,
+            total_width=bar_pane_width - 2,
             location=(bar_pane_x+1,bar_pane_y + 1),
         )
 
@@ -108,7 +109,7 @@ class Engine:
         char_pane_y = bar_pane_y + bar_pane_height
         char_pane_width = sub_pane_width
         char_pane_height = 9
-        render_functions.draw_window(console, char_pane_x, char_pane_y, char_pane_width, char_pane_height, '')
+        render_functions.draw_window(console, char_pane_x, char_pane_y, char_pane_width, char_pane_height, 'Info')
 
         render_functions.render_rouble_amount(
             console=console,
@@ -143,11 +144,13 @@ class Engine:
         equip_y = equip_pane_y + 1
         equip_x = equip_pane_x + 1
         for slot in self.player.equipment.item_slots:
-            console.print(equip_x, equip_y, slot.slot_name)
+            console.print(equip_x, equip_y, slot.slot_name, fg=color.yellow)
             if slot.item:
                 item_name = f'-{slot.item.name}'
                 # if slot.item.powered:
                 #     item_name = f'{item_name}'
+                if slot.item.equippable.max_ammo > 0:
+                    item_name = f'-{slot.item.name} [{slot.item.equippable.ammo}/{slot.item.equippable.max_ammo}]'
             else:
                 item_name = '-(Empty)'
             console.print(equip_x, equip_y + 1, item_name)
@@ -157,7 +160,7 @@ class Engine:
         log_pane_y = 0 + self.game_world.viewport_height
         log_pane_width = self.game_world.viewport_width
         log_pane_height = console.height - log_pane_y - 1
-        render_functions.draw_window(console, log_pane_x, log_pane_y, log_pane_width, log_pane_height, '')
+        render_functions.draw_window(console, log_pane_x, log_pane_y, log_pane_width, log_pane_height, 'Game Log')
 
         self.message_log.render(console=console,x=log_pane_x+1,y=log_pane_y+1,width=log_pane_width-2,height=log_pane_height-2)
 
