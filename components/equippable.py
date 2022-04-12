@@ -50,7 +50,6 @@ class Equippable(BaseComponent):
         self.engine.message_log.add_message(
             "Select a target location.", color.needs_target
         )
-        print(f"Testing: {self.parent}")
         return SingleAimedRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.FireAction(actor, self.parent, xy),

@@ -613,29 +613,37 @@ class FireSelectIndexHandler(AskUserEventHandler):
         player = self.engine.player
         viewport = self.engine.game_map.get_viewport()
         engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
-        enemy_tree = self.engine.game_map.enemies_tree
+        enemies = []
+        for enemy in self.engine.game_map.enemies:
+            # print(f"Appending: ({enemy},{enemy.distance(player.x, player.y)})")
+            enemies.append((enemy,enemy.distance(player.x, player.y)))
+        enemies.sort(key=lambda enemies: enemies[1])
+        
+        for enemy,distance in enemies:
+            if self.engine.game_map.visible[enemy.x, enemy.y]:
+                engine.mouse_location = (enemy.x- viewport[0],enemy.y- viewport[1])
+                break
+        # enemy_tree = self.engine.game_map.enemies_tree
         # print(f"Remaining Enemies: {[e.name for e in self.engine.game_map.enemies]}")
-        e_coords = [(e.x-viewport[0],e.y-viewport[1]) for e in self.engine.game_map.enemies]
-        visible_enemies = []
-        for x,y in e_coords:
-            if self.engine.game_map.visible[x,y]:
-                visible_enemies.append((x,y))
+        # e_coords = [(e.x-viewport[0],e.y-viewport[1]) for e in self.engine.game_map.enemies]
+        # visible_enemies = []
+        # for x,y in e_coords:
+        #     if self.engine.game_map.visible[x,y]:
+        #         visible_enemies.append((x,y))
         # print(f"Visible enemies: {visible_enemies}")
-        if(len(visible_enemies)>0):
-            # nearest_enemy_coords = e_coords[self.engine.game_map.find_closest_kdtree(self.engine.player,self.engine.game_map.enemies_tree)]
-            nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,4)
-            # print(f"{nearest_enemy_in_tree.parent.name}")
-            if(nearest_enemy_in_tree is not None):
-                nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
-                if(nearest_enemy_coords in visible_enemies):
-                    # print(f"Closest enemy: {nearest_enemy_coords}")
-                    engine.mouse_location = nearest_enemy_coords
-                else:
-                    engine.mouse_location = player.x, player.y
-            else:
-                engine.mouse_location = player.x, player.y
-        else:
-            engine.mouse_location = player.x, player.y
+        # if(len(visible_enemies)>0):
+        #     nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,4)
+        #     if(nearest_enemy_in_tree is not None):
+        #         nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
+        #         if(nearest_enemy_coords in visible_enemies):
+        #             print(f"Closest enemy: {nearest_enemy_coords}")
+        #             engine.mouse_location = nearest_enemy_coords
+        #         else:
+        #             engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
+        #     else:
+        #         engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
+        # else:
+        #     engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
         
         
 
@@ -670,8 +678,12 @@ class FireSelectIndexHandler(AskUserEventHandler):
             return None
         elif key in FIRE_CONFIRM_KEYS:
             mouse_x,mouse_y = self.engine.mouse_location
-            print(f"Mouse? {mouse_x, mouse_y}")
-            return self.on_index_selected(*self.engine.mouse_location)
+            print(f"Mouse           ? {mouse_x, mouse_y}")
+            print(f"Mouse [viewport]? {mouse_x+ viewport[0], mouse_y+ viewport[1]}")
+            map_x = mouse_x + viewport[0]
+            map_y = mouse_y + viewport[1]
+            # return self.on_index_selected(*self.engine.mouse_location)
+            return self.on_index_selected(map_x, map_y)
         return super().ev_keydown(event)
 
     def ev_mousebuttondown(
