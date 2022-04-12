@@ -678,8 +678,8 @@ class FireSelectIndexHandler(AskUserEventHandler):
             return None
         elif key in FIRE_CONFIRM_KEYS:
             mouse_x,mouse_y = self.engine.mouse_location
-            print(f"Mouse           ? {mouse_x, mouse_y}")
-            print(f"Mouse [viewport]? {mouse_x+ viewport[0], mouse_y+ viewport[1]}")
+            # print(f"Mouse           ? {mouse_x, mouse_y}")
+            # print(f"Mouse [viewport]? {mouse_x+ viewport[0], mouse_y+ viewport[1]}")
             map_x = mouse_x + viewport[0]
             map_y = mouse_y + viewport[1]
             # return self.on_index_selected(*self.engine.mouse_location)

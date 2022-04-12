@@ -28,8 +28,8 @@ def new_game() -> Engine:
     # map_width = 80
     # map_height = 43
 
-    map_width = 256
-    map_height = 256
+    map_width = 180
+    map_height = 106
     viewport_width = 180
     viewport_height = 106
 

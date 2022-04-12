@@ -119,7 +119,7 @@ class FireAction(Action):
         return self.engine.game_map.get_actor_at_location(*self.target_xy)
 
     def perform(self) -> None:
-        pprint(vars(self))
+        # pprint(vars(self))
         """Invoke the items ability, this action will be given to provide context."""
         if(self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type) and self.entity.equipment.get_item_in_slot(self.item.equippable.equipment_type) == self.item):
             self.item.equippable.activate(self)
