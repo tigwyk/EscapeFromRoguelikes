@@ -9,7 +9,9 @@ import input_handlers
 import setup_game
 
 WIDTH, HEIGHT = 720, 480  # Window pixel resolution (when not maximized.)
-FLAGS = tcod.context.SDL_WINDOW_FULLSCREEN_DESKTOP | tcod.context.SDL_WINDOW_MAXIMIZED
+# FLAGS = tcod.context.SDL_WINDOW_FULLSCREEN_DESKTOP | tcod.context.SDL_WINDOW_MAXIMIZED
+FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED | tcod.context.SDL_WINDOW_RESIZABLE
+# FLAGS = tcod.context.SDL_WINDOW_RESIZABLE
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
     """If the current event handler has an active Engine then save it."""
@@ -37,10 +39,11 @@ def main() -> None:
         title="L.U.R.K.E.R.",
         vsync=True,
         sdl_window_flags=FLAGS,
+        renderer=tcod.context.RENDERER_OPENGL2
     ) as context:
         root_console = context.new_console(
-            min_columns=screen_width,
-            min_rows=screen_height,
+            # min_columns=screen_width,
+            # min_rows=screen_height,
             order="F",
             # magnification=1.5,
             )

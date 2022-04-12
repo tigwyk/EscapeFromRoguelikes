@@ -553,7 +553,8 @@ class SelectIndexHandler(AskUserEventHandler):
         """Sets the cursor to the player when this handler is constructed."""
         super().__init__(engine)
         player = self.engine.player
-        engine.mouse_location = player.x, player.y
+        viewport = self.engine.game_map.get_viewport()
+        engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
 
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
@@ -593,7 +594,10 @@ class SelectIndexHandler(AskUserEventHandler):
         """Left click confirms a selection."""
         if self.engine.game_map.in_bounds(*event.tile):
             if event.button == 1:
-                return self.on_index_selected(*event.tile)
+                viewport = self.engine.game_map.get_viewport()
+                x = event.tile.x + viewport[0]
+                y = event.tile.y + viewport[1]
+                return self.on_index_selected(x,y)
         return super().ev_mousebuttondown(event)
 
     def on_index_selected(self, x: int, y: int) -> Optional[ActionOrHandler]:
@@ -607,14 +611,15 @@ class FireSelectIndexHandler(AskUserEventHandler):
         """Sets the cursor to the player when this handler is constructed."""
         super().__init__(engine)
         player = self.engine.player
+        viewport = self.engine.game_map.get_viewport()
         engine.mouse_location = player.x, player.y
         enemy_tree = self.engine.game_map.enemies_tree
         # print(f"Remaining Enemies: {[e.name for e in self.engine.game_map.enemies]}")
         e_coords = [(e.x,e.y) for e in self.engine.game_map.enemies]
         visible_enemies = []
-        for e in e_coords:
-            if self.engine.game_map.visible[e]:
-                visible_enemies.append(e)
+        for x,y in e_coords:
+            if self.engine.game_map.visible[x,y]:
+                visible_enemies.append((x,y))
         # print(f"Visible enemies: {visible_enemies}")
         if(len(visible_enemies)>0):
             # nearest_enemy_coords = e_coords[self.engine.game_map.find_closest_kdtree(self.engine.player,self.engine.game_map.enemies_tree)]
@@ -643,6 +648,7 @@ class FireSelectIndexHandler(AskUserEventHandler):
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         """Check for key movement or confirmation keys."""
+        viewport = self.engine.game_map.get_viewport()
         key = event.sym
         if key in MOVE_KEYS:
             modifier = 1  # Holding modifier keys will speed up key movement.
@@ -658,11 +664,13 @@ class FireSelectIndexHandler(AskUserEventHandler):
             x += dx * modifier
             y += dy * modifier
             # Clamp the cursor index to the map size.
-            x = max(0, min(x, self.engine.game_map.width - 1))
-            y = max(0, min(y, self.engine.game_map.height - 1))
+            x = max(0, min(x, self.engine.game_map.width - 1)) - viewport[0]
+            y = max(0, min(y, self.engine.game_map.height - 1)) - viewport[1]
             self.engine.mouse_location = x, y
             return None
         elif key in FIRE_CONFIRM_KEYS:
+            mouse_x,mouse_y = self.engine.mouse_location
+            print(f"Mouse? {mouse_x, mouse_y}")
             return self.on_index_selected(*self.engine.mouse_location)
         return super().ev_keydown(event)
 

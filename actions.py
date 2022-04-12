@@ -99,13 +99,12 @@ class FireAction(Action):
         self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
     ):
         super().__init__(entity)
-        if(entity.equipment.weapon is None or entity.equipment.weapon.equippable.equipment_type != EquipmentType.RANGED_WEAPON or item != entity.equipment.weapon):
-            return
-        
         self.entity = entity
         self.item = item
-        # print(f"FireAction, Item: {self.entity.equipment.weapon.name}")
-        # print(f"FireAction, entity.equipment.weapon: {self.entity.equipment.weapon.name}")
+        if not self.item:
+            return
+        if(not self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON) or not self.entity.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON)):
+            return
         
         if not target_xy:
             if(entity.fighter.target):

@@ -109,18 +109,18 @@ class Engine:
         char_pane_y = bar_pane_y + bar_pane_height
         char_pane_width = sub_pane_width
         char_pane_height = 9
-        render_functions.draw_window(console, char_pane_x, char_pane_y, char_pane_width, char_pane_height, 'Info')
+        render_functions.draw_window(console, char_pane_x, char_pane_y, char_pane_width, char_pane_height, info_pane_title)
 
         render_functions.render_rouble_amount(
             console=console,
             roubles=self.player.currency.roubles,
             location=(char_pane_x+1, char_pane_y+1),
         )
-        render_functions.render_coordinates(
-            console=console,
-            coords=(self.player.x,self.player.y),
-            location=(char_pane_x + 1, char_pane_y + 2),
-        )
+        # render_functions.render_coordinates(
+        #     console=console,
+        #     coords=(self.player.x,self.player.y),
+        #     location=(char_pane_x + 1, char_pane_y + 2),
+        # )
         if self.player.equipment.weapon != None and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
             render_functions.render_ammo_status(
                 console=console,
