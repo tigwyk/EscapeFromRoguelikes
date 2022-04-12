@@ -172,7 +172,7 @@ class Actor(Entity):
         return RussianNames(patronymic=False, name_reduction=True, transliterate=True).get_person()
     
     def generate_kit(self):
-        print(f"Generating kit...")
+        # print(f"Generating kit...")
         
         shirt = copy.deepcopy(entity_factories.shirt)
         shirt.parent = self.inventory

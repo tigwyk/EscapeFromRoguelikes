@@ -807,7 +807,8 @@ class MainGameEventHandler(EventHandler):
             return EscapeMenuEventHandler(self.engine)
         elif key == tcod.event.K_v:
             return HistoryViewer(self.engine)
-
+        elif key == tcod.event.K_F1:
+            return self.engine.game_map.reveal_map()
         elif key == tcod.event.K_f:
             action =  player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.get_fire_action(player) if player.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON) else None
 
