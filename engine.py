@@ -164,7 +164,8 @@ class Engine:
 
         self.message_log.render(console=console,x=log_pane_x+1,y=log_pane_y+1,width=log_pane_width-2,height=log_pane_height-2)
 
-        render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
+        # render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
+        render_functions.render_names_at_mouse_location(console=console, x=int(log_pane_width/2), y=log_pane_y-3, engine=self)
     
     def save_as(self, filename: str) -> None:
         """Save this Engine instance as a compressed file."""

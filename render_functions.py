@@ -83,11 +83,29 @@ def render_names_at_mouse_location(
 ) -> None:
     mouse_x, mouse_y = engine.mouse_location
 
-    names_at_mouse_location = get_names_at_location(
-        x=mouse_x, y=mouse_y, game_map=engine.game_map
-    )
+    viewport = engine.game_map.get_viewport()
+    map_x = mouse_x + viewport[0]
+    map_y = mouse_y + viewport[1]
 
-    console.print(x=x, y=y, string=names_at_mouse_location)
+    names_at_mouse_location = get_names_at_location(
+        x=map_x,y=map_y, game_map=engine.game_map
+    )
+    if names_at_mouse_location:
+        # Tooltip to render names
+        x = mouse_x - (len(names_at_mouse_location) // 2) - 1
+        if x < 0:
+            x = 0
+        elif x + len(names_at_mouse_location) + 2 > console.width - 1:
+            x = console.width - len(names_at_mouse_location) - 3
+
+        if mouse_y <= 3:
+            y = mouse_y + 1
+        else:
+            y = mouse_y - 3
+
+        draw_window(console, x, y, len(names_at_mouse_location) + 2, 3,'')
+
+    console.print(x=x+1,y=y+1, string=names_at_mouse_location)
 
 def draw_window(console, x, y, width, height, title):
   console.draw_frame(
