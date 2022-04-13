@@ -156,6 +156,33 @@ class Engine:
             console.print(equip_x, equip_y + 1, item_name)
             equip_y += 2
         
+
+        inv_pane_x = sub_pane_x
+        inv_pane_y = equip_pane_y + equip_pane_height
+        inv_pane_width = sub_pane_width
+        # inv_pane_height = (len(self.player.inventory.items)) + 2
+        inv_pane_height = console.height - inv_pane_y - 1
+        render_functions.draw_window(console, inv_pane_x, inv_pane_y, inv_pane_width, inv_pane_height, 'Inventory')
+
+        inv_y = inv_pane_y + 1
+        inv_x = inv_pane_x + 1
+        for item in self.player.inventory.items:
+            if(item.equippable):
+                    is_equipped = (self.player.equipment.item_is_equipped(item.equippable.equipment_type) and self.player.equipment.get_item_in_slot(item.equippable.equipment_type) == item)
+            else:
+                    is_equipped = False
+
+            item_string = f"{item.name.capitalize()}"
+
+            if is_equipped:
+                    item_string = f"{item_string} (E)"         
+            
+            if item.ammo_container:
+                item_string = f'{item.name} [{item.ammo_container.ammo}/{item.ammo_container.max_ammo}]'
+
+            console.print(inv_x, inv_y, f'- {item_string}')
+            inv_y += 1
+
         log_pane_x = 0
         log_pane_y = 0 + self.game_world.viewport_height
         log_pane_width = self.game_world.viewport_width
