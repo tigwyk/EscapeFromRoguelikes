@@ -165,7 +165,6 @@ class EventHandler(BaseEventHandler):
             return False  # Skip enemy turn on exceptions.
 
         self.engine.handle_enemy_turns()
-        # self.engine.game_map.update_enemies_tree()
         self.engine.update_fov()
         return True
 
