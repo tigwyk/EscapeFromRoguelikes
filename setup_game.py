@@ -28,10 +28,11 @@ def new_game() -> Engine:
     # map_width = 80
     # map_height = 43
 
-    map_width = 180
-    map_height = 106
-    viewport_width = 180
-    viewport_height = 106
+    WIDTH = 50
+    HEIGHT = 50
+    
+    viewport_width = WIDTH
+    viewport_height = HEIGHT
 
     room_max_size = 25
     room_min_size = 8
@@ -48,8 +49,6 @@ def new_game() -> Engine:
         room_max_size=room_max_size,
         viewport_width=viewport_width,
         viewport_height=viewport_height,
-        map_width=map_width,
-        map_height=map_height,
     )
     # engine.game_world.generate_world()
     engine.game_world.generate_floor()

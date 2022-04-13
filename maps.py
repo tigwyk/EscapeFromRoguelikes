@@ -198,6 +198,11 @@ class GameMap:
         viewport_visible  = self.visible[s_x,s_y]
         viewport_explored = self.explored[s_x,s_y]
 
+        # print(f'({o_x},{o_y}), ({e_x},{e_y})')
+        # print(f'Viewport Tiles: ({len(viewport_tiles)},{len(viewport_tiles[0])})')
+        # print(f'Viewport Visible: ({len(viewport_visible)},{len(viewport_visible[0])})')
+        # print(f'Viewport Explored: ({len(viewport_explored)},{len(viewport_explored[0])})')
+
         console.tiles_rgb[0 : self.engine.game_world.viewport_width, 0 : self.engine.game_world.viewport_height] = np.select(
             condlist=[viewport_explored],
             choicelist=[viewport_tiles["dark"]],
@@ -256,8 +261,8 @@ class GameWorld:
         self,
         *,
         engine: Engine,
-        map_width: int,
-        map_height: int,
+        # map_width: int,
+        # map_height: int,
         viewport_width: int,
         viewport_height: int,
         max_rooms: int,
@@ -267,12 +272,14 @@ class GameWorld:
     ):
         self.engine = engine
 
-        self.map_width = map_width
-        self.map_height = map_height
+        # self.map_width = map_width
+        # self.map_height = map_height
         self.viewport_width = viewport_width
         self.viewport_height = viewport_height
-        
 
+        self.min_map_width = viewport_width
+        self.min_map_height = viewport_height
+        
         self.max_rooms = max_rooms
 
         self.room_min_size = room_min_size
@@ -285,8 +292,8 @@ class GameWorld:
         """Randomly generate a new world with some water, swamps, hills, some objects etc"""
 
         self.engine.game_map = generate_random_overworld(
-            map_width=self.map_width,
-            map_height=self.map_height,
+            map_width=self.min_map_width,
+            map_height=self.min_map_height,
             engine=self.engine,
         )
     def generate_floor(self) -> None:
@@ -294,14 +301,17 @@ class GameWorld:
         from procgen import generate_dungeon
 
         self.current_floor += 1
+
+        random_map_width = randint(self.min_map_width, self.min_map_width+128)
+        random_map_height = randint(self.min_map_height, self.min_map_height+128)
         
         if(self.current_floor % 3):
             self.engine.game_map = generate_dungeon(
                 max_rooms=self.max_rooms,
                 room_min_size=self.room_min_size,
                 room_max_size=self.room_max_size,
-                map_width=self.map_width,
-                map_height=self.map_height,
+                map_width=random_map_width,
+                map_height=random_map_height,
                 engine=self.engine,
             )
         else:
@@ -309,8 +319,8 @@ class GameWorld:
                 max_rooms=self.max_rooms,
                 room_min_size=self.room_min_size,
                 room_max_size=self.room_max_size,
-                map_width=self.map_width,
-                map_height=self.map_height,
+                map_width=random_map_width,
+                map_height=random_map_height,
                 engine=self.engine,
             )
         # print(f"floor {self.current_floor} entities: {[i.name for i in self.engine.game_map.enemies]}")
