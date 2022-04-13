@@ -8,8 +8,10 @@ from pathlib import Path
 import os.path
 from typing import TYPE_CHECKING
 
+import tcod
 from tcod.console import Console
 from tcod.map import compute_fov
+import color
 
 import exceptions
 from message_log import MessageLog
@@ -18,11 +20,13 @@ from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
     from entity import Actor
-    from maps import GameMap, DungeonWorld
+    from maps import GameMap, GameWorld
+    from camera import Camera
 
 class Engine:
     game_map: GameMap
-    game_world: DungeonWorld
+    game_world: GameWorld
+    camera: Camera
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
@@ -31,6 +35,7 @@ class Engine:
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
+            self.update_light_levels()
             if entity.ai:
                 try:
                     entity.ai.perform()
@@ -47,46 +52,120 @@ class Engine:
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
 
+    def update_light_levels(self):
+        """ Create our light map for all static light entities """
+        self.game_map.light_levels[:] = 1
+        for light in [self.player]:
+            if light == self.player:
+                light_walls = True
+            else:
+                light_walls = self.game_map.visible[light.x][light.y]
+            coords = self.game_map.get_coords_in_radius(light.x, light.y, light.light_source.radius)
+            light_fov = compute_fov(
+                self.game_map.tiles['transparent'],
+                (light.x, light.y),
+                radius=light.light_source.radius,
+                algorithm=tcod.FOV_BASIC,
+                light_walls=light_walls
+            )
+            for x, y in coords:
+                if light_fov[x][y]:
+                    distance = light.distance(x, y)
+                    brightness_diff = distance / (light.light_source.radius+2)
+                    if brightness_diff < self.game_map.light_levels[x][y]:
+                        self.game_map.light_levels[x][y] = brightness_diff
+
+        explored = (self.game_map.light_levels < 1) & self.game_map.visible
+        self.game_map.explored |= explored
+
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)
 
-        self.message_log.render(console=console, x=21, y=45, width=40, height=5)
+        info_pane_x = self.game_world.viewport_width
+        info_pane_width = console.width - info_pane_x
+        info_pane_height = self.game_world.viewport_height
+        # This is debug info.  Remove it later
+        info_pane_title = f'({self.player.x},{self.player.y})'
+
+        sub_pane_x = info_pane_x + 1
+        sub_pane_width = info_pane_width - 2
+
+        bar_pane_x = sub_pane_x
+        bar_pane_y = 1
+        bar_pane_width = sub_pane_width
+        bar_pane_height = 5
+        render_functions.draw_window(console, bar_pane_x, bar_pane_y, bar_pane_width, bar_pane_height, 'Vitals')
 
         render_functions.render_bar(
             console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
-            total_width=20,
+            total_width=bar_pane_width - 2,
+            location=(bar_pane_x+1,bar_pane_y + 1),
         )
 
-        render_functions.render_bunker_level(
-            console=console,
-            bunker_level=self.game_world.current_floor,
-            location=(1, 47),
-        )
+        char_pane_x =  sub_pane_x
+        char_pane_y = bar_pane_y + bar_pane_height
+        char_pane_width = sub_pane_width
+        char_pane_height = 9
+        render_functions.draw_window(console, char_pane_x, char_pane_y, char_pane_width, char_pane_height, info_pane_title)
 
         render_functions.render_rouble_amount(
             console=console,
             roubles=self.player.currency.roubles,
-            location=(1, 48),
+            location=(char_pane_x+1, char_pane_y+1),
         )
-        render_functions.render_coordinates(
-            console=console,
-            coords=(self.player.x,self.player.y),
-            location=(71, 48),
-        )
+        # render_functions.render_coordinates(
+        #     console=console,
+        #     coords=(self.player.x,self.player.y),
+        #     location=(char_pane_x + 1, char_pane_y + 2),
+        # )
         if self.player.equipment.weapon != None and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
             render_functions.render_ammo_status(
                 console=console,
                 ammo=self.player.equipment.weapon.equippable.ammo,
                 max_ammo=self.player.equipment.weapon.equippable.max_ammo,
-                location=(1, 49),
+                location=(char_pane_x + 1, char_pane_y + 3),
             )
 
-        render_functions.render_names_at_mouse_location(
-            console=console, x=21, y=44, engine=self
+        render_functions.render_bunker_level(
+            console=console,
+            bunker_level=self.game_world.current_floor,
+            location=(char_pane_x + 1,char_pane_y + 7)
         )
+
+        equip_pane_x = sub_pane_x
+        equip_pane_y = char_pane_y + char_pane_height
+        equip_pane_width = sub_pane_width
+        equip_pane_height = (len(self.player.equipment.item_slots) * 2) + 2
+        render_functions.draw_window(console, equip_pane_x, equip_pane_y, equip_pane_width, equip_pane_height, 'Equipped')
+
+        equip_y = equip_pane_y + 1
+        equip_x = equip_pane_x + 1
+        for slot in self.player.equipment.item_slots:
+            console.print(equip_x, equip_y, slot.slot_name, fg=color.yellow)
+            if slot.item:
+                item_name = f'-{slot.item.name}'
+                # if slot.item.powered:
+                #     item_name = f'{item_name}'
+                if slot.item.equippable.max_ammo > 0:
+                    item_name = f'-{slot.item.name} [{slot.item.equippable.ammo}/{slot.item.equippable.max_ammo}]'
+            else:
+                item_name = '-(Empty)'
+            console.print(equip_x, equip_y + 1, item_name)
+            equip_y += 2
+        
+        log_pane_x = 0
+        log_pane_y = 0 + self.game_world.viewport_height
+        log_pane_width = self.game_world.viewport_width
+        log_pane_height = console.height - log_pane_y - 1
+        render_functions.draw_window(console, log_pane_x, log_pane_y, log_pane_width, log_pane_height, 'Game Log')
+
+        self.message_log.render(console=console,x=log_pane_x+1,y=log_pane_y+1,width=log_pane_width-2,height=log_pane_height-2)
+
+        # render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
+        render_functions.render_names_at_mouse_location(console=console, x=int(log_pane_width/2), y=log_pane_y-3, engine=self)
     
     def save_as(self, filename: str) -> None:
         """Save this Engine instance as a compressed file."""

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Tuple, TYPE_CHECKING
 
 import color
+import tcod
 
 if TYPE_CHECKING:
     from tcod import Console
@@ -20,19 +21,19 @@ def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
     return names.capitalize()
 
 def render_bar(
-    console: Console, current_value: int, maximum_value: int, total_width: int
+    console: Console, current_value: int, maximum_value: int, total_width: int, location: Tuple[int, int]
 ) -> None:
     bar_width = int(float(current_value) / maximum_value * total_width)
-
-    console.draw_rect(x=0, y=45, width=total_width, height=1, ch=1, bg=color.bar_empty)
+    x, y = location
+    console.draw_rect(x=x, y=y, width=total_width, height=1, ch=1, bg=color.bar_empty)
 
     if bar_width > 0:
         console.draw_rect(
-            x=0, y=45, width=bar_width, height=1, ch=1, bg=color.bar_filled
+            x=x, y=y, width=bar_width, height=1, ch=1, bg=color.bar_filled
         )
 
     console.print(
-        x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text
+        x=x+1, y=y, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text
     )
 
 def render_bunker_level(
@@ -82,8 +83,64 @@ def render_names_at_mouse_location(
 ) -> None:
     mouse_x, mouse_y = engine.mouse_location
 
-    names_at_mouse_location = get_names_at_location(
-        x=mouse_x, y=mouse_y, game_map=engine.game_map
-    )
+    viewport = engine.game_map.get_viewport()
+    map_x = mouse_x + viewport[0]
+    map_y = mouse_y + viewport[1]
 
-    console.print(x=x, y=y, string=names_at_mouse_location)
+    names_at_mouse_location = get_names_at_location(
+        x=map_x,y=map_y, game_map=engine.game_map
+    )
+    if names_at_mouse_location:
+        # Tooltip to render names
+        x = mouse_x - (len(names_at_mouse_location) // 2) - 1
+        if x < 0:
+            x = 0
+        elif x + len(names_at_mouse_location) + 2 > console.width - 1:
+            x = console.width - len(names_at_mouse_location) - 3
+
+        if mouse_y <= 3:
+            y = mouse_y + 1
+        else:
+            y = mouse_y - 3
+
+        draw_window(console, x, y, len(names_at_mouse_location) + 2, 3,'')
+
+    console.print(x=x+1,y=y+1, string=names_at_mouse_location)
+
+def draw_window(console, x, y, width, height, title):
+  console.draw_frame(
+      x=x,
+      y=y,
+      width=width,
+      height=height,
+      title='',
+      clear=True,
+      fg=color.window_border_bright,
+      bg=(0, 0, 0),
+  )
+
+  r_bright, g_bright, b_bright = color.window_border_bright
+  r_dark, g_dark, b_dark = color.window_border_dark
+  r_step = (r_bright - r_dark) // 10
+  g_step = (g_bright - g_dark) // 10
+  b_step = (b_bright - b_dark) // 10
+  x1 = x + width - 1
+  y1 = y + height - 1
+  
+  for i in range(0, 11):
+    r = r_dark + (r_step * i)
+    g = g_dark + (g_step * i)
+    b = b_dark + (b_step * i)
+    if i <= width // 2:
+      console.tiles_rgb['fg'][x+i,y] = (r,g,b)
+      console.tiles_rgb['fg'][x1-i,y] = (r,g,b)
+      console.tiles_rgb['fg'][x1-i,y1] = (r,g,b)
+      console.tiles_rgb['fg'][x+i,y1] = (r,g,b)
+    if i <= height // 2:
+      console.tiles_rgb['fg'][x,y+i] = (r,g,b)
+      console.tiles_rgb['fg'][x1,y+i] = (r,g,b)
+      console.tiles_rgb['fg'][x1,y1-i] = (r,g,b)
+      console.tiles_rgb['fg'][x,y1-i] = (r,g,b)
+
+  if title:
+    console.print_box(x=x, y=y, width=width, height=1, fg=color.window_border_bright, string=f'┤{title}├', alignment=tcod.CENTER)

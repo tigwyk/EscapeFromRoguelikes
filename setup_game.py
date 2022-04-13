@@ -14,7 +14,7 @@ import tcod
 import color
 from engine import Engine
 import entity_factories
-from maps import DungeonWorld, OverWorldGenerator
+from maps import GameWorld
 import input_handlers
 import sound
 
@@ -25,36 +25,35 @@ background_image = tcod.image.load(".\img\menu_background2.png")[:, :, :3]
 
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
-    map_width = 80
-    map_height = 43
+    # map_width = 80
+    # map_height = 43
 
-    # map_width = 1024
-    # map_height = 1024
+    WIDTH = 50
+    HEIGHT = 50
+    
+    viewport_width = WIDTH
+    viewport_height = HEIGHT
 
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
+    room_max_size = 25
+    room_min_size = 8
+    max_rooms = 75
 
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
 
-    engine.game_world = DungeonWorld(
+    engine.game_world = GameWorld(
         engine=engine,
         max_rooms=max_rooms,
         room_min_size=room_min_size,
         room_max_size=room_max_size,
-        map_width=map_width,
-        map_height=map_height,
+        viewport_width=viewport_width,
+        viewport_height=viewport_height,
     )
-    # engine.game_world = OverWorldGenerator(
-    #     engine=engine,
-    #     map_width=map_width,
-    #     map_height=map_height,
-    # )
     # engine.game_world.generate_world()
     engine.game_world.generate_floor()
     engine.update_fov()
+    engine.update_light_levels()
 
     engine.message_log.add_message(
         "Welcome to L.U.R.K.E.R.", color.welcome_text
@@ -66,11 +65,11 @@ def new_game() -> Engine:
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
-    # pistol = copy.deepcopy(entity_factories.pistol)
+    pistol = copy.deepcopy(entity_factories.pistol)
 
     knife.parent = player.inventory
     shirt.parent = player.inventory
-    # pistol.parent = player.inventory
+    pistol.parent = player.inventory
 
     player.inventory.items.append(knife)
     player.equipment.toggle_equip(knife, add_message=False)
@@ -78,8 +77,8 @@ def new_game() -> Engine:
     player.inventory.items.append(shirt)
     player.equipment.toggle_equip(shirt, add_message=False)
 
-    # player.inventory.items.append(pistol)
-    # player.equipment.toggle_equip(pistol, add_message=False)
+    player.inventory.items.append(pistol)
+    player.equipment.toggle_equip(pistol, add_message=False)
 
     return engine
 

@@ -32,10 +32,10 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.medkit, 35), (entity_factories.combat_knife, 5)],
+    0: [(entity_factories.medkit, 35), (entity_factories.combat_knife, 5),(entity_factories.makarov_mag, 2)],
     2: [(entity_factories.throwing_sand, 10), (entity_factories.combat_knife, 15), (random.choice([entity_factories.hiking_boots,entity_factories.rusty_helmet,entity_factories.body_armor]), 1), (entity_factories.pistol, 1)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5), (entity_factories.pistol, 2), (random.choice([entity_factories.hiking_boots,entity_factories.rusty_helmet,entity_factories.body_armor]), 5),(entity_factories.makarov_mag, 10)],
-    6: [(entity_factories.grenade, 25), (entity_factories.body_armor, 15)],
+    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5), (entity_factories.pistol, 2), (entity_factories.hiking_boots, 2), (entity_factories.rusty_helmet, 2), (entity_factories.body_armor, 5),(entity_factories.makarov_mag, 10)],
+    6: [(entity_factories.grenade, 25), (entity_factories.body_armor, 15), (entity_factories.rifle, 2),(entity_factories.assault_rifle, 2)],
     8: [(entity_factories.hiking_boots, 2)],
 }
 
@@ -326,7 +326,7 @@ def generate_bsp_dungeon(
 
     return map
 
-def generate_overworld(
+def generate_random_overworld(
     map_width: int,
     map_height: int,
     engine: Engine,

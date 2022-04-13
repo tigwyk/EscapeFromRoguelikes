@@ -485,7 +485,12 @@ class InventoryEventHandler(AskUserEventHandler):
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
                 
-                is_equipped = self.engine.player.equipment.item_is_equipped(item)
+                if(item.equippable):
+                    # print(f"Item? {item.name}")
+                    is_equipped = (self.engine.player.equipment.item_is_equipped(item.equippable.equipment_type) and self.engine.player.equipment.get_item_in_slot(item.equippable.equipment_type) == item)
+                    # print(f"Is equipped? {is_equipped}")
+                else:
+                    is_equipped = False
 
                 item_string = f"({item_key}) {item.name.capitalize()}"
 
@@ -548,17 +553,19 @@ class SelectIndexHandler(AskUserEventHandler):
         """Sets the cursor to the player when this handler is constructed."""
         super().__init__(engine)
         player = self.engine.player
-        engine.mouse_location = player.x, player.y
+        viewport = self.engine.game_map.get_viewport()
+        engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
 
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
-        super().on_render(console)
+        super().on_render(console)        
         x, y = self.engine.mouse_location
         console.tiles_rgb["bg"][x, y] = color.white
         console.tiles_rgb["fg"][x, y] = color.black
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         """Check for key movement or confirmation keys."""
+        viewport = self.engine.game_map.get_viewport()
         key = event.sym
         if key in MOVE_KEYS:
             modifier = 1  # Holding modifier keys will speed up key movement.
@@ -574,8 +581,10 @@ class SelectIndexHandler(AskUserEventHandler):
             x += dx * modifier
             y += dy * modifier
             # Clamp the cursor index to the map size.
-            x = max(0, min(x, self.engine.game_map.width - 1))
-            y = max(0, min(y, self.engine.game_map.height - 1))
+            # x = max(0, min(x, self.engine.game_map.width - 1))
+            x = max(0, min(x,  (viewport[2]-viewport[0]) - 1))
+            # y = max(0, min(y, self.engine.game_map.height - 1))
+            y = max(0, min(y, (viewport[3]-viewport[1]) - 1))
             self.engine.mouse_location = x, y
             return None
         elif key in CONFIRM_KEYS:
@@ -588,7 +597,10 @@ class SelectIndexHandler(AskUserEventHandler):
         """Left click confirms a selection."""
         if self.engine.game_map.in_bounds(*event.tile):
             if event.button == 1:
-                return self.on_index_selected(*event.tile)
+                viewport = self.engine.game_map.get_viewport()
+                x = event.tile.x + viewport[0]
+                y = event.tile.y + viewport[1]
+                return self.on_index_selected(x,y)
         return super().ev_mousebuttondown(event)
 
     def on_index_selected(self, x: int, y: int) -> Optional[ActionOrHandler]:
@@ -602,30 +614,39 @@ class FireSelectIndexHandler(AskUserEventHandler):
         """Sets the cursor to the player when this handler is constructed."""
         super().__init__(engine)
         player = self.engine.player
-        engine.mouse_location = player.x, player.y
-        enemy_tree = self.engine.game_map.enemies_tree
+        viewport = self.engine.game_map.get_viewport()
+        engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
+        enemies = []
+        for enemy in self.engine.game_map.enemies:
+            # print(f"Appending: ({enemy},{enemy.distance(player.x, player.y)})")
+            enemies.append((enemy,enemy.distance(player.x, player.y)))
+        enemies.sort(key=lambda enemies: enemies[1])
+        
+        for enemy,distance in enemies:
+            if self.engine.game_map.visible[enemy.x, enemy.y]:
+                engine.mouse_location = (enemy.x- viewport[0],enemy.y- viewport[1])
+                break
+        # enemy_tree = self.engine.game_map.enemies_tree
         # print(f"Remaining Enemies: {[e.name for e in self.engine.game_map.enemies]}")
-        e_coords = [(e.x,e.y) for e in self.engine.game_map.enemies]
-        visible_enemies = []
-        for e in e_coords:
-            if self.engine.game_map.visible[e]:
-                visible_enemies.append(e)
+        # e_coords = [(e.x-viewport[0],e.y-viewport[1]) for e in self.engine.game_map.enemies]
+        # visible_enemies = []
+        # for x,y in e_coords:
+        #     if self.engine.game_map.visible[x,y]:
+        #         visible_enemies.append((x,y))
         # print(f"Visible enemies: {visible_enemies}")
-        if(len(visible_enemies)>0):
-            # nearest_enemy_coords = e_coords[self.engine.game_map.find_closest_kdtree(self.engine.player,self.engine.game_map.enemies_tree)]
-            nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,4)
-            # print(f"{nearest_enemy_in_tree.parent.name}")
-            if(nearest_enemy_in_tree is not None):
-                nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
-                if(nearest_enemy_coords in visible_enemies):
-                    # print(f"Closest enemy: {nearest_enemy_coords}")
-                    engine.mouse_location = nearest_enemy_coords
-                else:
-                    engine.mouse_location = player.x, player.y
-            else:
-                engine.mouse_location = player.x, player.y
-        else:
-            engine.mouse_location = player.x, player.y
+        # if(len(visible_enemies)>0):
+        #     nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,4)
+        #     if(nearest_enemy_in_tree is not None):
+        #         nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
+        #         if(nearest_enemy_coords in visible_enemies):
+        #             print(f"Closest enemy: {nearest_enemy_coords}")
+        #             engine.mouse_location = nearest_enemy_coords
+        #         else:
+        #             engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
+        #     else:
+        #         engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
+        # else:
+        #     engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
         
         
 
@@ -638,6 +659,7 @@ class FireSelectIndexHandler(AskUserEventHandler):
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         """Check for key movement or confirmation keys."""
+        viewport = self.engine.game_map.get_viewport()
         key = event.sym
         if key in MOVE_KEYS:
             modifier = 1  # Holding modifier keys will speed up key movement.
@@ -658,7 +680,13 @@ class FireSelectIndexHandler(AskUserEventHandler):
             self.engine.mouse_location = x, y
             return None
         elif key in FIRE_CONFIRM_KEYS:
-            return self.on_index_selected(*self.engine.mouse_location)
+            mouse_x,mouse_y = self.engine.mouse_location
+            # print(f"Mouse           ? {mouse_x, mouse_y}")
+            # print(f"Mouse [viewport]? {mouse_x+ viewport[0], mouse_y+ viewport[1]}")
+            map_x = mouse_x + viewport[0]
+            map_y = mouse_y + viewport[1]
+            # return self.on_index_selected(*self.engine.mouse_location)
+            return self.on_index_selected(map_x, map_y)
         return super().ev_keydown(event)
 
     def ev_mousebuttondown(
@@ -667,7 +695,10 @@ class FireSelectIndexHandler(AskUserEventHandler):
         """Left click confirms a selection."""
         if self.engine.game_map.in_bounds(*event.tile):
             if event.button == 1:
-                return self.on_index_selected(*event.tile)
+                viewport = self.engine.game_map.get_viewport()
+                x = event.tile.x + viewport[0]
+                y = event.tile.y + viewport[1]
+                return self.on_index_selected(x,y)
         return super().ev_mousebuttondown(event)
 
     def on_index_selected(self, x: int, y: int) -> Optional[ActionOrHandler]:
@@ -779,9 +810,10 @@ class MainGameEventHandler(EventHandler):
             return EscapeMenuEventHandler(self.engine)
         elif key == tcod.event.K_v:
             return HistoryViewer(self.engine)
-
+        elif key == tcod.event.K_F1:
+            return self.engine.game_map.reveal_map()
         elif key == tcod.event.K_f:
-            action =  player.equipment.weapon.equippable.get_fire_action(player) if player.equipment.weapon is not None else None
+            action =  player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.get_fire_action(player) if player.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON) else None
 
         elif key == tcod.event.K_g:
             action = PickupAction(player)
@@ -792,7 +824,7 @@ class MainGameEventHandler(EventHandler):
             return InventoryDropHandler(self.engine)
 
         elif key == tcod.event.K_r:
-            action = ReloadAction(player, player.equipment.weapon)
+            action = ReloadAction(player, player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON))
 
         elif key == tcod.event.K_c:
             return CharacterScreenEventHandler(self.engine)

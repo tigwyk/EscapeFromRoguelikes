@@ -2,7 +2,7 @@ from enum import auto, Enum
 
 
 class EquipmentType(Enum):
-    WEAPON = auto()
+    MELEE_WEAPON = auto()
     RANGED_WEAPON = auto()
     ARMOR = auto()
     HEAD = auto()

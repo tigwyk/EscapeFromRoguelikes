@@ -8,7 +8,10 @@ import exceptions
 import input_handlers
 import setup_game
 
-FLAGS = tcod.context.SDL_WINDOW_FULLSCREEN_DESKTOP | tcod.context.SDL_WINDOW_MAXIMIZED
+WIDTH, HEIGHT = 720, 480  # Window pixel resolution (when not maximized.)
+# FLAGS = tcod.context.SDL_WINDOW_FULLSCREEN_DESKTOP | tcod.context.SDL_WINDOW_MAXIMIZED
+FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED | tcod.context.SDL_WINDOW_RESIZABLE
+# FLAGS = tcod.context.SDL_WINDOW_RESIZABLE
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
     """If the current event handler has an active Engine then save it."""
@@ -19,7 +22,7 @@ def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
 
 def main() -> None:
     screen_width = 80
-    screen_height = 50
+    screen_height = 60
 
     tileset = tcod.tileset.load_tilesheet(
         # "img\dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -29,20 +32,36 @@ def main() -> None:
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 
-    with tcod.context.new_terminal(
-        screen_width,
-        screen_height,
+    # root_console = context.new_console(
+    #     min_columns=min_c,
+    #     min_rows=min_r,
+    #     order="F",
+    #     magnification=2,
+    # )
+    root_console = tcod.Console(
+        width=screen_width,
+        height=screen_height,
+        order="F",
+        # magnification=2,
+    )
+
+
+    with tcod.context.new(
+        width=WIDTH,
+        height=HEIGHT,
+        columns=root_console.width,
+        rows=root_console.height,
         tileset=tileset,
         title="L.U.R.K.E.R.",
         vsync=True,
         sdl_window_flags=FLAGS,
+        renderer=tcod.context.RENDERER_OPENGL2
     ) as context:
-        root_console = tcod.Console(screen_width, screen_height, order="F")
         try:
             while True:
                 root_console.clear()
                 handler.on_render(console=root_console)
-                context.present(root_console)
+                context.present(root_console, integer_scaling=True, keep_aspect=True)
 
                 try:
                     for event in tcod.event.wait():

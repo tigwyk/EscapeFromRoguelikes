@@ -4,6 +4,7 @@ import copy
 import math
 from time import time
 from russian_names import RussianNames
+from camera import Camera
 import random
 import entity_factories
 
@@ -45,6 +46,7 @@ class Entity:
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
         render_order: RenderOrder = RenderOrder.CORPSE,
+        light_source = None,
     ):
         self.x = x
         self.y = y
@@ -53,6 +55,9 @@ class Entity:
         self.name = name
         self.blocks_movement = blocks_movement
         self.render_order = render_order
+        self.light_source = light_source
+        if light_source:
+            self.light_source.parent = self
         if parent:
             # If parent isn't provided now then it will be set later.
             self.parent = parent
@@ -116,7 +121,8 @@ class Actor(Entity):
         currency: Currency,
         lore: Lore = None,
         gen_name: bool = False,
-        gen_kit: bool = False
+        gen_kit: bool = False,
+        light_source=None,
     ):
         super().__init__(
             x=x,
@@ -126,6 +132,7 @@ class Actor(Entity):
             name=name,
             blocks_movement=True,
             render_order=RenderOrder.ACTOR,
+            light_source=light_source
         )
 
         self.ai: Optional[BaseAI] = ai_cls(self)
@@ -165,7 +172,7 @@ class Actor(Entity):
         return RussianNames(patronymic=False, name_reduction=True, transliterate=True).get_person()
     
     def generate_kit(self):
-        print(f"Generating kit...")
+        # print(f"Generating kit...")
         
         shirt = copy.deepcopy(entity_factories.shirt)
         shirt.parent = self.inventory
@@ -223,3 +230,30 @@ class Item(Entity):
 
         if self.ammo_container:
             self.ammo_container.parent = self
+
+
+class Container(Entity):
+  def __init__(self,
+               *,
+               x = 0,
+               y = 0,
+               char='?',
+               color= (255,255,255),
+               name = '<Container>',
+               inventory: Inventory):
+    super().__init__(
+      x=x,
+      y=y,
+      char=char,
+      color=color,
+      name=name,
+      blocks_movement=True,
+      render_order=RenderOrder.ITEM,
+    )
+    self.inventory = inventory
+    self.inventory.parent = self
+
+  def add_items(self, items):
+    if type(items) == Item:
+      items = [items]
+    self.inventory.extend(items)
