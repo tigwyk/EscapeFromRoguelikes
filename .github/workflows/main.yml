@@ -30,3 +30,8 @@ jobs:
         uses: JackMcKew/pyinstaller-action-windows@v0.1.2
           with:
             path: .
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lurker-release
+          path: dist/windows
