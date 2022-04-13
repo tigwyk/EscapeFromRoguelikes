@@ -10,7 +10,7 @@ soundFiles = {
     'medkit' : 'audio/med_medkit_offline_use.wav',
     'game_over' : 'audio/game_over.wav',
     'new_game' : 'audio/new_game.wav',
-    'death' : 'audio/scav6/scav6_death_03.wav',
+    'death' : 'audio/scav6_death_03.wav',
     }
 # mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
 reload_sound = pyglet.media.StaticSource(pyglet.media.load(soundFiles['reload']))
