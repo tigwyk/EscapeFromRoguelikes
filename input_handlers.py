@@ -625,30 +625,8 @@ class FireSelectIndexHandler(AskUserEventHandler):
         for enemy,distance in enemies:
             if self.engine.game_map.visible[enemy.x, enemy.y]:
                 engine.mouse_location = (enemy.x- viewport[0],enemy.y- viewport[1])
-                break
-        # enemy_tree = self.engine.game_map.enemies_tree
-        # print(f"Remaining Enemies: {[e.name for e in self.engine.game_map.enemies]}")
-        # e_coords = [(e.x-viewport[0],e.y-viewport[1]) for e in self.engine.game_map.enemies]
-        # visible_enemies = []
-        # for x,y in e_coords:
-        #     if self.engine.game_map.visible[x,y]:
-        #         visible_enemies.append((x,y))
-        # print(f"Visible enemies: {visible_enemies}")
-        # if(len(visible_enemies)>0):
-        #     nearest_enemy_in_tree = self.engine.game_map.find_closest_enemy_radius(self.engine.player,enemy_tree,4)
-        #     if(nearest_enemy_in_tree is not None):
-        #         nearest_enemy_coords = e_coords[nearest_enemy_in_tree]
-        #         if(nearest_enemy_coords in visible_enemies):
-        #             print(f"Closest enemy: {nearest_enemy_coords}")
-        #             engine.mouse_location = nearest_enemy_coords
-        #         else:
-        #             engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
-        #     else:
-        #         engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
-        # else:
-        #     engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
-        
-        
+                break       
+            
 
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
@@ -675,8 +653,10 @@ class FireSelectIndexHandler(AskUserEventHandler):
             x += dx * modifier
             y += dy * modifier
             # Clamp the cursor index to the map size.
-            x = max(0, min(x, self.engine.game_map.width - 1))
-            y = max(0, min(y, self.engine.game_map.height - 1))
+            # x = max(0, min(x, self.engine.game_map.width - 1))
+            x = max(0, min(x,  (viewport[2]-viewport[0]) - 1))
+            # y = max(0, min(y, self.engine.game_map.height - 1))
+            y = max(0, min(y, (viewport[3]-viewport[1]) - 1))
             self.engine.mouse_location = x, y
             return None
         elif key in FIRE_CONFIRM_KEYS:
