@@ -28,3 +28,5 @@ jobs:
       # Runs a single command using the runners shell
       - name: PyInstaller Windows
         uses: JackMcKew/pyinstaller-action-windows@v0.1.2
+          with:
+            path: .
