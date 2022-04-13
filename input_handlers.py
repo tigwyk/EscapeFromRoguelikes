@@ -558,13 +558,14 @@ class SelectIndexHandler(AskUserEventHandler):
 
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
-        super().on_render(console)
+        super().on_render(console)        
         x, y = self.engine.mouse_location
         console.tiles_rgb["bg"][x, y] = color.white
         console.tiles_rgb["fg"][x, y] = color.black
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         """Check for key movement or confirmation keys."""
+        viewport = self.engine.game_map.get_viewport()
         key = event.sym
         if key in MOVE_KEYS:
             modifier = 1  # Holding modifier keys will speed up key movement.
@@ -580,8 +581,10 @@ class SelectIndexHandler(AskUserEventHandler):
             x += dx * modifier
             y += dy * modifier
             # Clamp the cursor index to the map size.
-            x = max(0, min(x, self.engine.game_map.width - 1))
-            y = max(0, min(y, self.engine.game_map.height - 1))
+            # x = max(0, min(x, self.engine.game_map.width - 1))
+            x = max(0, min(x,  (viewport[2]-viewport[0]) - 1))
+            # y = max(0, min(y, self.engine.game_map.height - 1))
+            y = max(0, min(y, (viewport[3]-viewport[1]) - 1))
             self.engine.mouse_location = x, y
             return None
         elif key in CONFIRM_KEYS:
