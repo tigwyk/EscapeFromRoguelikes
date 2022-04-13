@@ -293,7 +293,3 @@ class GameWorld:
                 map_height=random_map_height,
                 engine=self.engine,
             )
-        # print(f"floor {self.current_floor} entities: {[i.name for i in self.engine.game_map.enemies]}")
-        # print(f"floor {self.current_floor} items: {[i.name for i in self.engine.game_map.items]}")
-        self.engine.game_map.update_enemies_tree()
-        # print(f"floor {self.current_floor} enemies_tree: {self.engine.game_map.enemies_tree}")
