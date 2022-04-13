@@ -4,10 +4,10 @@
 block_cipher = None
 
 
-a = Analysis(['main.py'],
-             pathex=['C:\\Users\\Lee\\Documents\\GitHub\\EscapeFromRoguelikesProject\\env\\Lib\\site-packages'],
+a = Analysis(['EscapeFromRoguelikes\\main.py'],
+             pathex=['C:\\Users\\Lee\\Documents\\GitHub\\EscapeFromRoguelikesProject\\env'],
              binaries=[],
-             datas=[('img\\dejavu10x10_gs_tc.png', 'img'), ('img\\menu_background.png', 'img')],
+             datas=[('./EscapeFromRoguelikes/audio/game_over.wav', 'audio'), ('./EscapeFromRoguelikes/audio/menu_lurker.wav', 'audio'), ('./EscapeFromRoguelikes/audio/med_medkit_offline_use.wav', 'audio/'), ('./EscapeFromRoguelikes/audio/new_game.wav', 'audio'), ('./EscapeFromRoguelikes/audio/stairs.mp3', 'audio'), ('./EscapeFromRoguelikes/audio/pistol_shot.wav', 'audio'), ('./EscapeFromRoguelikes/audio/shotgun_reload.wav', 'audio'), ('./env/Lib/site-packages/russian_names/_data.zip', 'russian_names'), ('./EscapeFromRoguelikes/img/dejavu10x10_gs_tc.png', 'img'), ('./EscapeFromRoguelikes/img/Taffer_10x10.png', 'img'), ('./EscapeFromRoguelikes/img/menu_background2.png', 'img'), ('./EscapeFromRoguelikes/audio/scav6_death_03.wav', 'audio/'), ('./EscapeFromRoguelikes/README.md', '.')],
              hiddenimports=[],
              hookspath=[],
              hooksconfig={},
@@ -24,7 +24,7 @@ exe = EXE(pyz,
           a.scripts, 
           [],
           exclude_binaries=True,
-          name='main',
+          name='LURKER',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -41,4 +41,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='main')
+               name='LURKER')
