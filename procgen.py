@@ -10,6 +10,7 @@ import tcod
 import entity_factories
 from maps import GameMap
 import tile_types
+import sound
 
 import numpy as np
 
@@ -214,7 +215,8 @@ def generate_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    exploring_music = sound.exploring_music()
+    dungeon = GameMap(engine, map_width, map_height, exploring_music, entities=[player])
 
     rooms: List[RectangularRoom] = []
 
@@ -333,7 +335,8 @@ def generate_random_overworld(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    worldmap = GameMap(engine, map_width, map_height, entities=[player])
+    overworld_music = sound.exploring_music()
+    worldmap = GameMap(engine, map_width, map_height, overworld_music, entities=[player])
     print(f"Generate_random_overworld: {worldmap}")
     
     noise = tcod.noise.Noise(

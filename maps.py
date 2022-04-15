@@ -9,6 +9,7 @@ import tcod.color
 from random import randint
 import itertools
 import math
+import sound
 
 from pprint import pprint
 
@@ -36,11 +37,13 @@ class Tile:
 
 class GameMap:
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+        self, engine: Engine, width: int, height: int, music: object,entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
+
+        self.music = music
         
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
