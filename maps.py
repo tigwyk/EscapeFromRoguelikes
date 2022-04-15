@@ -37,7 +37,7 @@ class Tile:
 
 class GameMap:
     def __init__(
-        self, engine: Engine, width: int, height: int, music: object,entities: Iterable[Entity] = ()
+        self, engine: Engine, width: int, height: int, music: str,entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height

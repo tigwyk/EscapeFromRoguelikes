@@ -215,7 +215,7 @@ def generate_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    exploring_music = sound.exploring_music()
+    exploring_music = "exploring_music"
     dungeon = GameMap(engine, map_width, map_height, exploring_music, entities=[player])
 
     rooms: List[RectangularRoom] = []
@@ -335,7 +335,7 @@ def generate_random_overworld(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    overworld_music = sound.exploring_music()
+    overworld_music = "overworld_music"
     worldmap = GameMap(engine, map_width, map_height, overworld_music, entities=[player])
     print(f"Generate_random_overworld: {worldmap}")
     

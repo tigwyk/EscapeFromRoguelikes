@@ -63,7 +63,7 @@ def new_game() -> Engine:
         f"You are {player.name}.", color.red
     )
 
-    engine.game_map.music.play()
+    sound.play_music(engine.game_map.music)
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
@@ -96,7 +96,7 @@ class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
 
     def __init__(self):
-        self.main_menu_music = sound.main_menu_music()
+        self.main_menu_music = sound.play_music("main_menu")
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
