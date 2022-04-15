@@ -8,6 +8,7 @@ from components.currency import Currency
 from components.lore import Lore
 from components.lightsource import LightSource
 from entity import Actor, Item, Entity, Container
+import color
 
 from russian_names import RussianNames
 
@@ -142,6 +143,13 @@ shotgun_slugs_box = Item(
     ammo_container=ammo_container.AmmoMag(ammo=6,max_ammo=6,ammo_type="12g")
 )
 
+ak_mag = Item(
+    char="=",
+    color=color.red,
+    name="AK magazine",
+    ammo_container=ammo_container.AmmoMag(ammo=30,max_ammo=30,ammo_type="5.45x39mm")
+)
+
 kitchen_knife = Item(
     char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Knife()
 )
@@ -158,7 +166,7 @@ shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=
 
 rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Rifle())
 
-assault_rifle = Item(char="/", color=(0, 191, 255), name="AK-74n automatic rifle", equippable=equippable.Rifle())
+assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.AssaultRifle())
 
 shirt = Item(
     char="[",

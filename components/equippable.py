@@ -111,6 +111,10 @@ class Rifle(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.RANGED_WEAPON, power_bonus=8, max_ammo=10, ammo_type="7.62x54R")
 
+class AssaultRifle(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.RANGED_WEAPON, power_bonus=8, max_ammo=10, ammo_type="5.45x39mm")        
+
 
 class Shirt(Equippable):
     def __init__(self) -> None:
