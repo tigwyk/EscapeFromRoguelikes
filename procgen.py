@@ -179,8 +179,8 @@ def place_overworld_entities(overworld: GameMap, floor_number: int,) -> None:
     )
 
     for entity in monsters + items:
-        x = random.randint(1, 79)
-        y = random.randint(1, 42)
+        x = random.randint(1, overworld.width)
+        y = random.randint(1, overworld.height)
 
         if not any(entity.x == x and entity.y == y for entity in overworld.entities):
             entity.spawn(overworld, x, y)
@@ -334,6 +334,7 @@ def generate_random_overworld(
     """Generate a new dungeon map."""
     player = engine.player
     worldmap = GameMap(engine, map_width, map_height, entities=[player])
+    print(f"Generate_random_overworld: {worldmap}")
     
     noise = tcod.noise.Noise(
             dimensions=2,
@@ -341,7 +342,7 @@ def generate_random_overworld(
             seed=random.randint(0,500)
     )
 
-    noisemap = noise[tcod.noise.grid(shape=(2048,2048), scale=0.07, origin=(0,0))]
+    noisemap = noise[tcod.noise.grid(shape=(512,512), scale=0.07, origin=(0,0))]
     noisemap = (noisemap + 1.0) * 0.5
 
     for x in range(map_width):
@@ -365,7 +366,7 @@ def generate_random_overworld(
 
     # worldmap.tiles[slice(0,80),slice(0,43)] = tile_types.floor
     # worldmap.tiles[slice(center),slice((map_width/2)+10,(map_height/2)+10)] = tile_types.floor
-    player.place(40, 21, worldmap)
+    player.place(int(worldmap.width/2), int(worldmap.height/2), worldmap)
     place_overworld_entities(worldmap, engine.game_world.current_floor)
     
     worldmap.tiles[44,25] = tile_types.down_stairs

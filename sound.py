@@ -1,4 +1,5 @@
 import time
+
 import pyglet
 
 # import tcod.sdl.audio
@@ -48,8 +49,23 @@ def main_menu_music():
         menu_player = music.play()
         menu_player.volume = 0.02
         return menu_player
-    except:
-        print("Audio error in main_menu_music")
+    except Exception as e:
+        print(f"Audio error in main_menu_music {e}")
+        exit()
+
+def exploring_music():
+    # menu_player = pyglet.media.Player()
+    soundFile = "audio/LURKER_Exploring.mp3"
+    try:
+        music = pyglet.media.load(filename=soundFile)
+        # menu_player.volume = 0.5
+        # menu_player.queue(music)
+        
+        player = music.play()
+        player.volume = 0.02
+        return player
+    except Exception as e:
+        print(f"Audio error in exploring_music {e}")
         exit()    
 
 def play_sound(soundId=None):

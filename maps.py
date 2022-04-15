@@ -240,6 +240,9 @@ class GameWorld:
         room_max_size: int,
         current_floor: int = 0
     ):
+        
+        overworld: GameMap
+        
         self.engine = engine
 
         # self.map_width = map_width
@@ -257,13 +260,18 @@ class GameWorld:
 
         self.current_floor = current_floor
 
+        
+
     def generate_overworld(self):
         from procgen import generate_random_overworld
         """Randomly generate a new world with some water, swamps, hills, some objects etc"""
 
+        random_map_width = randint(self.min_map_width, self.min_map_width+128)
+        random_map_height = randint(self.min_map_height, self.min_map_height+128)
+
         self.engine.game_map = generate_random_overworld(
-            map_width=self.min_map_width,
-            map_height=self.min_map_height,
+            map_width=random_map_width,
+            map_height=random_map_height,
             engine=self.engine,
         )
     def generate_floor(self) -> None:

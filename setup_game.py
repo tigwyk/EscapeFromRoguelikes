@@ -50,8 +50,8 @@ def new_game() -> Engine:
         viewport_width=viewport_width,
         viewport_height=viewport_height,
     )
-    # engine.game_world.generate_world()
-    engine.game_world.generate_floor()
+    engine.game_world.generate_overworld()
+    # engine.game_world.generate_floor()
     engine.update_fov()
     engine.update_light_levels()
 
@@ -95,6 +95,9 @@ class MainMenu(input_handlers.BaseEventHandler):
 
     def __init__(self):
         self.main_menu_music = sound.main_menu_music()
+        self.exploring_music = sound.exploring_music()
+
+        self.exploring_music.pause()
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
@@ -146,6 +149,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         elif event.sym == tcod.event.K_n:
             sound.play_sound('new_game')
             self.main_menu_music.pause() if self.main_menu_music.playing else None
+            self.exploring_music.play()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None
