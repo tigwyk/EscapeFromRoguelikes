@@ -151,28 +151,28 @@ ak_mag = Item(
 )
 
 kitchen_knife = Item(
-    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Blade()
 )
 
 combat_knife = Item(
-    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Blade()
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Sword())
+sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade())
 
-pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Handgun())
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm())
 
-shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Shotgun())
+shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm())
 
-rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Rifle())
+rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm())
 
-assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.AssaultRifle())
+assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm())
 
 shirt = Item(
     char="[",
     color=(139, 69, 19),
     name="tattered shirt",
-    equippable=equippable.Shirt(),
+    equippable=equippable.BodyArmor(),
 )
 
 body_armor = Item(
@@ -183,14 +183,14 @@ rusty_helmet = Item(
     char="[",
     color=(139, 69, 19),
     name="rusty helmet",
-    equippable=equippable.BasicHelmet(),
+    equippable=equippable.Helmet(),
 )
 
 tough_denim_jeans = Item(
     char="[",
     color=(139, 69, 19),
     name="tough denim jeans",
-    equippable=equippable.Pants(),
+    equippable=equippable.LegArmor(),
 )
 
 hiking_boots = Item(
