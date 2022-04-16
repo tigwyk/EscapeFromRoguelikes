@@ -103,6 +103,10 @@ class Engine:
             maximum_value=self.player.fighter.max_hp,
             total_width=bar_pane_width - 2,
             location=(bar_pane_x+1,bar_pane_y + 1),
+            caption="HP",
+            bar_fill_color=color.bar_filled,
+            bar_empty_color=color.bar_empty,
+            bar_text_color=color.bar_text
         )
 
         char_pane_x =  sub_pane_x
@@ -114,7 +118,19 @@ class Engine:
         render_functions.render_rouble_amount(
             console=console,
             roubles=self.player.currency.roubles,
-            location=(char_pane_x+1, char_pane_y+1),
+            location=(char_pane_x+1, char_pane_y+2),
+        )
+
+        render_functions.render_bar(
+            console=console,
+            current_value=self.player.level.current_xp,
+            maximum_value=self.player.level.experience_to_next_level,
+            total_width=char_pane_width - 2,
+            location=(char_pane_x+1,char_pane_y + 1),
+            caption="EXP",
+            bar_fill_color=color.yellow,
+            bar_empty_color=color.window_border_bright,
+            bar_text_color=color.black
         )
         # render_functions.render_coordinates(
         #     console=console,

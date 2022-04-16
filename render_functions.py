@@ -21,19 +21,19 @@ def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
     return names.capitalize()
 
 def render_bar(
-    console: Console, current_value: int, maximum_value: int, total_width: int, location: Tuple[int, int]
+    console: Console, current_value: int, maximum_value: int, total_width: int, location: Tuple[int, int], caption: str, bar_text_color: Tuple(int, int, int), bar_fill_color: Tuple(int, int, int), bar_empty_color: Tuple(int, int, int)
 ) -> None:
     bar_width = int(float(current_value) / maximum_value * total_width)
     x, y = location
-    console.draw_rect(x=x, y=y, width=total_width, height=1, ch=1, bg=color.bar_empty)
+    console.draw_rect(x=x, y=y, width=total_width, height=1, ch=1, bg=bar_empty_color)
 
     if bar_width > 0:
         console.draw_rect(
-            x=x, y=y, width=bar_width, height=1, ch=1, bg=color.bar_filled
+            x=x, y=y, width=bar_width, height=1, ch=1, bg=bar_fill_color
         )
 
     console.print(
-        x=x+1, y=y, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text
+        x=x+1, y=y, string=f"{caption}: {current_value}/{maximum_value}", fg=bar_text_color
     )
 
 def render_bunker_level(

@@ -116,25 +116,25 @@ class Equippable(BaseComponent):
 
 
 class Blade(Equippable):
-    def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.MELEE_WEAPON, power_bonus=2)
+    def __init__(self, power_bonus: int = 2) -> None:
+        super().__init__(equipment_type=EquipmentType.MELEE_WEAPON, power_bonus=power_bonus)
 
 class Firearm(Equippable):
-    def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.RANGED_WEAPON, power_bonus=6, max_ammo=6,ammo_type="9x18mm")
+    def __init__(self, power_bonus: int = 6, max_ammo: int = 6, ammo:int = 6, ammo_type:str = '9x18mm') -> None:
+        super().__init__(equipment_type=EquipmentType.RANGED_WEAPON, power_bonus=power_bonus, max_ammo=max_ammo,ammo_type=ammo_type)
 
 class BodyArmor(Equippable):
-    def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=3)
+    def __init__(self, defense_bonus: int = 3) -> None:
+        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=defense_bonus)
 
 class Helmet(Equippable):
-    def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.HEAD, defense_bonus=3)
+    def __init__(self, defense_bonus: int = 3) -> None:
+        super().__init__(equipment_type=EquipmentType.HEAD, defense_bonus=defense_bonus)
 
 class LegArmor(Equippable):
-    def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.LEGS, defense_bonus=1)
+    def __init__(self, defense_bonus: int = 1) -> None:
+        super().__init__(equipment_type=EquipmentType.LEGS, defense_bonus=defense_bonus)
 
 class Boots(Equippable):
-    def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.FEET, defense_bonus=2)
+    def __init__(self, defense_bonus: int = 2) -> None:
+        super().__init__(equipment_type=EquipmentType.FEET, defense_bonus=defense_bonus)
