@@ -1,4 +1,5 @@
 import time
+
 import pyglet
 
 # import tcod.sdl.audio
@@ -37,19 +38,58 @@ soundMap = {
 def init():
     pyglet.app.run()
 
-def main_menu_music():
+def play_music(music: str = ""):
     # menu_player = pyglet.media.Player()
-    soundFile = "audio/menu_lurker.wav"
+    menuFile = "audio/menu_lurker.wav"
+    exploringFile = "audio/LURKER_Exploring.mp3"
+    overworldFile = "audio/LURKER_overworld_theme.mp3"
+    
+    music_match = {
+        "overworld_music": overworldFile,
+        "exploring_music": exploringFile,
+        "main_menu"      : menuFile,
+    }
+    
+    try:
+        music = pyglet.media.load(filename=music_match[music])
+        # menu_player.volume = 0.5
+        # menu_player.queue(music)
+        
+        menu_player = music.play()
+        menu_player.volume = 0.04
+        return menu_player
+    except Exception as e:
+        print(f"Audio error in play_music {e}")
+        exit()
+
+def exploring_music():
+    # menu_player = pyglet.media.Player()
+    soundFile = "audio/LURKER_Exploring.mp3"
     try:
         music = pyglet.media.load(filename=soundFile)
         # menu_player.volume = 0.5
         # menu_player.queue(music)
         
-        menu_player = music.play()
-        menu_player.volume = 0.02
-        return menu_player
-    except:
-        print("Audio error in main_menu_music")
+        player = music.play()
+        player.volume = 0.04
+        return player
+    except Exception as e:
+        print(f"Audio error in exploring_music {e}")
+        exit()    
+    
+def overworld_music():
+    # menu_player = pyglet.media.Player()
+    soundFile = "audio/LURKER_overworld_theme.mp3"
+    try:
+        music = pyglet.media.load(filename=soundFile)
+        # menu_player.volume = 0.5
+        # menu_player.queue(music)
+        
+        player = music.play()
+        player.volume = 0.04
+        return player
+    except Exception as e:
+        print(f"Audio error in exploring_music {e}")
         exit()    
 
 def play_sound(soundId=None):

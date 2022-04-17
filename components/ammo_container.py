@@ -44,20 +44,8 @@ class AmmoMag(AmmoContainer):
         max_ammo: int,
         ammo_type: str
     ) -> None:
-        super().__init__(ammo, max_ammo,ammo_type)
+        super().__init__(ammo=8, max_ammo=8,ammo_type="9x18mm")
 
 class AmmoBox(AmmoContainer):
     def __init__(self) -> None:
         super().__init__(ammo=6, max_ammo=6,ammo_type="9x18mm")
-
-class ShotgunAmmoBox(AmmoContainer):
-    def __init__(self) -> None:
-        super().__init__(ammo=7, max_ammo=4, ammo_type="12g shell")
-
-class RifleAmmoMag(AmmoContainer):
-    def __init__(self) -> None:
-        super().__init__(ammo=8, max_ammo=10, ammo_type="7.62x54R")
-
-class RifleAmmoBox(AmmoContainer):
-    def __init__(self) -> None:
-        super().__init__(ammo=8, max_ammo=10, ammo_type="7.62x54R")

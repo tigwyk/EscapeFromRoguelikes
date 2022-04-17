@@ -103,6 +103,10 @@ class Engine:
             maximum_value=self.player.fighter.max_hp,
             total_width=bar_pane_width - 2,
             location=(bar_pane_x+1,bar_pane_y + 1),
+            caption="HP",
+            bar_fill_color=color.bar_filled,
+            bar_empty_color=color.bar_empty,
+            bar_text_color=color.bar_text
         )
 
         char_pane_x =  sub_pane_x
@@ -114,7 +118,31 @@ class Engine:
         render_functions.render_rouble_amount(
             console=console,
             roubles=self.player.currency.roubles,
-            location=(char_pane_x+1, char_pane_y+1),
+            location=(char_pane_x+1, char_pane_y+4),
+        )
+
+        render_functions.render_char_stats(
+            console=console,
+            character=self.player,
+            location=(char_pane_x+1, char_pane_y+3),
+        )
+
+        render_functions.render_char_level(
+            console=console,
+            character=self.player,
+            location=(char_pane_x+1, char_pane_y+2),
+        )
+
+        render_functions.render_bar(
+            console=console,
+            current_value=self.player.level.current_xp,
+            maximum_value=self.player.level.experience_to_next_level,
+            total_width=char_pane_width - 2,
+            location=(char_pane_x+1,char_pane_y + 1),
+            caption="EXP",
+            bar_fill_color=color.yellow,
+            bar_empty_color=color.window_border_bright,
+            bar_text_color=color.black
         )
         # render_functions.render_coordinates(
         #     console=console,
@@ -156,6 +184,33 @@ class Engine:
             console.print(equip_x, equip_y + 1, item_name)
             equip_y += 2
         
+
+        inv_pane_x = sub_pane_x
+        inv_pane_y = equip_pane_y + equip_pane_height
+        inv_pane_width = sub_pane_width
+        # inv_pane_height = (len(self.player.inventory.items)) + 2
+        inv_pane_height = console.height - inv_pane_y - 1
+        render_functions.draw_window(console, inv_pane_x, inv_pane_y, inv_pane_width, inv_pane_height, 'Inventory')
+
+        inv_y = inv_pane_y + 1
+        inv_x = inv_pane_x + 1
+        for item in self.player.inventory.items:
+            if(item.equippable):
+                    is_equipped = (self.player.equipment.item_is_equipped(item.equippable.equipment_type) and self.player.equipment.get_item_in_slot(item.equippable.equipment_type) == item)
+            else:
+                    is_equipped = False
+
+            item_string = f"{item.name.capitalize()}"
+
+            if is_equipped:
+                    item_string = f"{item_string} (E)"         
+            
+            if item.ammo_container:
+                item_string = f'{item.name} [{item.ammo_container.ammo}/{item.ammo_container.max_ammo}]'
+
+            console.print(inv_x, inv_y, f'- {item_string}')
+            inv_y += 1
+
         log_pane_x = 0
         log_pane_y = 0 + self.game_world.viewport_height
         log_pane_width = self.game_world.viewport_width

@@ -8,6 +8,7 @@ from components.currency import Currency
 from components.lore import Lore
 from components.lightsource import LightSource
 from entity import Actor, Item, Entity, Container
+import color
 
 from russian_names import RussianNames
 
@@ -142,54 +143,61 @@ shotgun_slugs_box = Item(
     ammo_container=ammo_container.AmmoMag(ammo=6,max_ammo=6,ammo_type="12g")
 )
 
+ak_mag = Item(
+    char="=",
+    color=color.red,
+    name="AK magazine",
+    ammo_container=ammo_container.AmmoMag(ammo=30,max_ammo=30,ammo_type="5.45x39mm")
+)
+
 kitchen_knife = Item(
-    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Blade(power_bonus=1)
 )
 
 combat_knife = Item(
-    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Blade(power_bonus=2)
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Sword())
+sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3))
 
-pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Handgun())
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1))
 
-shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Shotgun())
+shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2))
 
-rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Rifle())
+rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm(power_bonus=4))
 
-assault_rifle = Item(char="/", color=(0, 191, 255), name="AK-74n automatic rifle", equippable=equippable.Rifle())
+assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm(power_bonus=3))
 
 shirt = Item(
     char="[",
     color=(139, 69, 19),
     name="tattered shirt",
-    equippable=equippable.Shirt(),
+    equippable=equippable.BodyArmor(defense_bonus=1),
 )
 
 body_armor = Item(
-    char="[", color=(139, 69, 19), name="body armor", equippable=equippable.BodyArmor()
+    char="[", color=(139, 69, 19), name="body armor", equippable=equippable.BodyArmor(defense_bonus=3)
 )
 
 rusty_helmet = Item(
     char="[",
     color=(139, 69, 19),
     name="rusty helmet",
-    equippable=equippable.BasicHelmet(),
+    equippable=equippable.Helmet(defense_bonus=1),
 )
 
 tough_denim_jeans = Item(
     char="[",
     color=(139, 69, 19),
     name="tough denim jeans",
-    equippable=equippable.Pants(),
+    equippable=equippable.LegArmor(defense_bonus=1),
 )
 
 hiking_boots = Item(
     char="[",
     color=(139, 69, 19),
     name="hiking boots",
-    equippable=equippable.Boots(),
+    equippable=equippable.Boots(defense_bonus=1),
 )
 
 light = Entity(char=' ', color=(255,255,255), name='', light_source=LightSource(radius=2))

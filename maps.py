@@ -9,6 +9,7 @@ import tcod.color
 from random import randint
 import itertools
 import math
+import sound
 
 from pprint import pprint
 
@@ -36,11 +37,13 @@ class Tile:
 
 class GameMap:
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+        self, engine: Engine, width: int, height: int, music: str,entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
+
+        self.music = music
         
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
@@ -240,6 +243,9 @@ class GameWorld:
         room_max_size: int,
         current_floor: int = 0
     ):
+        
+        overworld: GameMap
+        
         self.engine = engine
 
         # self.map_width = map_width
@@ -257,13 +263,18 @@ class GameWorld:
 
         self.current_floor = current_floor
 
+        
+
     def generate_overworld(self):
         from procgen import generate_random_overworld
         """Randomly generate a new world with some water, swamps, hills, some objects etc"""
 
+        random_map_width = randint(self.min_map_width+1, self.min_map_width+128)
+        random_map_height = randint(self.min_map_height+1, self.min_map_height+128)
+
         self.engine.game_map = generate_random_overworld(
-            map_width=self.min_map_width,
-            map_height=self.min_map_height,
+            map_width=random_map_width,
+            map_height=random_map_height,
             engine=self.engine,
         )
     def generate_floor(self) -> None:
@@ -272,8 +283,8 @@ class GameWorld:
 
         self.current_floor += 1
 
-        random_map_width = randint(self.min_map_width, self.min_map_width+128)
-        random_map_height = randint(self.min_map_height, self.min_map_height+128)
+        random_map_width = randint(self.min_map_width+1, self.min_map_width+128)
+        random_map_height = randint(self.min_map_height+1, self.min_map_height+128)
         
         if(self.current_floor % 3):
             self.engine.game_map = generate_dungeon(

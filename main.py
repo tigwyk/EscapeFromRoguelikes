@@ -8,7 +8,8 @@ import exceptions
 import input_handlers
 import setup_game
 
-WIDTH, HEIGHT = 720, 480  # Window pixel resolution (when not maximized.)
+# WIDTH, HEIGHT = 720, 480
+WIDTH, HEIGHT = 1280, 720
 # FLAGS = tcod.context.SDL_WINDOW_FULLSCREEN_DESKTOP | tcod.context.SDL_WINDOW_MAXIMIZED
 FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED | tcod.context.SDL_WINDOW_RESIZABLE
 # FLAGS = tcod.context.SDL_WINDOW_RESIZABLE
