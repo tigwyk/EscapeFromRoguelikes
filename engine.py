@@ -118,6 +118,18 @@ class Engine:
         render_functions.render_rouble_amount(
             console=console,
             roubles=self.player.currency.roubles,
+            location=(char_pane_x+1, char_pane_y+4),
+        )
+
+        render_functions.render_char_stats(
+            console=console,
+            character=self.player,
+            location=(char_pane_x+1, char_pane_y+3),
+        )
+
+        render_functions.render_char_level(
+            console=console,
+            character=self.player,
             location=(char_pane_x+1, char_pane_y+2),
         )
 

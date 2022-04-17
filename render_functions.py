@@ -68,6 +68,27 @@ def render_ammo_status(
         return
     console.print(x=x, y=y, string=f"Ammo: {ammo}/{max_ammo}", fg=ammo_color)
 
+def render_char_stats(
+    console: Console, character: object, location: Tuple[int, int]
+) -> None:
+    """
+    Render the player's weapon ammo status.  
+    """
+    x, y = location
+    power = character.fighter.power
+    defense = character.fighter.defense
+    console.print(x=x, y=y, string=f"Att: {power} / Def: {defense}")
+
+def render_char_level(
+    console: Console, character: object, location: Tuple[int, int]
+) -> None:
+    """
+    Render the player's weapon ammo status.  
+    """
+    x, y = location
+    level = character.level.current_level
+    console.print(x=x, y=y, string=f"Level: {level}")
+
 def render_coordinates(
     console: Console, coords: Tuple[int, int], location: Tuple[int, int]
 ) -> None:
