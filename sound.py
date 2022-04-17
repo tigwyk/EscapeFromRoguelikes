@@ -56,7 +56,7 @@ def play_music(music: str = ""):
         # menu_player.queue(music)
         
         menu_player = music.play()
-        menu_player.volume = 0.03
+        menu_player.volume = 0.04
         return menu_player
     except Exception as e:
         print(f"Audio error in play_music {e}")
@@ -71,7 +71,7 @@ def exploring_music():
         # menu_player.queue(music)
         
         player = music.play()
-        player.volume = 0.03
+        player.volume = 0.04
         return player
     except Exception as e:
         print(f"Audio error in exploring_music {e}")
@@ -86,7 +86,7 @@ def overworld_music():
         # menu_player.queue(music)
         
         player = music.play()
-        player.volume = 0.03
+        player.volume = 0.04
         return player
     except Exception as e:
         print(f"Audio error in exploring_music {e}")
