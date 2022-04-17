@@ -180,8 +180,8 @@ def place_overworld_entities(overworld: GameMap, floor_number: int,) -> None:
     )
 
     for entity in monsters + items:
-        x = random.randint(1, overworld.width)
-        y = random.randint(1, overworld.height)
+        x = random.randint(1, overworld.width-1)
+        y = random.randint(1, overworld.height-1)
 
         if not any(entity.x == x and entity.y == y for entity in overworld.entities):
             entity.spawn(overworld, x, y)
@@ -372,8 +372,10 @@ def generate_random_overworld(
     player.place(int(worldmap.width/2), int(worldmap.height/2), worldmap)
     place_overworld_entities(worldmap, engine.game_world.current_floor)
     
-    worldmap.tiles[44,25] = tile_types.down_stairs
-    worldmap.downstairs_location = (44,25)
+    stair_x = random.randint(1,worldmap.width-1)
+    stair_y = random.randint(1,worldmap.height-1)
+    worldmap.tiles[stair_x,stair_y] = tile_types.down_stairs
+    worldmap.downstairs_location = (stair_x,stair_y)
 
     return worldmap
 
