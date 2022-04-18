@@ -18,6 +18,10 @@ from maps import GameWorld
 import input_handlers
 import sound
 
+from russian_names import RussianNames
+
+import procgen
+
 # Load the background image and remove the alpha channel.
 # background_image = tcod.image.load(".\img\menu_background.png")[:, :, :3]
 background_image = tcod.image.load(".\img\menu_background2.png")[:, :, :3]
@@ -41,6 +45,12 @@ def new_game() -> Engine:
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
+    
+    engine.game_rules = procgen.load_rules()
+
+    print(f"Game rules: {engine.game_rules}")
+    for i in range(0,10):
+        print(engine.game_rules.flatten(f"{i+1}. {player.name}#fake_postmortem#"))
 
     engine.game_world = GameWorld(
         engine=engine,
@@ -81,6 +91,8 @@ def new_game() -> Engine:
 
     player.inventory.items.append(pistol)
     player.equipment.toggle_equip(pistol, add_message=False)
+
+    # player.lore.previous_job = procgen.random_occupation(engine)
 
     return engine
 

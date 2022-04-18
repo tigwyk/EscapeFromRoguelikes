@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 import os.path
 from typing import TYPE_CHECKING
+from components.equipment import Equipment
 
 import tcod
 from tcod.console import Console
@@ -32,6 +33,7 @@ class Engine:
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+        self.game_rules = None
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
@@ -243,13 +245,13 @@ class Engine:
  L.U.R.K.E.R. roguelike post-mortem character dump
 --------------------------------------------------------------
 """
-            before_event_text = ['in a past life', 'before the event', "outside the zone"]
             post_mortem_lines = []
-            post_mortem_lines.append(f' {self.player.name}, level {self.player.level.current_level} Human and {self.player.lore.previous_job} {random.choice(before_event_text)},\n')
+            summary_line = self.game_rules.flatten(f" {self.player.name}, level {self.player.level.current_level} Human #postmortem_summary#")
+            post_mortem_lines.append(summary_line)
             if killer != None:
-                post_mortem_lines.append(f' was murdered by {killer.name}, a level {killer.level.current_level}\n')
-            else:
-                post_mortem_lines.append(f' was murdered by the invisible forces of the zone\n')
+                post_mortem_lines.append(f' {killer.name}, a level {killer.level.current_level}\n')
+            # else:
+            #     post_mortem_lines.append(f' died to the invisible forces of the Zone\n')
             post_mortem_lines.append('\n')
             post_mortem_lines.append('-- Special levels --------------------------------------------\n\n')
             post_mortem_lines.append(f' Bunker levels explored : {self.game_world.current_floor}\n\n')
@@ -264,15 +266,16 @@ class Engine:
             post_mortem_lines.append('-- Traits ----------------------------------------------------\n\n')
             post_mortem_lines.append(' None\n\n')
             post_mortem_lines.append('-- Equipment -------------------------------------------------\n\n')
-            post_mortem_lines.append(f' [a] [ Armor      ]   {self.player.equipment.armor.name if self.player.equipment.armor else None}\n')
-            if(self.player.equipment.weapon and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
-                ammo_text = f'[{self.player.equipment.weapon.equippable.ammo}/{self.player.equipment.weapon.equippable.max_ammo}]'
+            post_mortem_lines.append(f' [a] [ Armor      ]   {self.player.equipment.get_item_in_slot(EquipmentType.ARMOR).name if self.player.equipment.item_is_equipped(EquipmentType.ARMOR) else None}\n')
+            if self.player.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON):
+                ammo_text = f'[{self.player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.ammo}/{self.player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.max_ammo}]'
             else:
                 ammo_text = f''
-            post_mortem_lines.append(f' [b] [ Weapon     ]   {self.player.equipment.weapon.name if self.player.equipment.weapon else None} {ammo_text}\n')
-            post_mortem_lines.append(f' [c] [ Head       ]   {self.player.equipment.head.name if self.player.equipment.head else None}\n')
-            post_mortem_lines.append(f' [c] [ Legs       ]   {self.player.equipment.legs.name if self.player.equipment.legs else None}\n')
-            post_mortem_lines.append(f' [d] [ Feet       ]   {self.player.equipment.feet.name if self.player.equipment.feet else None}\n')
+            post_mortem_lines.append(f' [b] [ M. Weapon  ]   {self.player.equipment.get_item_in_slot(EquipmentType.MELEE_WEAPON).name if self.player.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON) else None}\n')
+            post_mortem_lines.append(f' [b] [ R. Weapon  ]   {self.player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).name if self.player.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON) else None} {ammo_text}\n')
+            post_mortem_lines.append(f' [c] [ Head       ]   {self.player.equipment.get_item_in_slot(EquipmentType.HEAD).name if self.player.equipment.item_is_equipped(EquipmentType.HEAD) else None}\n')
+            post_mortem_lines.append(f' [c] [ Legs       ]   {self.player.equipment.get_item_in_slot(EquipmentType.LEGS).name if self.player.equipment.item_is_equipped(EquipmentType.LEGS) else None}\n')
+            post_mortem_lines.append(f' [d] [ Feet       ]   {self.player.equipment.get_item_in_slot(EquipmentType.FEET).name if self.player.equipment.item_is_equipped(EquipmentType.FEET) else None}\n')
             post_mortem_lines.append('\n')
             post_mortem_lines.append('-- Inventory -------------------------------------------------\n\n')
             names_only_inventory_list = [i.name for i in self.player.inventory.items]
