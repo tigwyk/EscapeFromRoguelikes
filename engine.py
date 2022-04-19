@@ -246,12 +246,12 @@ class Engine:
 --------------------------------------------------------------
 """
             post_mortem_lines = []
-            summary_line = self.game_rules.flatten(f" {self.player.name}, level {self.player.level.current_level} Human #postmortem_summary#")
+            summary_line = self.game_rules.flatten(f" {self.player.name}, level {self.player.level.current_level} #postmortem_summary#")
             post_mortem_lines.append(summary_line)
             if killer != None:
                 post_mortem_lines.append(f' {killer.name}, a level {killer.level.current_level}\n')
-            # else:
-            #     post_mortem_lines.append(f' died to the invisible forces of the Zone\n')
+            else:
+                post_mortem_lines.append(f' the invisible forces of the Zone\n')
             post_mortem_lines.append('\n')
             post_mortem_lines.append('-- Special levels --------------------------------------------\n\n')
             post_mortem_lines.append(f' Bunker levels explored : {self.game_world.current_floor}\n\n')
