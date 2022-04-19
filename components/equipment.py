@@ -80,11 +80,8 @@ class Equipment(BaseComponent):
                 item_slot.item = item
                 if add_message:
                     self.equip_message(item.name)
-                if(item.equippable.equipment_type == EquipmentType.RANGED_WEAPON):
-                    # print(f"Playing reload equip sound for {self.parent.name}")
-                    # print(f"Player is? {self.engine.player}")
-                    # play_sound('reload')
-                    pass
+                    if item.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
+                        play_sound('reload')
 
     def unequip_from_slot(self, equipment_type: EquipmentType, add_message: bool) -> None:
         for item_slot in self.item_slots:

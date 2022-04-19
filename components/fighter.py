@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import color
 import sound
+import copy
 from components.base_component import BaseComponent
 from render_order import RenderOrder
 
@@ -62,7 +63,7 @@ class Fighter(BaseComponent):
             death_message = "You died!"
             death_message_color = color.player_die
             roubles_to_reward = 0
-            self.engine.player.fighter.killer = self.engine.player.fighter.fighting
+            self.engine.player.fighter.killer = copy.deepcopy(self.engine.player.fighter.fighting)
             self.engine.dump_character_log()
             sound.play_sound('death')
             sound.play_sound('game_over')
