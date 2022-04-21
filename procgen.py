@@ -66,7 +66,7 @@ def load_rules():
 
     grammar = tracery.Grammar(rules)
     grammar.add_modifiers(base_english)
-    print(f"load_rules: {grammar.flatten('#text#')}")
+    # print(f"load_rules: {grammar.flatten('#text#')}")
     return grammar
 
 def get_max_value_for_floor(
@@ -357,7 +357,7 @@ def generate_random_overworld(
     player = engine.player
     overworld_music = "overworld_music"
     worldmap = GameMap(engine, map_width, map_height, overworld_music, entities=[player])
-    print(f"Generate_random_overworld: {worldmap}")
+    # print(f"Generate_random_overworld: {worldmap}")
     
     noise = tcod.noise.Noise(
             dimensions=2,

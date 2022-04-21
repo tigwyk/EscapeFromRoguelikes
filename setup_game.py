@@ -48,9 +48,9 @@ def new_game() -> Engine:
     
     engine.game_rules = procgen.load_rules()
 
-    print(f"Game rules: {engine.game_rules}")
-    for i in range(0,10):
-        print(engine.game_rules.flatten(f"{i+1}. {player.name}#fake_postmortem#"))
+    # print(f"Game rules: {engine.game_rules}")
+    # for i in range(0,10):
+    #     print(engine.game_rules.flatten(f"{i+1}. {player.name}#fake_postmortem#"))
 
     engine.game_world = GameWorld(
         engine=engine,
