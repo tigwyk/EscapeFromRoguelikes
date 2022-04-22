@@ -8,7 +8,6 @@ from exceptions import Impossible
 
 import actions
 import color
-import sound
 
 if TYPE_CHECKING:
     from entity import Actor, Item

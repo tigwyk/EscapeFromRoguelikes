@@ -10,7 +10,6 @@ import tcod
 import entity_factories
 from maps import GameMap
 import tile_types
-import sound
 import json
 
 import tracery

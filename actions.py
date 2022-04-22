@@ -5,7 +5,6 @@ from typing import Optional, Tuple, TYPE_CHECKING
 import color
 from components import ammo_container
 import exceptions
-import sound
 
 from pprint import pprint
 
@@ -168,7 +167,7 @@ class ReloadAction(Action):
                                 # print(f"Adding ammo: {ammo_needed}")
                                 self.item.equippable.ammo += ammo_needed
                                 self.engine.message_log.add_message(f"You reload the {self.item.name}!")
-                                sound.play_sound('reload')
+                                self.engine.sound.play_sound('reload')
                                 if(mag.ammo_container.ammo < 1):
                                         mag.ammo_container.consume()  
                                     
@@ -191,7 +190,8 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
-            sound.play_sound('stairs')
+            # self.engine.sound.play_music(self.engine.game_map.music)
+            # self.engine.sound.play_sound('stairs')
             self.engine.message_log.add_message(
                 "You descend the staircase.", color.descend
             )

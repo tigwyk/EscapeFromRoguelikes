@@ -18,22 +18,26 @@ import exceptions
 from message_log import MessageLog
 import render_functions
 from equipment_types import EquipmentType
+from sound import Sound
 
 if TYPE_CHECKING:
     from entity import Actor
     from maps import GameMap, GameWorld
     from camera import Camera
 
+
 class Engine:
     game_map: GameMap
     game_world: GameWorld
     camera: Camera
+    sound: Sound
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
         self.game_rules = None
+        self.sound = Sound()
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:

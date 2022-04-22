@@ -4,7 +4,6 @@ from typing import Optional, TYPE_CHECKING
 
 import actions
 import color
-import sound
 import components.ai
 import components.inventory
 from components.base_component import BaseComponent
@@ -86,7 +85,7 @@ class HealingConsumable(Consumable):
                 f"You consume the {self.parent.name}, and recover {amount_recovered} HP!",
                 color.health_recovered,
             )
-            sound.play_sound('medkit')
+            self.engine.sound.play_sound('medkit')
             self.consume()
         else:
             raise Impossible(f"Your health is already full.")

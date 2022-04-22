@@ -13,7 +13,6 @@ from input_handlers import (
 )
 import actions
 import color
-import sound
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -112,7 +111,7 @@ class Equippable(BaseComponent):
         self.ammo = self.ammo - 1
         actor.fighter.fighting = target
         target.fighter.fighting = actor
-        sound.play_sound('pistol_shot')
+        self.engine.sound.play_sound('pistol_shot')
 
 
 class Blade(Equippable):
