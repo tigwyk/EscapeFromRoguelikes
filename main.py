@@ -25,6 +25,8 @@ def main() -> None:
     screen_width = 80
     screen_height = 60
 
+    tcod.lib.SDL_SetHint(b"SDL_RENDER_SCALE_QUALITY", b"0")
+
     tileset = tcod.tileset.load_tilesheet(
         # "img\dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
         "img\Taffer_10x10.png", 16, 16, tcod.tileset.CHARMAP_CP437
