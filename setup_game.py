@@ -109,8 +109,8 @@ class MainMenu(input_handlers.BaseEventHandler):
 
     def __init__(self):
         self.sound = Sound()
-        # self.main_menu_music = self.sound.play_music("main_menu")
-        self.sound.test_sound()
+        self.main_menu_music = self.sound.play_music("main_menu")
+        # self.sound.test_sound()
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
@@ -124,7 +124,8 @@ class MainMenu(input_handlers.BaseEventHandler):
             alignment=tcod.CENTER,
         )
         console.print(
-            console.width // 2,
+            # console.width // 2,
+            4,
             console.height - 2,
             "By Tigwyk",
             fg=color.menu_title,
@@ -152,7 +153,7 @@ class MainMenu(input_handlers.BaseEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:
             try:
-                # self.main_menu_music.pause() if self.main_menu_music.playing else None
+                # self.main_menu_music.stop()
                 return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
@@ -160,8 +161,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()  # Print to stderr.
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
-            # self.sound.play_sound('new_game')
-            # self.main_menu_music.pause() if self.main_menu_music.playing else None
+            self.sound.play_sound('new_game')
+            # self.main_menu_music.stop()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None
