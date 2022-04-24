@@ -73,7 +73,7 @@ def new_game() -> Engine:
         f"You are {player.name}.", color.red
     )
 
-    engine.sound.play_music(engine.game_map.music)
+    # engine.sound.play_music(engine.game_map.music)
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
@@ -109,7 +109,7 @@ class MainMenu(input_handlers.BaseEventHandler):
 
     def __init__(self):
         self.sound = Sound()
-        self.main_menu_music = self.sound.play_music("main_menu")
+        # self.main_menu_music = self.sound.play_music("main_menu")
         # self.sound.test_sound()
 
     def on_render(self, console: tcod.Console) -> None:

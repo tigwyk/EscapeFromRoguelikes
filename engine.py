@@ -233,7 +233,7 @@ class Engine:
         save_data = lzma.compress(pickle.dumps(self))
         with open(filename, "wb") as f:
             f.write(save_data)
-
+    
     def dump_character_log(self) -> None:
         post_mortem_path = 'mortem'
         try:
