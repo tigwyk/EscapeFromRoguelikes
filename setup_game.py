@@ -109,7 +109,7 @@ class MainMenu(input_handlers.BaseEventHandler):
 
     def __init__(self):
         self.sound = Sound()
-        # self.main_menu_music = self.sound.play_music("main_menu")
+        self.main_menu_music = self.sound.play_music("main_menu")
         # self.sound.test_sound()
 
     def on_render(self, console: tcod.Console) -> None:
