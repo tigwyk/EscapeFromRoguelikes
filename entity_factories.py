@@ -171,7 +171,7 @@ assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rif
 shirt = Item(
     char="[",
     color=(139, 69, 19),
-    name="tattered shirt",
+    name=f"tattered shirt",
     equippable=equippable.BodyArmor(defense_bonus=1),
 )
 

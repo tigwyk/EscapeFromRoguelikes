@@ -9,7 +9,6 @@ import tcod.color
 from random import randint
 import itertools
 import math
-import sound
 
 from pprint import pprint
 

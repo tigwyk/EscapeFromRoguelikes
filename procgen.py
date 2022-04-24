@@ -10,7 +10,12 @@ import tcod
 import entity_factories
 from maps import GameMap
 import tile_types
-import sound
+import json
+
+import tracery
+from tracery.modifiers import base_english
+
+import pathlib
 
 import numpy as np
 
@@ -48,6 +53,20 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     5: [(entity_factories.mutant1, 30),(entity_factories.mutant2, 10)],
     7: [(entity_factories.mutant1, 60),(entity_factories.mutant2, 30)],
 }
+
+def load_rules():
+    rules_dir = pathlib.Path('data')
+
+    rules = {}
+
+    for rules_file in rules_dir.glob("*.json"):
+        with open(rules_file, 'r') as f:
+            rules.update( json.load(f) )
+
+    grammar = tracery.Grammar(rules)
+    grammar.add_modifiers(base_english)
+    # print(f"load_rules: {grammar.flatten('#text#')}")
+    return grammar
 
 def get_max_value_for_floor(
     max_value_by_floor: List[Tuple[int, int]], floor: int
@@ -337,7 +356,7 @@ def generate_random_overworld(
     player = engine.player
     overworld_music = "overworld_music"
     worldmap = GameMap(engine, map_width, map_height, overworld_music, entities=[player])
-    print(f"Generate_random_overworld: {worldmap}")
+    # print(f"Generate_random_overworld: {worldmap}")
     
     noise = tcod.noise.Noise(
             dimensions=2,
@@ -504,3 +523,6 @@ def hline_right(map, x, y):
         map[x][y].blocked = False
         map[x][y].block_sight = False
         x += 1
+
+def random_occupation(engine):
+    return engine.game_rules.flatten('#occupation#')

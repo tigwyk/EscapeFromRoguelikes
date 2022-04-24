@@ -8,6 +8,7 @@ import traceback
 from turtle import back
 from typing import Optional
 from main import main
+from sound import Sound
 
 import tcod
 
@@ -16,7 +17,10 @@ from engine import Engine
 import entity_factories
 from maps import GameWorld
 import input_handlers
-import sound
+
+from russian_names import RussianNames
+
+import procgen
 
 # Load the background image and remove the alpha channel.
 # background_image = tcod.image.load(".\img\menu_background.png")[:, :, :3]
@@ -41,6 +45,12 @@ def new_game() -> Engine:
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
+    
+    engine.game_rules = procgen.load_rules()
+
+    # print(f"Game rules: {engine.game_rules}")
+    # for i in range(0,10):
+    #     print(engine.game_rules.flatten(f"{i+1}. {player.name}#fake_postmortem#"))
 
     engine.game_world = GameWorld(
         engine=engine,
@@ -63,7 +73,7 @@ def new_game() -> Engine:
         f"You are {player.name}.", color.red
     )
 
-    sound.play_music(engine.game_map.music)
+    # engine.sound.play_music(engine.game_map.music)
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
@@ -82,6 +92,8 @@ def new_game() -> Engine:
     player.inventory.items.append(pistol)
     player.equipment.toggle_equip(pistol, add_message=False)
 
+    # player.lore.previous_job = procgen.random_occupation(engine)
+
     return engine
 
 
@@ -96,7 +108,9 @@ class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
 
     def __init__(self):
-        self.main_menu_music = sound.play_music("main_menu")
+        self.sound = Sound()
+        self.main_menu_music = self.sound.play_music("main_menu")
+        # self.sound.test_sound()
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
@@ -110,7 +124,8 @@ class MainMenu(input_handlers.BaseEventHandler):
             alignment=tcod.CENTER,
         )
         console.print(
-            console.width // 2,
+            # console.width // 2,
+            4,
             console.height - 2,
             "By Tigwyk",
             fg=color.menu_title,
@@ -138,7 +153,7 @@ class MainMenu(input_handlers.BaseEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:
             try:
-                self.main_menu_music.pause() if self.main_menu_music.playing else None
+                # self.main_menu_music.stop()
                 return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
@@ -146,8 +161,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()  # Print to stderr.
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
-            sound.play_sound('new_game')
-            self.main_menu_music.pause() if self.main_menu_music.playing else None
+            self.sound.play_sound('new_game')
+            # self.main_menu_music.stop()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None

@@ -1,109 +1,87 @@
 import time
 
-import pyglet
+import tcod.sdl.audio
+import soundfile  # pip install soundfile
 
-# import tcod.sdl.audio
+from pprint import pprint
 
-soundFiles = {
-    'reload':'audio/shotgun_reload.wav',
-    'pistol_shot':'audio/pistol_shot.wav',
-    'stairs' : 'audio/stairs.mp3',
-    'medkit' : 'audio/med_medkit_offline_use.wav',
-    'game_over' : 'audio/game_over.wav',
-    'new_game' : 'audio/new_game.wav',
-    'death' : 'audio/scav6_death_03.wav',
-    }
-# mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
-reload_sound = pyglet.media.StaticSource(pyglet.media.load(soundFiles['reload']))
-pistol_shot_sound = pyglet.media.StaticSource(pyglet.media.load(soundFiles['pistol_shot']))
-medkit_sound = pyglet.media.StaticSource(pyglet.media.load(soundFiles['medkit']))
+class Sound:
+    def __init__(self):
+        # print("PySoundFile version:", soundfile.__version__)
+        self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
+        self.load_sound_files()
+        pass
 
-stairs_sound = pyglet.media.load(soundFiles['stairs'])
-
-new_game_sound = pyglet.media.load(soundFiles['new_game'])
-game_over_sound = pyglet.media.load(soundFiles['game_over'])
-
-death_sound = pyglet.media.load(soundFiles['death'])
-
-soundMap = {
-    'reload' : reload_sound,
-    'pistol_shot' : pistol_shot_sound,
-    'stairs' : stairs_sound,
-    'medkit' : medkit_sound,
-    'game_over' : game_over_sound,
-    'new_game' : new_game_sound,
-    'death' : death_sound
-}
-
-def init():
-    pyglet.app.run()
-
-def play_music(music: str = ""):
-    # menu_player = pyglet.media.Player()
-    menuFile = "audio/menu_lurker.wav"
-    exploringFile = "audio/LURKER_Exploring.mp3"
-    overworldFile = "audio/LURKER_overworld_theme.mp3"
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['mixer']
+        return state
     
-    music_match = {
-        "overworld_music": overworldFile,
-        "exploring_music": exploringFile,
-        "main_menu"      : menuFile,
-    }
-    
-    try:
-        music = pyglet.media.load(filename=music_match[music])
-        # menu_player.volume = 0.5
-        # menu_player.queue(music)
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
+
+    def load_sound_files(self):
+        self.soundFiles = {
+        'reload':'audio/shotgun_reload.wav',
+        'pistol_shot':'audio/pistol_shot.wav',
+        'stairs' : 'audio/stairs.mp3',
+        'medkit' : 'audio/med_medkit_offline_use.wav',
+        'game_over' : 'audio/game_over.wav',
+        'new_game' : 'audio/new_game.wav',
+        'death' : 'audio/scav6_death_03.wav',
+        }
+
+    def test_sound(self):
+        print(f"Mixer: {vars(self.mixer)}")
+        print(f'Mixer Device: {vars(self.mixer.device)}')
+        sound, samplerate = soundfile.read(file="audio/menu_lurker.wav",dtype='float32')
+        print(f"Sound ({sound}) Dtype ({sound.dtype}) Samplerate ({samplerate})")
+        print(f"Available SoundFile formats: {soundfile.available_formats()}")
+
+        sound = self.mixer.device.convert(sound, samplerate)  # Needed if dtype or samplerate differs.
+        channel = self.mixer.play(sound)
+        # while channel.busy:
+        #     time.sleep(0.001)
+
+    def play_music(self, music: str = ""):
+        menuFile = "audio/menu_lurker.wav"
+        exploringFile = "audio/LURKER_Exploring.wav"
+        overworldFile = "audio/LURKER_overworld_theme.wav"
         
-        menu_player = music.play()
-        menu_player.volume = 0.04
-        return menu_player
-    except Exception as e:
-        print(f"Audio error in play_music {e}")
-        exit()
-
-def exploring_music():
-    # menu_player = pyglet.media.Player()
-    soundFile = "audio/LURKER_Exploring.mp3"
-    try:
-        music = pyglet.media.load(filename=soundFile)
-        # menu_player.volume = 0.5
-        # menu_player.queue(music)
+        music_match = {
+            "overworld_music": overworldFile,
+            "exploring_music": exploringFile,
+            "main_menu"      : menuFile,
+        }
         
-        player = music.play()
-        player.volume = 0.04
-        return player
-    except Exception as e:
-        print(f"Audio error in exploring_music {e}")
-        exit()    
-    
-def overworld_music():
-    # menu_player = pyglet.media.Player()
-    soundFile = "audio/LURKER_overworld_theme.mp3"
-    try:
-        music = pyglet.media.load(filename=soundFile)
-        # menu_player.volume = 0.5
-        # menu_player.queue(music)
-        
-        player = music.play()
-        player.volume = 0.04
-        return player
-    except Exception as e:
-        print(f"Audio error in exploring_music {e}")
-        exit()    
+        try:
+            sound, samplerate = self.read_audio_file(music_match[music])
 
-def play_sound(soundId=None):
-    # player = pyglet.media.Player()
-    if(soundId == None):
-        return
+            sound = self.mixer.device.convert(sound, samplerate)  # Needed if dtype or samplerate differs.
+            channel = self.mixer.play(sound=sound, volume=0.04)
+
+            return channel
+        except Exception as e:
+            print(f"Audio error in play_music {e}")
+            exit()
+
+    def play_sound(self, soundId=None):
+        if(soundId == None):
+            return
+        
+        soundFile = self.soundFiles[soundId]
+        try:
+            sound, samplerate = self.read_audio_file(soundFile)
+            sound = self.mixer.device.convert(sound, samplerate)  # Needed if dtype or samplerate differs.
+            channel = self.mixer.play(sound=sound, volume=0.1)
+            return channel
+        except Exception as e:
+            print(f"Audio error in play_sound {e}")
+            exit()
     
-    soundFile = soundMap[soundId]
-    # try:
-    #     # player.queue(reload_sound)
-    #     soundMap[soundId].play()
-    # except:
-    #     print("Audio error in play_sound")
-    #     exit()
-    player = soundFile.play()
-    player.volume = 0.1
+    def read_audio_file(self, filename):
+        if(filename):
+            signature, samplerate = soundfile.read(file=filename,dtype='float32')
+            return signature, samplerate
 
