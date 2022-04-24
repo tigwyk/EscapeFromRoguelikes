@@ -274,8 +274,8 @@ def generate_bsp_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    
-    map = GameMap(engine, map_width, map_height, entities=[player])
+    exploring_music = "exploring_music"
+    map = GameMap(engine, map_width, map_height, music=exploring_music, entities=[player])
 
     #Empty global list for storing room coordinates
     rooms: List[RectangularRoom] = []
