@@ -7,10 +7,19 @@ from pprint import pprint
 
 class Sound:
     def __init__(self):
-        print("PySoundFile version:", soundfile.__version__)
+        # print("PySoundFile version:", soundfile.__version__)
         self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
         self.load_sound_files()
         pass
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['mixer']
+        return state
+    
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
 
     def load_sound_files(self):
         self.soundFiles = {
@@ -24,8 +33,8 @@ class Sound:
         }
 
     def test_sound(self):
-        print(f"Mixer: {vars(mixer)}")
-        print(f'Mixer Device: {vars(mixer.device)}')
+        print(f"Mixer: {vars(self.mixer)}")
+        print(f'Mixer Device: {vars(self.mixer.device)}')
         sound, samplerate = soundfile.read(file="audio/menu_lurker.wav",dtype='float32')
         print(f"Sound ({sound}) Dtype ({sound.dtype}) Samplerate ({samplerate})")
         print(f"Available SoundFile formats: {soundfile.available_formats()}")
