@@ -45,9 +45,7 @@ def main() -> None:
         width=screen_width,
         height=screen_height,
         order="F",
-        # magnification=2,
     )
-
 
     with tcod.context.new(
         width=WIDTH,
@@ -64,7 +62,7 @@ def main() -> None:
             while True:
                 root_console.clear()
                 handler.on_render(console=root_console)
-                context.present(root_console, integer_scaling=True, keep_aspect=True)
+                context.present(root_console, keep_aspect=True)
 
                 try:
                     for event in tcod.event.wait():
