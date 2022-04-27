@@ -296,7 +296,7 @@ class GameWorld:
             )
             new_faction = Faction(name=self.engine.game_rules.flatten("#faction_name.capitalize#"),leader=leader)
             factions.append(new_faction)
-            print(f"{new_faction.name} : {new_faction.leader.name}")
+            # print(f"{new_faction.name} : {new_faction.leader.name}")
             # print(self.engine.game_rules.flatten("#artifact_name.capitalize#"))
         self.factions = factions
 
