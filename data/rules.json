@@ -1,5 +1,5 @@
 {
-    "colour" : [ "red", "green", "blue" ],
+    "colour" : [ "red", "gray","cyan","green", "blue", "rust", "dust", "purple", "silver", "silvery", "gold", "golden", "greenish", "reddish", "yellow", "orange", "brown" ],
     "action" : ["rolled", "bounced" ],
     "occupation" : [
         "accountant",
@@ -109,6 +109,7 @@
     "zone_title" : ["scavenger","conqueror","explorer","killer","absolute chad","coward","pacifist", "hero"],
     "zone_adjective" : ["hyper-intelligent", "feral", "mutant", "glowing"],
     "animal" : ["raccoon","cat","dog","pig"],
+    "gang_word" : ["mafia","crime family","organization","club","gang","group","coalition","militia", "consortium", "league", "association", "corporation", "alliance", "union", "partnership", "federation","syndicate"],
     "material" : ["hard metal", "soft metal", "plastic", "wood", "crystal", "glass","rubber", "needles", "vine", "stiff cloth", "silk", "hair", "water", "milk", "blood", "chitin", "meat", "sinew", "bone", "light"],
     "thing" : ["trenchcoat","rain jacket","leather jacket","dress", "blanket"],
     "number_animals_in_thing" : ["three #adjective1#, #adjective2# #animal.s# in a #thing# made of #material#"],
@@ -116,5 +117,15 @@
     "random_protagonist" : ["Fred", "Lucille", "Jim", "Jennifer", "Bill", "Amy", "Sarah", "Tom"],
     "text" : [ "The #colour# #occupation# ball #action# down the hall." ],
     "postmortem_summary" : [ "#zone_title# in the Zone and #occupation# #past_life_phrasing#, was #past_tense_death_verb# by" ],
-    "fake_postmortem" : [", #zone_title# in the Zone and #occupation# #past_life_phrasing#, was #past_tense_death_verb# by #random_enemy#"]
+    "fake_postmortem" : [", #zone_title# in the Zone and #occupation# #past_life_phrasing#, was #past_tense_death_verb# by #random_enemy#"],
+    "faction_name_begin" : ["#zone_title# #animal#","#artifact_colour# #artifact_material#","#animal# #death_verb#", "#zone_adjective# #occupation#","#artifact_colour# #artifact_shape#"],
+    "faction_name" : ["#faction_name_begin# #gang_word#"],
+    "artifact_effect" : ["glowing","sparking","hovering","weightless","thrumming","buzzing","frictionless","heavy","semi-visible","staticky","flickering","unsettling","silent","warm","cold","tingly","quivering","shapeshifting","glittering","mundane"],
+    "artifact_colour" : ["red","orange","yellow","green","blue","indigo","violet","pink","teal","white","black","brown","gray","variegated","pearlescent","coppery","golden","silver","metallic","clear"],
+    "artifact_shape" : ["ring","stick","sheet","arc","sock","spike","ball","disc","cube","tablet","cord","bowl","cone","cylinder","egg","pyramid","lattice","mobius strip","contraption","icosahedron"],
+    "artifact_material" : ["hard metal","soft metal","plastic","wood","crystal","glass","rubber","needles","vine","stiff cloth","silk","hair","water","milk","blood","chitin","meat","sinew","bone","light"],
+    "artifact_name" : ["#artifact_effect# #artifact_colour# #artifact_shape# of #artifact_material#"],
+    "nickname" : ["ace","angel","blaster","blinky","braces","brainiac","buckaroo","cass","cheese","charlie","computer","chuckles","cookie","cop","cranky","crow","cuddles","cubby","deadeye","deedee","doc","ducky","dusty","egg","fingers","fossil","fraggle","frogger","gemini","glitch","goose","greasy","hammerhead","happy","hotdog","jack","jeep","joe","joker","kestrel","kid","killer","kingfisher","knife","lex","lucifer","lucky","mars","montana","mopey","mouse","mushy","nails","nickel","nico","pants","peg-leg","pickle","piggy","professor","pucker","ripcord","rock","rookie","rubber","sam","skipper","skunk","sly","smiley","smitty","smokey","snuffy","socks","stinky","storm","spider","squirrel","sugar","teeth","tex","tiny","trouble","turtle","weasel","wheels","whisper","witchy","wolf","x-ray","yank","zed","zero","zipper","zork"],
+    "faction_leader_nickname" : ["#colour# #nickname#","#nickname#","#artifact_material# #nickname#", "#artifact_material# #artifact_shape#"],
+    "neutral_name" : ["ainsley","akira","alvarez","amari","ash","bao","bird","callahan","cardozo","case","charlie","chandra","chin","dae-young","decker","dominguez","doolittle","eastman","ejiro","esposito","evers","fox","fuji","graves","grey","harper","holtz","hwang","idowu","ikram","imani","iseul","ishikawa","ivory","joshi","joyce","jin","jyun","karga","kayin","keene","kelsey","kim","kiran","kobayashi","kovac","kwok","lakshmi","lee","lennox","long","maas","mackenzie","macleod","matsumoto","mcgee","morgan","nash","nikora","nguyen","park","patil","qamar","quinn","reese","robin","rowan","riley","ryder","sacco","santana","sawyer","shay","shahnaz","small","sommer","sun","sydney","teagan","temple","tran","turner","urias","uzun","val","vanja","vasquez","vaughn","voigt","wall","watts","weaver","wong","wu","xu","xylander","young","yu","zhang","zima"]
 }
