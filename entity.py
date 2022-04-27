@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from components.ammo_container import AmmoContainer
     from components.lore import Lore
     from maps import GameMap
+    from faction import Faction
 
 T = TypeVar("T", bound="Entity")
 
@@ -105,6 +106,8 @@ class Entity:
         self.y += dy
 
 class Actor(Entity):
+    faction: Faction
+
     def __init__(
         self,
         *,
@@ -162,6 +165,9 @@ class Actor(Entity):
 
         # if(gen_name):
         #     self.name = self.generate_russian_name()
+
+    def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
+        super().spawn(gamemap=gamemap, x=x, y=y)
 
     @property
     def is_alive(self) -> bool:

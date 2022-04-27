@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, Tuple, TYPE_CHECKING
+from typing import Iterable, Iterator, Optional, Tuple, List, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 from tcod.console import Console
@@ -12,7 +12,16 @@ import math
 
 from pprint import pprint
 
+from components.ai import HostileEnemy, HostileHumanEnemy
+from components.equipment import Equipment
+from components.fighter import Fighter
+from components.inventory import Inventory
+from components.level import Level
+from components.currency import Currency
+from components.lore import Lore
+
 from entity import Actor, Item
+from faction import Faction
 import tile_types
 
 if TYPE_CHECKING:
@@ -228,6 +237,14 @@ class GameWorld:
     """
     Holds the settings for the GameMap, and generates new maps when moving down the stairs.
     """
+    engine: Engine
+    viewport_width: int
+    viewport_height: int
+    max_rooms: int
+    room_min_size: int
+    room_max_size: int
+    current_floor: int
+    factions: List(Faction)
 
     def __init__(
         self,
@@ -240,7 +257,7 @@ class GameWorld:
         max_rooms: int,
         room_min_size: int,
         room_max_size: int,
-        current_floor: int = 0
+        current_floor: int = 0,
     ):
         
         overworld: GameMap
@@ -262,7 +279,26 @@ class GameWorld:
 
         self.current_floor = current_floor
 
+        self.factions = None
+
         
+    def generate_factions(self):
+        factions = []
+        for x in range(0,10):
+            leader = Actor(
+                name=self.engine.game_rules.flatten("#neutral_name.capitalize# \'#faction_leader_nickname.capitalize#\' #neutral_name.capitalize#"),
+                ai_cls=HostileEnemy,
+                equipment=Equipment(),
+                fighter=Fighter(hp=3, base_defense=0, base_power=4),
+                inventory=Inventory(capacity=0),
+                level=Level(xp_given=10),
+                currency=Currency(roubles=0)
+            )
+            new_faction = Faction(name=self.engine.game_rules.flatten("#faction_name.capitalize#"),leader=leader)
+            factions.append(new_faction)
+            print(f"{new_faction.name} : {new_faction.leader.name}")
+            # print(self.engine.game_rules.flatten("#artifact_name.capitalize#"))
+        self.factions = factions
 
     def generate_overworld(self):
         from procgen import generate_random_overworld

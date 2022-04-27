@@ -64,6 +64,8 @@ def new_game() -> Engine:
     # engine.game_world.generate_floor()
     engine.update_fov()
     engine.update_light_levels()
+    
+    engine.game_world.generate_factions()
 
     engine.message_log.add_message(
         "Welcome to L.U.R.K.E.R.", color.welcome_text
