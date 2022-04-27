@@ -7,7 +7,7 @@ from pprint import pprint
 
 class Sound:
     def __init__(self):
-        # print("PySoundFile version:", soundfile.__version__)
+        print("PySoundFile version:", soundfile.__version__)
         self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
         self.load_sound_files()
         pass
@@ -25,7 +25,7 @@ class Sound:
         self.soundFiles = {
         'reload':'audio/shotgun_reload.wav',
         'pistol_shot':'audio/pistol_shot.wav',
-        'stairs' : 'audio/stairs.mp3',
+        'stairs' : 'audio/stairs.wav',
         'medkit' : 'audio/med_medkit_offline_use.wav',
         'game_over' : 'audio/game_over.wav',
         'new_game' : 'audio/new_game.wav',
@@ -44,8 +44,8 @@ class Sound:
         # while channel.busy:
         #     time.sleep(0.001)
 
-    def play_music(self, music: str = ""):
-        menuFile = "audio/menu_lurker.wav"
+    def play_music(self, music: str = "", volume: float = 0.1):
+        menuFile = "audio/menu_lurker_remastered.wav"
         exploringFile = "audio/LURKER_Exploring.wav"
         overworldFile = "audio/LURKER_overworld_theme.wav"
         
@@ -59,14 +59,14 @@ class Sound:
             sound, samplerate = self.read_audio_file(music_match[music])
 
             sound = self.mixer.device.convert(sound, samplerate)  # Needed if dtype or samplerate differs.
-            channel = self.mixer.play(sound=sound, volume=0.04)
+            channel = self.mixer.play(sound=sound, volume=volume)
 
             return channel
         except Exception as e:
             print(f"Audio error in play_music {e}")
             exit()
 
-    def play_sound(self, soundId=None):
+    def play_sound(self, soundId=None, volume: float = 0.2):
         if(soundId == None):
             return
         
@@ -74,7 +74,7 @@ class Sound:
         try:
             sound, samplerate = self.read_audio_file(soundFile)
             sound = self.mixer.device.convert(sound, samplerate)  # Needed if dtype or samplerate differs.
-            channel = self.mixer.play(sound=sound, volume=0.1)
+            channel = self.mixer.play(sound=sound, volume=volume)
             return channel
         except Exception as e:
             print(f"Audio error in play_sound {e}")
