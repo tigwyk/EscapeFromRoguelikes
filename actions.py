@@ -198,6 +198,13 @@ class TakeStairsAction(Action):
         else:
             raise exceptions.Impossible("There are no stairs here.")
 
+class ActivateAction(Action):
+    def perform(self) -> None:
+        """
+        Activate thing at player's location
+        """
+        pass
+
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):
         super().__init__(entity)
