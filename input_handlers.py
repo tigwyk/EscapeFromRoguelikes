@@ -14,7 +14,8 @@ from actions import (
     ReloadAction,
     TakeStairsAction,
     EquipAction,
-    DropItemAction
+    DropItemAction,
+    ActivateAction
 )
 import color
 import exceptions
@@ -61,6 +62,10 @@ MOVE_KEYS = {
 WAIT_KEYS = {
     tcod.event.K_PERIOD,
     tcod.event.K_w,
+}
+
+ACTIVATE_KEYS = {
+    tcod.event.K_e,
 }
 
 CONFIRM_KEYS = {
@@ -778,6 +783,13 @@ class MainGameEventHandler(EventHandler):
             tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
         ):
             return TakeStairsAction(player)
+
+        if key in ACTIVATE_KEYS:
+            print(f'Pressing Activate Key')
+            if (player.x, player.y) == self.engine.game_map.downstairs_location:
+                return TakeStairsAction(player)
+            else:
+                return ActivateAction(player)
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
