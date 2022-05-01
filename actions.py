@@ -190,8 +190,9 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
-            # self.engine.sound.play_music(self.engine.game_map.music)
-            # self.engine.sound.play_sound('stairs')
+            self.engine.sound.mixer.stop()
+            self.engine.sound.play_music(self.engine.game_map.music)
+            self.engine.sound.play_sound('stairs')
             self.engine.message_log.add_message(
                 "You descend the staircase.", color.descend
             )
@@ -237,7 +238,7 @@ class MeleeAction(ActionWithDirection):
 
         damage = self.entity.fighter.power - target.fighter.defense
 
-        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.weapon.name if self.entity.equipment.weapon is not None else 'their fists'}"
+        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.get_item_in_slot(EquipmentType.MELEE_WEAPON).name if self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON) else 'their fists'}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
         else:
@@ -247,7 +248,9 @@ class MeleeAction(ActionWithDirection):
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
-            target.fighter.hp -= damage
+            target.fighter.take_damage(damage)
+            self.entity.fighter.after_melee_damage(damage, target)
+            target.fighter.after_damaged(damage, self.entity)
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color

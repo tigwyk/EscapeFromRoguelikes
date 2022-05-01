@@ -43,3 +43,8 @@ blades = Skill(
     name='Blades',
     level=1
 )
+
+misc = Skill(
+    name='Placeholder',
+    level=1
+)

@@ -52,6 +52,7 @@ class GameMap:
         self.entities = set(entities)
 
         self.music = music
+        print(f"Map music: {self.music}")
         
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 

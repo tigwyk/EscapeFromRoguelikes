@@ -6,6 +6,7 @@ import color
 import copy
 from components.base_component import BaseComponent
 from render_order import RenderOrder
+from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -57,6 +58,28 @@ class Fighter(BaseComponent):
         else:
             return 0
 
+    def after_melee_damage(self, damage_dealt, target):
+        equipment = self.parent.equipment
+        if equipment:
+            for item_slot in equipment.item_slots:
+                if item_slot.item and item_slot.item.equippable.equipment_type in (EquipmentType.MELEE_WEAPON,EquipmentType.HEAD):
+                    item_slot.item.equippable.after_melee_damage(damage_dealt, target)
+
+    def after_ranged_damage(self, damage_dealt, target):
+        equipment = self.parent.equipment
+        if equipment:
+            for item_slot in equipment.item_slots:
+                if item_slot.item and item_slot.item.equippable.equipment_type in (EquipmentType.RANGED_WEAPON,EquipmentType.HEAD):
+                    item_slot.item.equippable.after_ranged_damage(damage_dealt, target)
+
+    def after_damaged(self, damage_taken, source):
+        if self.engine.game_map.visible[self.parent.x, self.parent.y]:
+            equipment = self.parent.equipment
+            if equipment:
+                for item_slot in equipment.item_slots:
+                    if item_slot.item and item_slot.item.equippable.equipment_type in (EquipmentType.ARMOR,EquipmentType.HEAD):
+                        item_slot.item.equippable.after_damaged(damage_taken, source)
+
     def die(self) -> None:
         if self.engine.player is self.parent:
             death_message = "You died!"
@@ -64,8 +87,8 @@ class Fighter(BaseComponent):
             roubles_to_reward = 0
             self.engine.player.fighter.killer = copy.deepcopy(self.engine.player.fighter.fighting)
             self.engine.dump_character_log()
-            self.engine.sound.play_sound('death')
-            self.engine.sound.play_sound('game_over')
+            self.engine.sound.play_sound('death', volume=1)
+            self.engine.sound.play_sound('game_over',volume=1.5)
         else:
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die

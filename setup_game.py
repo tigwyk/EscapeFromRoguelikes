@@ -77,9 +77,10 @@ def new_game() -> Engine:
         f"You are {player.name}.", color.red
     )
 
-    # engine.sound.play_music(engine.game_map.music)
+    engine.sound.play_music(engine.game_map.music)
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
+    # sword = copy.deepcopy(entity_factories.sword)
     shirt = copy.deepcopy(entity_factories.shirt)
     pistol = copy.deepcopy(entity_factories.pistol)
 
@@ -97,6 +98,7 @@ def new_game() -> Engine:
     knife.parent = player.inventory
     shirt.parent = player.inventory
     pistol.parent = player.inventory
+    # sword.parent = player.inventory
 
     player.inventory.items.append(knife)
     player.equipment.toggle_equip(knife, add_message=False)
@@ -106,6 +108,9 @@ def new_game() -> Engine:
 
     player.inventory.items.append(pistol)
     player.equipment.toggle_equip(pistol, add_message=False)
+
+    # player.inventory.items.append(sword)
+    # player.equipment.toggle_equip(sword, add_message=False)
 
     # player.lore.previous_job = procgen.random_occupation(engine)
 
@@ -168,7 +173,7 @@ class MainMenu(input_handlers.BaseEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:
             try:
-                # self.main_menu_music.stop()
+                self.main_menu_music.stop()
                 return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
@@ -176,8 +181,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()  # Print to stderr.
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
-            self.sound.play_sound('new_game')
-            # self.main_menu_music.stop()
+            self.sound.play_sound('new_game', volume=0.7)
+            self.main_menu_music.stop()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None

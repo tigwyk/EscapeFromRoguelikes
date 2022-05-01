@@ -7,7 +7,7 @@ from pprint import pprint
 
 class Sound:
     def __init__(self):
-        print("PySoundFile version:", soundfile.__version__)
+        # print("PySoundFile version:", soundfile.__version__)
         self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
         self.load_sound_files()
         pass
@@ -44,7 +44,7 @@ class Sound:
         # while channel.busy:
         #     time.sleep(0.001)
 
-    def play_music(self, music: str = "", volume: float = 0.1):
+    def play_music(self, music: str = "", volume: float = 0.1, loops: int = 0):
         menuFile = "audio/menu_lurker_remastered.wav"
         exploringFile = "audio/LURKER_Exploring.wav"
         overworldFile = "audio/LURKER_overworld_theme.wav"
@@ -59,7 +59,7 @@ class Sound:
             sound, samplerate = self.read_audio_file(music_match[music])
 
             sound = self.mixer.device.convert(sound, samplerate)  # Needed if dtype or samplerate differs.
-            channel = self.mixer.play(sound=sound, volume=volume)
+            channel = self.mixer.play(sound=sound, volume=volume, loops=loops)
 
             return channel
         except Exception as e:

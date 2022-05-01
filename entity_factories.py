@@ -7,7 +7,10 @@ from components.level import Level
 from components.currency import Currency
 from components.lore import Lore
 from components.lightsource import LightSource
+from components.effects import Knockback, ChainLightning
 from components.skills import Skills
+
+from skill import handguns, shotguns, rifles, medical, blades
 from entity import Actor, Item, Entity, Container
 import color
 
@@ -31,7 +34,7 @@ player = Actor(
 
 rat = Actor(
     char="r",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Giant Rat",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -42,7 +45,7 @@ rat = Actor(
 )
 dog = Actor(
     char="d",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Mutant Dog",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -53,7 +56,7 @@ dog = Actor(
 )
 scav = Actor(
     char="s",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Scavenger",
     ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
@@ -160,15 +163,15 @@ combat_knife = Item(
     char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Blade(power_bonus=2)
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3))
+sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3, effects={Knockback(1)}))
 
-pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1))
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1, effects={Knockback(1)}, fire_skill=handguns))
 
-shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2))
+shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2, fire_skill=shotguns, effects={Knockback(1)}))
 
-rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm(power_bonus=4))
+rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm(power_bonus=4, fire_skill=rifles, effects={Knockback(1)}))
 
-assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm(power_bonus=3))
+assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm(power_bonus=3, fire_skill=rifles, effects={Knockback(1)}))
 
 shirt = Item(
     char="[",
