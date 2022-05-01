@@ -785,7 +785,7 @@ class MainGameEventHandler(EventHandler):
             return TakeStairsAction(player)
 
         if key in ACTIVATE_KEYS:
-            print(f'Pressing Activate Key')
+            # print(f'Pressing Activate Key')
             if (player.x, player.y) == self.engine.game_map.downstairs_location:
                 return TakeStairsAction(player)
             else:

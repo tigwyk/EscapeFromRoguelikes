@@ -161,12 +161,12 @@ class Equippable(BaseComponent):
         else:
             attack_color = color.enemy_atk
 
-        if(self.fire_skill):
-            print(f"Checking {self.fire_skill.name}...")
-            if(actor.skills.check(self.fire_skill)):
-                print(f"Pass")
-            else:
-                print(f"Fail")
+        # if(self.fire_skill):
+        #     print(f"Checking {self.fire_skill.name}...")
+        #     if(actor.skills.check(self.fire_skill)):
+        #         print(f"Pass")
+        #     else:
+        #         print(f"Fail")
 
         if damage > 0:
             self.engine.message_log.add_message(
