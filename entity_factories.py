@@ -32,7 +32,7 @@ player = Actor(
 
 rat = Actor(
     char="r",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Giant Rat",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -43,7 +43,7 @@ rat = Actor(
 )
 dog = Actor(
     char="d",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Mutant Dog",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -54,7 +54,7 @@ dog = Actor(
 )
 scav = Actor(
     char="s",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Scavenger",
     ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
@@ -161,11 +161,9 @@ combat_knife = Item(
     char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Blade(power_bonus=2)
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3))
-sword.equippable.add_after_melee_damage_effect(Knockback(1))
+sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3, effects={Knockback(1)}))
 
-pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1))
-pistol.equippable.add_after_ranged_damage_effect(Knockback(1))
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1, effects={Knockback(1)}))
 
 shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2))
 shotgun.equippable.add_after_ranged_damage_effect(Knockback(1))
