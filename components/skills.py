@@ -1,7 +1,8 @@
 from __future__ import annotations
-from email.mime import base
 
 from typing import List, TYPE_CHECKING
+
+import dice
 
 from components.base_component import BaseComponent
 
@@ -19,14 +20,40 @@ class Skills(BaseComponent):
 
     def unlearn(self, skill: Skill) -> None:
         """
-        Removes an item from the inventory and restores it to the game map, at the player's current location.
+        Unlearns a skill
         """
         self.skills.remove(skill)
         self.engine.message_log.add_message(f"You unlearned {skill.name}.")
     
     def learn(self, skill: Skill) -> None:
         """
-        Removes an item from the inventory and restores it to the game map, at the player's current location.
+        Learns a skill
         """
         self.skills.append(skill)
         self.engine.message_log.add_message(f"You learned {skill.name}.")
+    
+    def check(self, skill: Skill) -> bool:
+        if(skill in self.skills):
+            for roll in dice.roll('d100'):
+                if roll > skill.level:
+                    return False
+                else:
+                    return True
+        else:
+            return False
+
+    def learned(self, skill: Skill) -> bool:
+        if(skill in self.skills):
+            return True
+        else:
+            return False
+
+    def skill_by_name(self, name: str) -> Skill:
+        if name in self.skill_names:
+            s = [x for x in self.skills if x.name.lower() == name].pop()
+            # print(s)
+            return s
+
+    @property
+    def skill_names(self) -> list(str):
+        return [x.name.lower() for x in self.skills]

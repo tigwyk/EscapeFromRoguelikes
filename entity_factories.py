@@ -9,6 +9,8 @@ from components.lore import Lore
 from components.lightsource import LightSource
 from components.effects import Knockback, ChainLightning
 from components.skills import Skills
+
+from skill import handguns, shotguns, rifles, medical, blades
 from entity import Actor, Item, Entity, Container
 import color
 
@@ -163,16 +165,13 @@ combat_knife = Item(
 
 sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3, effects={Knockback(1)}))
 
-pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1, effects={Knockback(1)}))
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1, effects={Knockback(1)}, fire_skill=handguns))
 
-shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2))
-shotgun.equippable.add_after_ranged_damage_effect(Knockback(1))
+shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2, fire_skill=shotguns, effects={Knockback(1)}))
 
-rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm(power_bonus=4))
-rifle.equippable.add_after_ranged_damage_effect(Knockback(1))
+rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm(power_bonus=4, fire_skill=rifles, effects={Knockback(1)}))
 
-assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm(power_bonus=3))
-assault_rifle.equippable.add_after_ranged_damage_effect(Knockback(1))
+assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm(power_bonus=3, fire_skill=rifles, effects={Knockback(1)}))
 
 shirt = Item(
     char="[",
