@@ -56,12 +56,6 @@ class Equippable(BaseComponent):
             if self.equipment_type == EquipmentType.MELEE_WEAPON:
                 for e in effects:
                     self.add_after_melee_damage_effect(e)
-            # if self._after_damaged_effects:
-            #     print(f"Added after damaged: {self._after_damaged_effects}")
-            # if self._after_melee_damage_effects:
-            #     print(f"Added after melee: {self._after_melee_damage_effects}")
-            # if self._after_ranged_damage_effects:
-            #     print(f"Added after ranged: {self._after_ranged_damage_effects}")
     
     @property
     def max_ammo(self):
@@ -105,7 +99,7 @@ class Equippable(BaseComponent):
             return charges
 
     def add_after_melee_damage_effect(self, effect):
-        """ Add a component that triggers after doing melee damage."""
+        """ Add a component that triggers after doing melee damage."""        
         self._after_melee_damage_effects.append(effect)
 
     def add_after_ranged_damage_effect(self, effect):
@@ -157,7 +151,7 @@ class Equippable(BaseComponent):
 
         damage = actor.fighter.power - target.fighter.defense
 
-        attack_desc = f"{actor.name.capitalize()} shoots {target.name} with {actor.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).name if actor.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON) is not None else 'a spitball'}"
+        attack_desc = f"{actor.name.capitalize()} shoots {target.name} with {actor.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).name if actor.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON) else 'a spitball'}"
         if actor is self.engine.player:
             attack_color = color.player_atk
         else:
@@ -168,7 +162,7 @@ class Equippable(BaseComponent):
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
             target.fighter.take_damage(damage)
-            actor.fighter.after_melee_damage(damage, target)
+            actor.fighter.after_ranged_damage(damage, target)
             target.fighter.after_damaged(damage, actor)
         else:
             self.engine.message_log.add_message(
