@@ -7,7 +7,7 @@ from pprint import pprint
 
 class Sound:
     def __init__(self):
-        print("PySoundFile version:", soundfile.__version__)
+        # print("PySoundFile version:", soundfile.__version__)
         self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
         self.load_sound_files()
         pass

@@ -247,7 +247,9 @@ class MeleeAction(ActionWithDirection):
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
-            target.fighter.hp -= damage
+            target.fighter.take_damage(damage)
+            self.entity.fighter.after_melee_damage(damage, target)
+            target.fighter.after_damaged(damage, self.entity)
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color

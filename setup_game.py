@@ -78,12 +78,14 @@ def new_game() -> Engine:
     # engine.sound.play_music(engine.game_map.music)
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
+    # sword = copy.deepcopy(entity_factories.sword)
     shirt = copy.deepcopy(entity_factories.shirt)
     pistol = copy.deepcopy(entity_factories.pistol)
 
     knife.parent = player.inventory
     shirt.parent = player.inventory
     pistol.parent = player.inventory
+    # sword.parent = player.inventory
 
     player.inventory.items.append(knife)
     player.equipment.toggle_equip(knife, add_message=False)
@@ -93,6 +95,9 @@ def new_game() -> Engine:
 
     player.inventory.items.append(pistol)
     player.equipment.toggle_equip(pistol, add_message=False)
+
+    # player.inventory.items.append(sword)
+    # player.equipment.toggle_equip(sword, add_message=False)
 
     # player.lore.previous_job = procgen.random_occupation(engine)
 
