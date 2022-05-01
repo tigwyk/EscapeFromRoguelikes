@@ -190,8 +190,9 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
-            # self.engine.sound.play_music(self.engine.game_map.music)
-            # self.engine.sound.play_sound('stairs')
+            self.engine.sound.mixer.stop()
+            self.engine.sound.play_music(self.engine.game_map.music)
+            self.engine.sound.play_sound('stairs')
             self.engine.message_log.add_message(
                 "You descend the staircase.", color.descend
             )
