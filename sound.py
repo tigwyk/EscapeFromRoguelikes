@@ -45,9 +45,9 @@ class Sound:
         #     time.sleep(0.001)
 
     def play_music(self, music: str = "", volume: float = 0.1, loops: int = 0):
-        menuFile = "audio/menu_lurker_remastered.wav"
-        exploringFile = "audio/LURKER_Exploring.wav"
-        overworldFile = "audio/LURKER_overworld_theme.wav"
+        menuFile = "audio/menu_lurker_remastered.flac"
+        exploringFile = "audio/LURKER_Exploring.flac"
+        overworldFile = "audio/LURKER_overworld_theme.flac"
         
         music_match = {
             "overworld_music": overworldFile,
