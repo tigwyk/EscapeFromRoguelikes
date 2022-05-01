@@ -126,6 +126,7 @@ class Actor(Entity):
         gen_name: bool = False,
         gen_kit: bool = False,
         light_source=None,
+        skills=None,
     ):
         super().__init__(
             x=x,
@@ -162,6 +163,10 @@ class Actor(Entity):
         self.gen_name = gen_name
 
         self.gen_kit = gen_kit
+
+        if(skills):
+            self.skills = skills
+            self.skills.parent = self
 
         # if(gen_name):
         #     self.name = self.generate_russian_name()

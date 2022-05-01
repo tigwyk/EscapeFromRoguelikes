@@ -7,6 +7,7 @@ from components.level import Level
 from components.currency import Currency
 from components.lore import Lore
 from components.lightsource import LightSource
+from components.skills import Skills
 from entity import Actor, Item, Entity, Container
 import color
 
@@ -25,6 +26,7 @@ player = Actor(
     currency=Currency(roubles=100),
     lore=Lore(),
     light_source=LightSource(radius=15),
+    skills=Skills(base_learn_bonus=1)
 )
 
 rat = Actor(
