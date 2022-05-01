@@ -18,6 +18,8 @@ import entity_factories
 from maps import GameWorld
 import input_handlers
 
+from skill import handguns, rifles, shotguns, medical, blades
+
 from russian_names import RussianNames
 
 import procgen
@@ -80,6 +82,17 @@ def new_game() -> Engine:
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     shirt = copy.deepcopy(entity_factories.shirt)
     pistol = copy.deepcopy(entity_factories.pistol)
+
+    handguns_skill = copy.deepcopy(handguns)
+    rifles_skill = copy.deepcopy(rifles)
+    shotguns_skill = copy.deepcopy(shotguns)
+    medical_skill = copy.deepcopy(medical)
+    blade_skill = copy.deepcopy(blades)
+
+    starting_skills = {handguns_skill, rifles_skill, shotguns_skill, medical_skill, blade_skill}
+
+    for skill in starting_skills:
+        player.skills.learn(skill)
 
     knife.parent = player.inventory
     shirt.parent = player.inventory

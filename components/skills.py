@@ -21,12 +21,12 @@ class Skills(BaseComponent):
         """
         Removes an item from the inventory and restores it to the game map, at the player's current location.
         """
-        self.skills.append(skill)
+        self.skills.remove(skill)
         self.engine.message_log.add_message(f"You unlearned {skill.name}.")
     
     def learn(self, skill: Skill) -> None:
         """
         Removes an item from the inventory and restores it to the game map, at the player's current location.
         """
-        self.skills.remove(skill)
+        self.skills.append(skill)
         self.engine.message_log.add_message(f"You learned {skill.name}.")

@@ -18,3 +18,28 @@ class Skill:
     def unlearn(self, student):
         if(student.skills and (self in student.skills.skills)):
             student.skills.unlearn(self)
+
+handguns = Skill(
+    name='Handguns',
+    level=1
+)
+
+rifles = Skill(
+    name='Rifles',
+    level=1
+)
+
+shotguns = Skill(
+    name='Shotguns',
+    level=1
+)
+
+medical = Skill(
+    name='Medical',
+    level=1
+)
+
+blades = Skill(
+    name='Blades',
+    level=1
+)
