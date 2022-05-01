@@ -237,7 +237,7 @@ class MeleeAction(ActionWithDirection):
 
         damage = self.entity.fighter.power - target.fighter.defense
 
-        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.weapon.name if self.entity.equipment.weapon is not None else 'their fists'}"
+        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.get_item_in_slot(EquipmentType.MELEE_WEAPON).name if self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON) else 'their fists'}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
         else:
