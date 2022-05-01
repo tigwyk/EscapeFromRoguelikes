@@ -85,7 +85,7 @@ class HealingConsumable(Consumable):
                 f"You consume the {self.parent.name}, and recover {amount_recovered} HP!",
                 color.health_recovered,
             )
-            self.engine.sound.play_sound('medkit')
+            self.engine.sound.play_sound('medkit', volume=1.5)
             self.consume()
         else:
             raise Impossible(f"Your health is already full.")

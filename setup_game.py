@@ -77,7 +77,7 @@ def new_game() -> Engine:
         f"You are {player.name}.", color.red
     )
 
-    # engine.sound.play_music(engine.game_map.music)
+    engine.sound.play_music(engine.game_map.music)
 
     knife = copy.deepcopy(entity_factories.kitchen_knife)
     # sword = copy.deepcopy(entity_factories.sword)
@@ -173,7 +173,7 @@ class MainMenu(input_handlers.BaseEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:
             try:
-                # self.main_menu_music.stop()
+                self.main_menu_music.stop()
                 return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
@@ -181,8 +181,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()  # Print to stderr.
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
-            self.sound.play_sound('new_game')
-            # self.main_menu_music.stop()
+            self.sound.play_sound('new_game', volume=0.7)
+            self.main_menu_music.stop()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None
