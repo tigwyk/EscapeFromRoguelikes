@@ -105,10 +105,12 @@ class Fighter(BaseComponent):
         if(self.parent.inventory and self.parent.inventory.items):
             while self.parent.inventory.items:
                 item = self.parent.inventory.items.pop()
+                # print(f"Spilling inventory item upon death: {item.name}")
                 item.x = self.parent.x
                 item.y = self.parent.y
                 item.parent = self.engine.game_map
                 self.engine.game_map.entities.add(item)
+                # print(f"Map entities now: {[x.name for x in self.engine.game_map.entities]}")
                 
 
         self.engine.message_log.add_message(death_message, death_message_color)

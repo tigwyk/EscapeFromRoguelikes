@@ -53,10 +53,11 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
-            radius=4,
+            radius=self.player.visibility,
+            algorithm=tcod.FOV_BASIC
         )
         # If a tile is "visible" it should be added to "explored".
-        self.game_map.explored |= self.game_map.visible
+        # self.game_map.explored |= self.game_map.visible
 
     def update_light_levels(self):
         """ Create our light map for all static light entities """
