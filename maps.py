@@ -199,14 +199,14 @@ class GameMap:
         # Try some more dynamic lighting
         lit = np.where(visible_light_levels < 1.0)
         #print(lit)
-        #print(f'Player is at ({self.engine.player.x},{self.engine.player.y}).  These tile are lit: {lit}')
+        # print(f'Player is at ({player.x},{player.y}).  These tile are lit: {lit}')
 
         for i in range(len(lit[0])):
             x, y = lit[0][i], lit[1][i]
             brightness_diff = visible_light_levels[x][y]
-            #distance = self.engine.player.distance(x + o_x, y + o_y)
+            # distance = self.engine.player.distance(x + o_x, y + o_y)
             #brightness_diff = distance / (self.engine.player.visibility+2)
-            #print(f'({x},{y}) is lit, translated to ({x-o_x},{y-o_y}) in viewport.  Distance to player: {distance}.')
+            # print(f'({x},{y}) is lit, translated to ({x-o_x},{y-o_y}) in viewport.  Distance to player: {distance}.')
             light_fg = viewport_tiles[x][y]['light']['fg']
             light_bg = viewport_tiles[x][y]['light']['bg']
             dark_fg = viewport_tiles[x][y]['dark']['fg']
@@ -216,7 +216,7 @@ class GameMap:
             for j in range(0,3):
                 new_fg.append(light_fg[j] - int((light_fg[j] - dark_fg[j]) * brightness_diff))
                 new_bg.append(light_bg[j] - int((light_bg[j] - dark_bg[j]) * brightness_diff))
-            #print(f'Light fg:{light_fg}, bg:{light_bg}, Dark fg:{dark_fg}, bg{dark_bg}.  Multiplier: {brightness_diff}.  New fg:{new_fg}, bg:{new_bg}')
+            # print(f'Light fg:{light_fg}, bg:{light_bg}, Dark fg:{dark_fg}, bg{dark_bg}.  Multiplier: {brightness_diff}.  New fg:{new_fg}, bg:{new_bg}')
             console.tiles_rgb['bg'][x,y] = tuple(new_bg)
             console.tiles_rgb['fg'][x,y] = tuple(new_fg)
 
