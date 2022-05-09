@@ -288,13 +288,30 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=y + 15,
-            string=f"Attack: {self.engine.player.fighter.power}"
+            string=f"Attack : {self.engine.player.fighter.power}"
         )
         console.print(
             x=x + 1,
             y=y + 16,
             string=f"Defense: {self.engine.player.fighter.defense}"
         )
+
+        for i,skill in enumerate(self.engine.player.skills.skills):
+            console.print(
+                x=x + 1,
+                y=18+i,
+                string=f"{skill.name}"
+            )
+            console.print(
+                x=9,
+                y=18+i,
+                string=":",
+            )
+            console.print(
+                x=11,
+                y=18+i,
+                string=f"{skill.level}"
+            )
         
 
 class LevelUpEventHandler(AskUserEventHandler):
