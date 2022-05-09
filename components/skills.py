@@ -39,8 +39,16 @@ class Skills(BaseComponent):
                     return False
                 else:
                     return True
+            if dice.roll('d20') > 17:
+                self.increase(skill, 1)
         else:
             return False
+
+    def increase(self, skill: Skill, amount: int) -> int:
+        if amount > 0:
+            skill.level += amount
+            self.engine.message_log.add_message(f"You feel better with {skill.name}.")
+            return skill.level
 
     def learned(self, skill: Skill) -> bool:
         if(skill in self.skills):

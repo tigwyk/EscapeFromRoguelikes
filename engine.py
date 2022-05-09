@@ -53,10 +53,12 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
-            radius=4,
+            radius=self.player.visibility,
+            # algorithm=tcod.FOV_BASIC
+            algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
         )
         # If a tile is "visible" it should be added to "explored".
-        self.game_map.explored |= self.game_map.visible
+        # self.game_map.explored |= self.game_map.visible
 
     def update_light_levels(self):
         """ Create our light map for all static light entities """
@@ -71,7 +73,8 @@ class Engine:
                 self.game_map.tiles['transparent'],
                 (light.x, light.y),
                 radius=light.light_source.radius,
-                algorithm=tcod.FOV_BASIC,
+                # algorithm=tcod.FOV_BASIC,
+                algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST,
                 light_walls=light_walls
             )
             for x, y in coords:
@@ -155,13 +158,13 @@ class Engine:
         #     coords=(self.player.x,self.player.y),
         #     location=(char_pane_x + 1, char_pane_y + 2),
         # )
-        if self.player.equipment.weapon != None and self.player.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
-            render_functions.render_ammo_status(
-                console=console,
-                ammo=self.player.equipment.weapon.equippable.ammo,
-                max_ammo=self.player.equipment.weapon.equippable.max_ammo,
-                location=(char_pane_x + 1, char_pane_y + 3),
-            )
+        # if self.player.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON):
+        #     render_functions.render_ammo_status(
+        #         console=console,
+        #         ammo=self.player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.ammo,
+        #         max_ammo=self.player.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON).equippable.max_ammo,
+        #         location=(char_pane_x + 1, char_pane_y + 3),
+        #     )
 
         render_functions.render_bunker_level(
             console=console,
@@ -177,7 +180,9 @@ class Engine:
 
         equip_y = equip_pane_y + 1
         equip_x = equip_pane_x + 1
+    
         for slot in self.player.equipment.item_slots:
+            bg_color = None
             console.print(equip_x, equip_y, slot.slot_name, fg=color.yellow)
             if slot.item:
                 item_name = f'-{slot.item.name}'
@@ -185,9 +190,14 @@ class Engine:
                 #     item_name = f'{item_name}'
                 if slot.item.equippable.max_ammo > 0:
                     item_name = f'-{slot.item.name} [{slot.item.equippable.ammo}/{slot.item.equippable.max_ammo}]'
+                    if slot.item.equippable.ammo == 0:
+                        bg_color = color.red
             else:
                 item_name = '-(Empty)'
-            console.print(equip_x, equip_y + 1, item_name)
+            if bg_color:
+                console.print(equip_x, equip_y + 1, item_name, bg=bg_color)
+            else:
+                console.print(equip_x, equip_y + 1, item_name)
             equip_y += 2
         
 

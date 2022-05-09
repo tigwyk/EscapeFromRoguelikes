@@ -42,6 +42,7 @@ rat = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=10),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 dog = Actor(
     char="d",
@@ -53,6 +54,7 @@ dog = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=17),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 scav = Actor(
     char="s",
@@ -65,7 +67,8 @@ scav = Actor(
     level=Level(xp_given=35),
     currency=Currency(roubles=5),
     gen_name=True,
-    gen_kit=True
+    gen_kit=True,
+    skills=Skills(base_learn_bonus=1),
 )
 raider = Actor(
     char="R",
@@ -77,6 +80,8 @@ raider = Actor(
     inventory=Inventory(capacity=5),
     level=Level(xp_given=100),
     currency=Currency(roubles=50),
+    skills=Skills(base_learn_bonus=1),
+    gen_kit=True,
 )
 mutant1 = Actor(
     char="m",
@@ -88,6 +93,7 @@ mutant1 = Actor(
     inventory=Inventory(capacity=5),
     level=Level(xp_given=125),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 mutant2 = Actor(
     char="M",
@@ -99,6 +105,7 @@ mutant2 = Actor(
     inventory=Inventory(capacity=5),
     level=Level(xp_given=125),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 
 throwing_sand = Item(
