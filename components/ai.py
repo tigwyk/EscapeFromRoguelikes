@@ -153,7 +153,7 @@ class HostileHumanEnemy(BaseAI):
                     for roll in dice.roll('d20'):
                         # print(f"Fire roll: {roll}")
                         if roll > 15:
-                            return FireAction(self.entity, self.entity.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON), (target.x, target.y)).perform()
+                            return FireAction(entity=self.entity, item=self.entity.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON), target_xy=(target.x, target.y)).perform()
                 if distance <= 1:
                     return MeleeAction(self.entity, dx, dy).perform()    
             else:

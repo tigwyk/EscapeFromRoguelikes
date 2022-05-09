@@ -102,7 +102,7 @@ class FireAction(Action):
         self.item = item
         if not self.item:
             return
-        if(not self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON) or not self.entity.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON)):
+        if not self.entity.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON):
             return
         
         if not target_xy:
@@ -244,6 +244,12 @@ class MeleeAction(ActionWithDirection):
         else:
             attack_color = color.enemy_atk
 
+        # if self.entity.skills:
+        #     if self.entity.skills.check("blades"):
+        #         print(f"{self.entity.name}: Successful Blades check during melee")
+        #     else:
+        #         print(f"{self.entity.name}: Failed Blades check during melee")
+
         if damage > 0:
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points.", attack_color
@@ -277,10 +283,7 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
-            if(self.entity.equipment and self.entity.equipment.weapon):
-                if(self.entity.equipment.weapon.equippable.equipment_type != EquipmentType.RANGED_WEAPON):
-                    return MeleeAction(self.entity, self.dx, self.dy).perform()
-            else:
-                return MeleeAction(self.entity, self.dx, self.dy).perform()
+            # if(self.entity.equipment and self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON)):
+            return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()

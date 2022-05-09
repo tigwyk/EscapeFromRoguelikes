@@ -163,10 +163,7 @@ class Equippable(BaseComponent):
 
         # if(self.fire_skill):
         #     print(f"Checking {self.fire_skill.name}...")
-        #     if(actor.skills.check(self.fire_skill)):
-        #         print(f"Pass")
-        #     else:
-        #         print(f"Fail")
+        #     print(f"{actor.name}: {'Pass' if actor.skills.check(self.fire_skill) else 'Fail'}")
 
         if damage > 0:
             self.engine.message_log.add_message(

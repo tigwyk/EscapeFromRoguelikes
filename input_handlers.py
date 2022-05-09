@@ -846,6 +846,10 @@ class MainGameEventHandler(EventHandler):
         return action
 
 class GameOverEventHandler(EventHandler):
+    def __init__(self, engine: Engine):
+        super().__init__(engine)
+        PostMortemViewer(engine)
+
     def on_quit(self) -> None:
         """Handle exiting out of a finished game."""
         if os.path.exists("savegame.sav"):
