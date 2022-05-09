@@ -54,7 +54,8 @@ class Engine:
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
             radius=self.player.visibility,
-            algorithm=tcod.FOV_BASIC
+            # algorithm=tcod.FOV_BASIC
+            algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
         )
         # If a tile is "visible" it should be added to "explored".
         # self.game_map.explored |= self.game_map.visible
@@ -72,7 +73,8 @@ class Engine:
                 self.game_map.tiles['transparent'],
                 (light.x, light.y),
                 radius=light.light_source.radius,
-                algorithm=tcod.FOV_BASIC,
+                # algorithm=tcod.FOV_BASIC,
+                algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST,
                 light_walls=light_walls
             )
             for x, y in coords:
