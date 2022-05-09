@@ -127,7 +127,7 @@ class Actor(Entity):
         gen_kit: bool = False,
         light_source=None,
         skills=None,
-        visibility=4
+        visibility=5
     ):
         super().__init__(
             x=x,
