@@ -12,6 +12,7 @@ Look              :  / or Numpad 5
 Character Screen  :  c
 Message Log       :  v
 Interact (Stairs) :  e
+Reload weapon     :  r
 ```
  
 Music by Ethan Hamman
