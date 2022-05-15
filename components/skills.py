@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class Skills(BaseComponent):
-    parent: Actor
 
     def __init__(self, base_learn_bonus: int):
         self.base_learn_bonus = base_learn_bonus

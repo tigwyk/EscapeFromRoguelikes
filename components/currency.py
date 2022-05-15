@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
 
 class Currency(BaseComponent):
-    parent: Actor
 
     def __init__(self, roubles: int):
         self._roubles = roubles

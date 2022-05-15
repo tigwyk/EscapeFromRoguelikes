@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 class Inventory(BaseComponent):
-    parent: Actor
 
     def __init__(self, capacity: int):
         self.capacity = capacity

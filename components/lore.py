@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 class Lore(BaseComponent):
-    parent: Actor
 
     def __init__(self, previous_job:str = ''):
         self.previous_job = previous_job
