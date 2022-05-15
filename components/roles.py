@@ -11,10 +11,8 @@ if TYPE_CHECKING:
 
 
 class Role(BaseComponent):
-    parent: Actor
 
     def __init__(self, name: str):
-        print(name)
         self.name: str = name
         self.base_skills: List[Skill]
 
