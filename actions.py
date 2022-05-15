@@ -5,7 +5,8 @@ from typing import Optional, Tuple, TYPE_CHECKING
 import color
 from components import ammo_container
 import exceptions
-import sound
+
+from pprint import pprint
 
 from equipment_types import EquipmentType
 
@@ -78,7 +79,7 @@ class ItemAction(Action):
 
 class DropItemAction(ItemAction):
     def perform(self) -> None:
-        if self.entity.equipment.item_is_equipped(self.item):
+        if self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type) and self.entity.equipment.get_item_in_slot(self.item.equippable.equipment_type) == self.item:
             self.entity.equipment.toggle_equip(self.item)
 
         self.entity.inventory.drop(self.item)
@@ -97,13 +98,12 @@ class FireAction(Action):
         self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
     ):
         super().__init__(entity)
-        if(entity.equipment.weapon is None or entity.equipment.weapon.equippable.equipment_type != EquipmentType.RANGED_WEAPON or item != entity.equipment.weapon):
-            return
-        
         self.entity = entity
         self.item = item
-        # print(f"FireAction, Item: {self.entity.equipment.weapon.name}")
-        # print(f"FireAction, entity.equipment.weapon: {self.entity.equipment.weapon.name}")
+        if not self.item:
+            return
+        if not self.entity.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON):
+            return
         
         if not target_xy:
             if(entity.fighter.target):
@@ -118,8 +118,9 @@ class FireAction(Action):
         return self.engine.game_map.get_actor_at_location(*self.target_xy)
 
     def perform(self) -> None:
+        # pprint(vars(self))
         """Invoke the items ability, this action will be given to provide context."""
-        if(self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and self.item == self.entity.equipment.weapon):
+        if(self.entity.equipment.item_is_equipped(self.item.equippable.equipment_type) and self.entity.equipment.get_item_in_slot(self.item.equippable.equipment_type) == self.item):
             self.item.equippable.activate(self)
 
 class ReloadAction(Action):
@@ -134,7 +135,10 @@ class ReloadAction(Action):
         return True if item.ammo_container is not None else False
 
     def perform(self) -> None:
-        if self.entity.equipment.item_is_equipped(self.item) and self.item.equippable.equipment_type == EquipmentType.RANGED_WEAPON and (self.item.equippable.ammo < self.item.equippable.max_ammo):
+        if(not self.item):
+            raise exceptions.Impossible("You can't reload your weapon.")
+
+        if self.item.equippable.ammo < self.item.equippable.max_ammo:
             # print(f"Player's items from reload action: {self.entity.inventory.items}")
             ammo_containers = []
             for item in self.entity.inventory.items:
@@ -163,7 +167,7 @@ class ReloadAction(Action):
                                 # print(f"Adding ammo: {ammo_needed}")
                                 self.item.equippable.ammo += ammo_needed
                                 self.engine.message_log.add_message(f"You reload the {self.item.name}!")
-                                sound.play_sound('reload')
+                                self.engine.sound.play_sound('reload')
                                 if(mag.ammo_container.ammo < 1):
                                         mag.ammo_container.consume()  
                                     
@@ -186,12 +190,21 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
-            sound.play_sound('stairs')
+            self.engine.sound.mixer.stop()
+            self.engine.sound.play_music(self.engine.game_map.music)
+            self.engine.sound.play_sound('stairs')
             self.engine.message_log.add_message(
                 "You descend the staircase.", color.descend
             )
         else:
             raise exceptions.Impossible("There are no stairs here.")
+
+class ActivateAction(Action):
+    def perform(self) -> None:
+        """
+        Activate thing at player's location
+        """
+        pass
 
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):
@@ -225,17 +238,25 @@ class MeleeAction(ActionWithDirection):
 
         damage = self.entity.fighter.power - target.fighter.defense
 
-        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.weapon.name if self.entity.equipment.weapon is not None else 'their fists'}"
+        attack_desc = f"{self.entity.name.capitalize()} attacks {target.name} with {self.entity.equipment.get_item_in_slot(EquipmentType.MELEE_WEAPON).name if self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON) else 'their fists'}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
 
+        # if self.entity.skills:
+        #     if self.entity.skills.check("blades"):
+        #         print(f"{self.entity.name}: Successful Blades check during melee")
+        #     else:
+        #         print(f"{self.entity.name}: Failed Blades check during melee")
+
         if damage > 0:
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
-            target.fighter.hp -= damage
+            target.fighter.take_damage(damage)
+            self.entity.fighter.after_melee_damage(damage, target)
+            target.fighter.after_damaged(damage, self.entity)
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color
@@ -262,10 +283,7 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
-            if(self.entity.equipment and self.entity.equipment.weapon):
-                if(self.entity.equipment.weapon.equippable.equipment_type != EquipmentType.RANGED_WEAPON):
-                    return MeleeAction(self.entity, self.dx, self.dy).perform()
-            else:
-                return MeleeAction(self.entity, self.dx, self.dy).perform()
+            # if(self.entity.equipment and self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON)):
+            return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()

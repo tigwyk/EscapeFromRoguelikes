@@ -3,16 +3,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import color
-import sound
+import copy
 from components.base_component import BaseComponent
 from render_order import RenderOrder
+from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
     from entity import Actor
 
 
 class Fighter(BaseComponent):
-    parent: Actor
     fighting: Actor
     killer: Actor
 
@@ -57,15 +57,37 @@ class Fighter(BaseComponent):
         else:
             return 0
 
+    def after_melee_damage(self, damage_dealt, target):
+        equipment = self.parent.equipment
+        if equipment:
+            for item_slot in equipment.item_slots:
+                if item_slot.item and item_slot.item.equippable.equipment_type in (EquipmentType.MELEE_WEAPON,EquipmentType.HEAD):
+                    item_slot.item.equippable.after_melee_damage(damage_dealt, target)
+
+    def after_ranged_damage(self, damage_dealt, target):
+        equipment = self.parent.equipment
+        if equipment:
+            for item_slot in equipment.item_slots:
+                if item_slot.item and item_slot.item.equippable.equipment_type in (EquipmentType.RANGED_WEAPON,EquipmentType.HEAD):
+                    item_slot.item.equippable.after_ranged_damage(damage_dealt, target)
+
+    def after_damaged(self, damage_taken, source):
+        if self.engine.game_map.visible[self.parent.x, self.parent.y]:
+            equipment = self.parent.equipment
+            if equipment:
+                for item_slot in equipment.item_slots:
+                    if item_slot.item and item_slot.item.equippable.equipment_type in (EquipmentType.ARMOR,EquipmentType.HEAD):
+                        item_slot.item.equippable.after_damaged(damage_taken, source)
+
     def die(self) -> None:
         if self.engine.player is self.parent:
             death_message = "You died!"
             death_message_color = color.player_die
             roubles_to_reward = 0
-            self.engine.player.fighter.killer = self.engine.player.fighter.fighting
+            self.engine.player.fighter.killer = copy.deepcopy(self.engine.player.fighter.fighting)
             self.engine.dump_character_log()
-            sound.play_sound('death')
-            sound.play_sound('game_over')
+            self.engine.sound.play_sound('death', volume=1)
+            self.engine.sound.play_sound('game_over',volume=1.5)
         else:
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
@@ -82,10 +104,12 @@ class Fighter(BaseComponent):
         if(self.parent.inventory and self.parent.inventory.items):
             while self.parent.inventory.items:
                 item = self.parent.inventory.items.pop()
+                # print(f"Spilling inventory item upon death: {item.name}")
                 item.x = self.parent.x
                 item.y = self.parent.y
                 item.parent = self.engine.game_map
                 self.engine.game_map.entities.add(item)
+                # print(f"Map entities now: {[x.name for x in self.engine.game_map.entities]}")
                 
 
         self.engine.message_log.add_message(death_message, death_message_color)

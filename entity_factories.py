@@ -6,7 +6,13 @@ from components.inventory import Inventory
 from components.level import Level
 from components.currency import Currency
 from components.lore import Lore
-from entity import Actor, Item
+from components.lightsource import LightSource
+from components.effects import Knockback, ChainLightning
+from components.skills import Skills
+
+from skill import handguns, shotguns, rifles, medical, blades
+from entity import Actor, Item, Entity, Container
+import color
 
 from russian_names import RussianNames
 import random
@@ -23,12 +29,14 @@ player = Actor(
     level=Level(level_up_base=200),
     currency=Currency(roubles=100),
     lore=Lore(),
-    role=random.choice([roles.Scavenger(),roles.Scientist(),roles.Soldier()])
+    role=random.choice([roles.Scavenger(),roles.Scientist(),roles.Soldier()]),
+    light_source=LightSource(radius=15),
+    skills=Skills(base_learn_bonus=1)
 )
 
 rat = Actor(
     char="r",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Giant Rat",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -36,10 +44,11 @@ rat = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=10),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 dog = Actor(
     char="d",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Mutant Dog",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -47,10 +56,11 @@ dog = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=17),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 scav = Actor(
     char="s",
-    color=(63, 127, 63),
+    color=(102,0,153),
     name="Scavenger",
     ai_cls=HostileHumanEnemy,
     equipment=Equipment(),
@@ -59,7 +69,8 @@ scav = Actor(
     level=Level(xp_given=35),
     currency=Currency(roubles=5),
     gen_name=True,
-    gen_kit=True
+    gen_kit=True,
+    skills=Skills(base_learn_bonus=1),
 )
 raider = Actor(
     char="R",
@@ -71,6 +82,8 @@ raider = Actor(
     inventory=Inventory(capacity=5),
     level=Level(xp_given=100),
     currency=Currency(roubles=50),
+    skills=Skills(base_learn_bonus=1),
+    gen_kit=True,
 )
 mutant1 = Actor(
     char="m",
@@ -82,6 +95,7 @@ mutant1 = Actor(
     inventory=Inventory(capacity=5),
     level=Level(xp_given=125),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 mutant2 = Actor(
     char="M",
@@ -93,6 +107,7 @@ mutant2 = Actor(
     inventory=Inventory(capacity=5),
     level=Level(xp_given=125),
     currency=Currency(roubles=0),
+    skills=Skills(base_learn_bonus=1)
 )
 
 throwing_sand = Item(
@@ -142,48 +157,67 @@ shotgun_slugs_box = Item(
     ammo_container=ammo_container.AmmoMag(ammo=6,max_ammo=6,ammo_type="12g")
 )
 
+ak_mag = Item(
+    char="=",
+    color=color.red,
+    name="AK magazine",
+    ammo_container=ammo_container.AmmoMag(ammo=30,max_ammo=30,ammo_type="5.45x39mm")
+)
+
 kitchen_knife = Item(
-    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="kitchen knife", equippable=equippable.Blade(power_bonus=1)
 )
 
 combat_knife = Item(
-    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Knife()
+    char="/", color=(0, 191, 255), name="combat knife", equippable=equippable.Blade(power_bonus=2)
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Sword())
+sword = Item(char="/", color=(0, 191, 255), name="sword", equippable=equippable.Blade(power_bonus=3, effects={Knockback(1)}))
 
-pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Handgun())
+pistol = Item(char="/", color=(0, 191, 255), name="makarov pistol", equippable=equippable.Firearm(power_bonus=1, effects={Knockback(1)}, fire_skill=handguns))
 
-shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Shotgun())
+shotgun = Item(char="/", color=(0, 191, 255), name="mp-153 shotgun", equippable=equippable.Firearm(power_bonus=2, fire_skill=shotguns, effects={Knockback(1)}))
+
+rifle = Item(char="/", color=(0, 191, 255), name="mosin rifle", equippable=equippable.Firearm(power_bonus=4, fire_skill=rifles, effects={Knockback(1)}))
+
+assault_rifle = Item(char="/", color=(139, 191, 255), name="AK-74m automatic rifle", equippable=equippable.Firearm(power_bonus=3, fire_skill=rifles, effects={Knockback(1)}))
 
 shirt = Item(
     char="[",
     color=(139, 69, 19),
-    name="tattered shirt",
-    equippable=equippable.Shirt(),
+    name=f"tattered shirt",
+    equippable=equippable.BodyArmor(defense_bonus=1),
 )
 
 body_armor = Item(
-    char="[", color=(139, 69, 19), name="body armor", equippable=equippable.BodyArmor()
+    char="[", color=(139, 69, 19), name="body armor", equippable=equippable.BodyArmor(defense_bonus=3)
 )
 
 rusty_helmet = Item(
     char="[",
     color=(139, 69, 19),
     name="rusty helmet",
-    equippable=equippable.BasicHelmet(),
+    equippable=equippable.Helmet(defense_bonus=1),
 )
 
 tough_denim_jeans = Item(
     char="[",
     color=(139, 69, 19),
     name="tough denim jeans",
-    equippable=equippable.Pants(),
+    equippable=equippable.LegArmor(defense_bonus=1),
 )
 
 hiking_boots = Item(
     char="[",
     color=(139, 69, 19),
     name="hiking boots",
-    equippable=equippable.Boots(),
+    equippable=equippable.Boots(defense_bonus=1),
 )
+
+light = Entity(char=' ', color=(255,255,255), name='', light_source=LightSource(radius=2))
+
+container_box = Container(char=' ',
+                             color=(128,128,128),
+                             name='weapons box',
+                             inventory=Inventory(capacity=5),
+                             )

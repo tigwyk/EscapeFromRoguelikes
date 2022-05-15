@@ -10,6 +10,12 @@ import tcod
 import entity_factories
 from maps import GameMap
 import tile_types
+import json
+
+import tracery
+from tracery.modifiers import base_english
+
+import pathlib
 
 import numpy as np
 
@@ -32,10 +38,10 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.medkit, 35), (entity_factories.combat_knife, 5)],
+    0: [(entity_factories.medkit, 35), (entity_factories.combat_knife, 5),(entity_factories.makarov_mag, 2)],
     2: [(entity_factories.throwing_sand, 10), (entity_factories.combat_knife, 15), (random.choice([entity_factories.hiking_boots,entity_factories.rusty_helmet,entity_factories.body_armor]), 1), (entity_factories.pistol, 1)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5), (entity_factories.pistol, 2), (random.choice([entity_factories.hiking_boots,entity_factories.rusty_helmet,entity_factories.body_armor]), 5),(entity_factories.makarov_mag, 10)],
-    6: [(entity_factories.grenade, 25), (entity_factories.body_armor, 15)],
+    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5), (entity_factories.pistol, 2), (entity_factories.hiking_boots, 2), (entity_factories.rusty_helmet, 2), (entity_factories.body_armor, 5),(entity_factories.makarov_mag, 10)],
+    6: [(entity_factories.grenade, 25), (entity_factories.body_armor, 15), (entity_factories.rifle, 2),(entity_factories.assault_rifle, 2)],
     8: [(entity_factories.hiking_boots, 2)],
 }
 
@@ -47,6 +53,20 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     5: [(entity_factories.mutant1, 30),(entity_factories.mutant2, 10)],
     7: [(entity_factories.mutant1, 60),(entity_factories.mutant2, 30)],
 }
+
+def load_rules():
+    rules_dir = pathlib.Path('data')
+
+    rules = {}
+
+    for rules_file in rules_dir.glob("*.json"):
+        with open(rules_file, 'r') as f:
+            rules.update( json.load(f) )
+
+    grammar = tracery.Grammar(rules)
+    grammar.add_modifiers(base_english)
+    # print(f"load_rules: {grammar.flatten('#text#')}")
+    return grammar
 
 def get_max_value_for_floor(
     max_value_by_floor: List[Tuple[int, int]], floor: int
@@ -179,8 +199,8 @@ def place_overworld_entities(overworld: GameMap, floor_number: int,) -> None:
     )
 
     for entity in monsters + items:
-        x = random.randint(1, 79)
-        y = random.randint(1, 42)
+        x = random.randint(1, overworld.width-1)
+        y = random.randint(1, overworld.height-1)
 
         if not any(entity.x == x and entity.y == y for entity in overworld.entities):
             entity.spawn(overworld, x, y)
@@ -214,7 +234,8 @@ def generate_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    exploring_music = "exploring_music"
+    dungeon = GameMap(engine, map_width, map_height, exploring_music, entities=[player])
 
     rooms: List[RectangularRoom] = []
 
@@ -272,8 +293,8 @@ def generate_bsp_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    
-    map = GameMap(engine, map_width, map_height, entities=[player])
+    exploring_music = "exploring_music"
+    map = GameMap(engine, map_width, map_height, music=exploring_music, entities=[player])
 
     #Empty global list for storing room coordinates
     rooms: List[RectangularRoom] = []
@@ -326,14 +347,16 @@ def generate_bsp_dungeon(
 
     return map
 
-def generate_overworld(
+def generate_random_overworld(
     map_width: int,
     map_height: int,
     engine: Engine,
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    worldmap = GameMap(engine, map_width, map_height, entities=[player])
+    overworld_music = "overworld_music"
+    worldmap = GameMap(engine, map_width, map_height, overworld_music, entities=[player])
+    # print(f"Generate_random_overworld: {worldmap}")
     
     noise = tcod.noise.Noise(
             dimensions=2,
@@ -341,7 +364,7 @@ def generate_overworld(
             seed=random.randint(0,500)
     )
 
-    noisemap = noise[tcod.noise.grid(shape=(2048,2048), scale=0.07, origin=(0,0))]
+    noisemap = noise[tcod.noise.grid(shape=(512,512), scale=0.07, origin=(0,0))]
     noisemap = (noisemap + 1.0) * 0.5
 
     for x in range(map_width):
@@ -365,11 +388,13 @@ def generate_overworld(
 
     # worldmap.tiles[slice(0,80),slice(0,43)] = tile_types.floor
     # worldmap.tiles[slice(center),slice((map_width/2)+10,(map_height/2)+10)] = tile_types.floor
-    player.place(40, 21, worldmap)
+    player.place(int(worldmap.width/2), int(worldmap.height/2), worldmap)
     place_overworld_entities(worldmap, engine.game_world.current_floor)
     
-    worldmap.tiles[44,25] = tile_types.down_stairs
-    worldmap.downstairs_location = (44,25)
+    stair_x = random.randint(1,worldmap.width-1)
+    stair_y = random.randint(1,worldmap.height-1)
+    worldmap.tiles[stair_x,stair_y] = tile_types.down_stairs
+    worldmap.downstairs_location = (stair_x,stair_y)
 
     return worldmap
 
@@ -498,3 +523,6 @@ def hline_right(map, x, y):
         map[x][y].blocked = False
         map[x][y].block_sight = False
         x += 1
+
+def random_occupation(engine):
+    return engine.game_rules.flatten('#occupation#')

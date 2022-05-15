@@ -122,6 +122,7 @@ class HostileHumanEnemy(BaseAI):
 
     def perform(self) -> None:
         target = self.engine.player
+        me = self.entity
         dx = target.x - self.entity.x
         dy = target.y - self.entity.y
         distance = max(abs(dx), abs(dy))  # Chebyshev distance.
@@ -130,36 +131,31 @@ class HostileHumanEnemy(BaseAI):
             melee_weapons = []
             ranged_weapons = []
             for item in self.entity.inventory.items:
-                if item.equippable.equipment_type == EquipmentType.WEAPON:
+                if item.equippable.equipment_type == EquipmentType.MELEE_WEAPON:
                     melee_weapons.append(item)
                 if item.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
                     ranged_weapons.append(item)
 
-            if self.entity.equipment.weapon is None:
+            if not me.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON):
                 if(len(melee_weapons)):
                     self.entity.equipment.toggle_equip(melee_weapons[0], add_message=False)
-                    # print(f"Equipping {melee_weapons[0].name}")
-                elif(len(ranged_weapons)):
+                    print(f"{me.name} equipping {melee_weapons[0].name}")
+            if not me.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON):
+                if(len(ranged_weapons)):
                     self.entity.equipment.toggle_equip(ranged_weapons[0], add_message=False)
-                    # print(f"Equipping {ranged_weapons[0].name}")
+                    print(f"{me.name} equipping {ranged_weapons[0].name}")
 
 
 
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
-            if self.entity.equipment.weapon:
-                if distance > 1 and distance <= 3 and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
+            if self.entity.equipment.item_is_equipped(EquipmentType.RANGED_WEAPON):
+                if distance > 1 and distance <= 3:
                     for roll in dice.roll('d20'):
                         # print(f"Fire roll: {roll}")
                         if roll > 15:
-                            return FireAction(self.entity, self.entity.equipment.weapon, (target.x, target.y)).perform()
-                if distance <= 1 and self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.RANGED_WEAPON:
-                    self.entity.equipment.toggle_equip(self.entity.equipment.weapon, add_message=False)
+                            return FireAction(entity=self.entity, item=self.entity.equipment.get_item_in_slot(EquipmentType.RANGED_WEAPON), target_xy=(target.x, target.y)).perform()
                 if distance <= 1:
-                    if self.entity.equipment.weapon:
-                        if self.entity.equipment.weapon.equippable.equipment_type == EquipmentType.WEAPON:
-                            return MeleeAction(self.entity, dx, dy).perform()
-                    else:
-                        return MeleeAction(self.entity, dx, dy).perform()    
+                    return MeleeAction(self.entity, dx, dy).perform()    
             else:
                 if distance <= 1:
                     return MeleeAction(self.entity, dx, dy).perform()

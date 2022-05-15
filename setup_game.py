@@ -8,15 +8,21 @@ import traceback
 from turtle import back
 from typing import Optional
 from main import main
+from sound import Sound
 
 import tcod
 
 import color
 from engine import Engine
 import entity_factories
-from maps import DungeonWorld, OverWorldGenerator
+from maps import GameWorld
 import input_handlers
-import sound
+
+from skill import handguns, rifles, shotguns, medical, blades
+
+from russian_names import RussianNames
+
+import procgen
 
 # Load the background image and remove the alpha channel.
 # background_image = tcod.image.load(".\img\menu_background.png")[:, :, :3]
@@ -25,36 +31,43 @@ background_image = tcod.image.load(".\img\menu_background2.png")[:, :, :3]
 
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
-    map_width = 80
-    map_height = 43
+    # map_width = 80
+    # map_height = 43
 
-    # map_width = 1024
-    # map_height = 1024
+    WIDTH = 50
+    HEIGHT = 50
+    
+    viewport_width = WIDTH
+    viewport_height = HEIGHT
 
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
+    room_max_size = 25
+    room_min_size = 8
+    max_rooms = 75
 
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
+    
+    engine.game_rules = procgen.load_rules()
 
-    engine.game_world = DungeonWorld(
+    # print(f"Game rules: {engine.game_rules}")
+    # for i in range(0,10):
+    #     print(engine.game_rules.flatten(f"{i+1}. {player.name}#fake_postmortem#"))
+
+    engine.game_world = GameWorld(
         engine=engine,
         max_rooms=max_rooms,
         room_min_size=room_min_size,
         room_max_size=room_max_size,
-        map_width=map_width,
-        map_height=map_height,
+        viewport_width=viewport_width,
+        viewport_height=viewport_height,
     )
-    # engine.game_world = OverWorldGenerator(
-    #     engine=engine,
-    #     map_width=map_width,
-    #     map_height=map_height,
-    # )
-    # engine.game_world.generate_world()
-    engine.game_world.generate_floor()
+    engine.game_world.generate_overworld()
+    # engine.game_world.generate_floor()
     engine.update_fov()
+    engine.update_light_levels()
+    
+    engine.game_world.generate_factions()
 
     engine.message_log.add_message(
         "Welcome to L.U.R.K.E.R.", color.welcome_text
@@ -64,13 +77,28 @@ def new_game() -> Engine:
         f"You are {player.name}.", color.red
     )
 
+    engine.sound.play_music(engine.game_map.music)
+
     knife = copy.deepcopy(entity_factories.kitchen_knife)
+    # sword = copy.deepcopy(entity_factories.sword)
     shirt = copy.deepcopy(entity_factories.shirt)
-    # pistol = copy.deepcopy(entity_factories.pistol)
+    pistol = copy.deepcopy(entity_factories.pistol)
+
+    handguns_skill = copy.deepcopy(handguns)
+    rifles_skill = copy.deepcopy(rifles)
+    shotguns_skill = copy.deepcopy(shotguns)
+    medical_skill = copy.deepcopy(medical)
+    blade_skill = copy.deepcopy(blades)
+
+    starting_skills = {handguns_skill, rifles_skill, shotguns_skill, medical_skill, blade_skill}
+
+    for skill in starting_skills:
+        player.skills.learn(skill)
 
     knife.parent = player.inventory
     shirt.parent = player.inventory
-    # pistol.parent = player.inventory
+    pistol.parent = player.inventory
+    # sword.parent = player.inventory
 
     player.inventory.items.append(knife)
     player.equipment.toggle_equip(knife, add_message=False)
@@ -78,8 +106,13 @@ def new_game() -> Engine:
     player.inventory.items.append(shirt)
     player.equipment.toggle_equip(shirt, add_message=False)
 
-    # player.inventory.items.append(pistol)
-    # player.equipment.toggle_equip(pistol, add_message=False)
+    player.inventory.items.append(pistol)
+    player.equipment.toggle_equip(pistol, add_message=False)
+
+    # player.inventory.items.append(sword)
+    # player.equipment.toggle_equip(sword, add_message=False)
+
+    # player.lore.previous_job = procgen.random_occupation(engine)
 
     return engine
 
@@ -95,7 +128,9 @@ class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
 
     def __init__(self):
-        self.main_menu_music = sound.main_menu_music()
+        self.sound = Sound()
+        self.main_menu_music = self.sound.play_music("main_menu")
+        # self.sound.test_sound()
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
@@ -109,7 +144,8 @@ class MainMenu(input_handlers.BaseEventHandler):
             alignment=tcod.CENTER,
         )
         console.print(
-            console.width // 2,
+            # console.width // 2,
+            4,
             console.height - 2,
             "By Tigwyk",
             fg=color.menu_title,
@@ -137,7 +173,7 @@ class MainMenu(input_handlers.BaseEventHandler):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:
             try:
-                self.main_menu_music.pause() if self.main_menu_music.playing else None
+                self.main_menu_music.stop()
                 return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
@@ -145,8 +181,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()  # Print to stderr.
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
-            sound.play_sound('new_game')
-            self.main_menu_music.pause() if self.main_menu_music.playing else None
+            self.sound.play_sound('new_game', volume=0.7)
+            self.main_menu_music.stop()
             return input_handlers.MainGameEventHandler(new_game())
 
         return None
