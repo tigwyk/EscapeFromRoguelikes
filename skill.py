@@ -44,6 +44,11 @@ blades = Skill(
     level=1
 )
 
+science = Skill(
+    name='Science',
+    level=1
+)
+
 misc = Skill(
     name='Placeholder',
     level=1

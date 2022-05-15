@@ -74,7 +74,7 @@ def new_game() -> Engine:
     )
 
     engine.message_log.add_message(
-        f"You are {player.name}.", color.red
+        f"You are {player.name}, a {player.role.name.capitalize()}.", color.red
     )
 
     engine.sound.play_music(engine.game_map.music)
@@ -84,15 +84,15 @@ def new_game() -> Engine:
     shirt = copy.deepcopy(entity_factories.shirt)
     pistol = copy.deepcopy(entity_factories.pistol)
 
-    handguns_skill = copy.deepcopy(handguns)
-    rifles_skill = copy.deepcopy(rifles)
-    shotguns_skill = copy.deepcopy(shotguns)
-    medical_skill = copy.deepcopy(medical)
-    blade_skill = copy.deepcopy(blades)
+    # handguns_skill = copy.deepcopy(handguns)
+    # rifles_skill = copy.deepcopy(rifles)
+    # shotguns_skill = copy.deepcopy(shotguns)
+    # medical_skill = copy.deepcopy(medical)
+    # blade_skill = copy.deepcopy(blades)
 
-    starting_skills = {handguns_skill, rifles_skill, shotguns_skill, medical_skill, blade_skill}
+    # starting_skills = {handguns_skill, rifles_skill, shotguns_skill, medical_skill, blade_skill}
 
-    for skill in starting_skills:
+    for skill in player.role.base_skills:
         player.skills.learn(skill)
 
     knife.parent = player.inventory
