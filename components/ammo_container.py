@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 class AmmoContainer(BaseComponent):
-    parent: Item
 
     def __init__(
         self,

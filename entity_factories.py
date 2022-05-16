@@ -1,5 +1,5 @@
 from components.ai import HostileEnemy, HostileHumanEnemy
-from components import consumable, equippable, ammo_container
+from components import consumable, equippable, ammo_container, roles
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -15,6 +15,7 @@ from entity import Actor, Item, Entity, Container
 import color
 
 from russian_names import RussianNames
+import random
 
 player = Actor(
     char="@",
@@ -28,6 +29,7 @@ player = Actor(
     level=Level(level_up_base=200),
     currency=Currency(roubles=100),
     lore=Lore(),
+    role=random.choice([roles.Scavenger(),roles.Scientist(),roles.Soldier()]),
     light_source=LightSource(radius=15),
     skills=Skills(base_learn_bonus=1)
 )

@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
 
 class Fighter(BaseComponent):
-    parent: Actor
     fighting: Actor
     killer: Actor
 

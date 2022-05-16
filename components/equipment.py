@@ -16,7 +16,6 @@ class ItemSlot:
     self.item = item
 
 class Equipment(BaseComponent):
-    parent: Actor
 
     def __init__(self, weapon: Optional[Item] = None, armor: Optional[Item] = None, head: Optional[Item] = None, legs: Optional[Item] = None, feet: Optional[Item] = None):
         self.item_slots = [

@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from components.currency import Currency
     from components.ammo_container import AmmoContainer
     from components.lore import Lore
+    from components.roles import Role
     from maps import GameMap
     from faction import Faction
 
@@ -123,6 +124,7 @@ class Actor(Entity):
         level: Level,
         currency: Currency,
         lore: Lore = None,
+        role: Role = None,
         gen_name: bool = False,
         gen_kit: bool = False,
         light_source=None,
@@ -160,6 +162,10 @@ class Actor(Entity):
         if(lore):
             self.lore = lore
             self.lore.parent = self
+
+        if(role):
+            self.role = role
+            self.role.parent = self
 
         self.gen_name = gen_name
 
