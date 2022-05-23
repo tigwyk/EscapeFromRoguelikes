@@ -609,7 +609,7 @@ class InventoryEventHandler(BasicMenuHandler):
 
     min_width = len(self.TITLE) + 6
     for i in self.filtered_items:
-      is_equipped = engine.player.equipment.item_is_equipped(i)
+      is_equipped = engine.player.equipment.item_is_equipped(i.equippable.equipment_type)
       item_name = i.name
       if is_equipped:
         item_name += ' (E)'
