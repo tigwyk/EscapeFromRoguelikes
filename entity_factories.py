@@ -1,4 +1,4 @@
-from components.ai import HostileEnemy, HostileHumanEnemy
+from components.ai import HostileEnemy, HostileHumanEnemy, BaseAI
 from components import consumable, equippable, ammo_container, roles
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -109,6 +109,23 @@ mutant2 = Actor(
     currency=Currency(roubles=0),
     skills=Skills(base_learn_bonus=1)
 )
+
+### Shopkeep
+
+shopkeep1 = Actor(
+    char="K",
+    color=(102,0,153),
+    name="ShopKeeper",
+    ai_cls=BaseAI,
+    equipment=Equipment(),
+    fighter=Fighter(hp=1000, base_defense=0, base_power=30),
+    inventory=Inventory(capacity=50),
+    level=Level(xp_given=35),
+    currency=Currency(roubles=5),
+    skills=Skills(base_learn_bonus=1),
+)
+
+
 
 throwing_sand = Item(
     char="~",

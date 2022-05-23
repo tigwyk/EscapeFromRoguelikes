@@ -205,6 +205,8 @@ def place_overworld_entities(overworld: GameMap, floor_number: int,) -> None:
         if not any(entity.x == x and entity.y == y for entity in overworld.entities):
             entity.spawn(overworld, x, y)
 
+    # print(overworld.tiles)
+
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]
 ) -> Iterator[Tuple[int, int]]:
