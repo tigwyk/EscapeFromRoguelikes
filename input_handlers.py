@@ -22,8 +22,9 @@ import exceptions
 import traceback
 import os
 import sys
-import psutil
-import logging
+# import psutil
+# import logging
+import ui
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -461,101 +462,213 @@ class EscapeMenuEventHandler(AskUserEventHandler):
         """
         return None
 
-class InventoryEventHandler(AskUserEventHandler):
-    """This handler lets the user select an item.
+class BasicMenuHandler(AskUserEventHandler):
+  TITLE = '<missing title>'
+  def __init__(self, engine, options, x=0, y=0, height=None, width=None):
+    super().__init__(engine)
+    self.options = options
+    if not height:
+      height = len(self.options) + 2
+    if not width:
+      width = 20
 
-    What happens then depends on the subclass.
-    """
+    if y + height > engine.game_world.viewport_height:
+      height = engine.game_world.viewport_height - y
 
-    TITLE = "<missing title>"
+    self.menu = ui.BasicMenu(self.options, x, y, height, width, title=self.TITLE)
 
-    def on_render(self, console: tcod.Console) -> None:
-        """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
-        Will move to a different position based on where the player is located, so the player can always see where
-        they are.
-        """
-        super().on_render(console)
-        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+  def on_item_selected(self):
+    return PopupMessage(MainGameEventHandler(self.engine), self.options[self.menu.cursor])
 
-        height = number_of_items_in_inventory + 2
+  def ev_keydown(self, event):
+    key = event.sym
 
-        if height <= 3:
-            height = 3
+    if key in (tcod.event.K_UP, tcod.event.K_KP_8):
+      self.menu.up()
+      return None
+    elif key in (tcod.event.K_DOWN, tcod.event.K_KP_2):
+      self.menu.down()
+      return None
+    elif key in CONFIRM_KEYS:
+      return self.on_item_selected()
 
-        if self.engine.player.x <= 30:
-            x = 40
-        else:
-            x = 0
+    elif key == tcod.event.K_ESCAPE:
+      return MainGameEventHandler(self.engine)
 
-        y = 0
+  def ev_mousemotion(self, event):
+    self.menu.mouse_select(event.tile.x, event.tile.y)
 
-        width = len(self.TITLE) + 6
+  def ev_mousebuttondown(self, event):
+    selected = self.menu.mouse_select(event.tile.x, event.tile.y)
+    if selected is not None:
+      return self.on_item_selected()
 
-        console.draw_frame(
-            x=x,
-            y=y,
-            width=width,
-            height=height,
-            title=self.TITLE,
-            clear=True,
-            fg=(255, 255, 255),
-            bg=(0, 0, 0),
-        )
+  def ev_mousewheel(self, event):
+    if event.y > 0:
+      self.menu.up()
+    elif event.y < 0:
+      self.menu.down()
 
-        if number_of_items_in_inventory > 0:
-            for i, item in enumerate(self.engine.player.inventory.items):
-                item_key = chr(ord("a") + i)
+  def on_render(self, console):
+    super().on_render(console)
+    self.menu.render(console)
+
+# class InventoryEventHandler(AskUserEventHandler):
+#     """This handler lets the user select an item.
+
+#     What happens then depends on the subclass.
+#     """
+
+#     TITLE = "<missing title>"
+
+#     def on_render(self, console: tcod.Console) -> None:
+#         """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
+#         Will move to a different position based on where the player is located, so the player can always see where
+#         they are.
+#         """
+#         super().on_render(console)
+#         number_of_items_in_inventory = len(self.engine.player.inventory.items)
+
+#         height = number_of_items_in_inventory + 2
+
+#         if height <= 3:
+#             height = 3
+
+#         if self.engine.player.x <= 30:
+#             x = 40
+#         else:
+#             x = 0
+
+#         y = 0
+
+#         width = len(self.TITLE) + 6
+
+#         console.draw_frame(
+#             x=x,
+#             y=y,
+#             width=width,
+#             height=height,
+#             title=self.TITLE,
+#             clear=True,
+#             fg=(255, 255, 255),
+#             bg=(0, 0, 0),
+#         )
+
+#         if number_of_items_in_inventory > 0:
+#             for i, item in enumerate(self.engine.player.inventory.items):
+#                 item_key = chr(ord("a") + i)
                 
-                if(item.equippable):
-                    # print(f"Item? {item.name}")
-                    is_equipped = (self.engine.player.equipment.item_is_equipped(item.equippable.equipment_type) and self.engine.player.equipment.get_item_in_slot(item.equippable.equipment_type) == item)
-                    # print(f"Is equipped? {is_equipped}")
-                else:
-                    is_equipped = False
+#                 if(item.equippable):
+#                     is_equipped = (self.engine.player.equipment.item_is_equipped(item.equippable.equipment_type) and self.engine.player.equipment.get_item_in_slot(item.equippable.equipment_type) == item)
+#                 else:
+#                     is_equipped = False
 
-                item_string = f"({item_key}) {item.name.capitalize()}"
+#                 item_string = f"({item_key}) {item.name.capitalize()}"
 
-                if is_equipped:
-                    item_string = f"{item_string} (E)"
+#                 if is_equipped:
+#                     item_string = f"{item_string} (E)"
 
-                if item.ammo_container:
-                    item_string = f"{item_string} {item.ammo_container.ammo}/{item.ammo_container.max_ammo}"
+#                 if item.ammo_container:
+#                     item_string = f"{item_string} {item.ammo_container.ammo}/{item.ammo_container.max_ammo}"
 
-                console.print(x + 1, y + i + 1, item_string)
-        else:
-            console.print(x + 1, y + 1, "(Empty)")
+#                 console.print(x + 1, y + i + 1, item_string)
+#         else:
+#             console.print(x + 1, y + 1, "(Empty)")
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
-        player = self.engine.player
-        key = event.sym
-        index = key - tcod.event.K_a
+#     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+#         player = self.engine.player
+#         key = event.sym
+#         index = key - tcod.event.K_a
 
-        if 0 <= index <= 26:
-            try:
-                selected_item = player.inventory.items[index]
-            except IndexError:
-                self.engine.message_log.add_message("Invalid entry.", color.invalid)
-                return None
-            return self.on_item_selected(selected_item)
-        return super().ev_keydown(event)
+#         if 0 <= index <= 26:
+#             try:
+#                 selected_item = player.inventory.items[index]
+#             except IndexError:
+#                 self.engine.message_log.add_message("Invalid entry.", color.invalid)
+#                 return None
+#             return self.on_item_selected(selected_item)
+#         return super().ev_keydown(event)
 
-    def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
-        """Called when the user selects a valid item."""
-        raise NotImplementedError()
+#     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
+#         """Called when the user selects a valid item."""
+#         raise NotImplementedError()
+
+
+class InventoryEventHandler(BasicMenuHandler):
+  """ This handler lets the user select an item.
+  What happens then depends on the subclass."""
+  TITLE = '<missing title>'
+
+  def __init__(self, engine, filter_function=lambda x: True):
+    self.filter_function = filter_function
+    self.filtered_items = []
+    for item in engine.player.inventory.items:
+      if self.filter_function(item):
+        self.filtered_items.append(item)
+    self.options = options = []
+
+    min_width = len(self.TITLE) + 6
+    for i in self.filtered_items:
+      is_equipped = engine.player.equipment.item_is_equipped(i)
+      item_name = i.name
+      if is_equipped:
+        item_name += ' (E)'
+      options.append(item_name)
+      if len(item_name) > min_width:
+        min_width = len(item_name)
+
+    super().__init__(engine, options, width=min_width + 2)
+
+  def on_render(self, console):
+    super().on_render(console)
+
+  #def ev_keydown(self, event):
+  #  player = self.engine.player
+  #  key = event.sym
+  #  index = key - tcod.event.K_a
+
+  #  if 0 <= index <= 26:
+  #    # Did they push a letter between a and z
+  #    try:
+  #      selected_item = self.filtered_items[index]#player.inventory.items[index]
+  #    except IndexError:
+  #      self.engine.message_log.add_message('Invalid entry.', color.invalid)
+  #      return None
+  #    return self.on_item_selected(selected_item)
+  #  return super().ev_keydown(event)
+
+  def on_item_selected(self, item):
+    """Called when the user selectes a valid item."""
+    raise NotImplementedError()
+
+# class InventoryActivateHandler(InventoryEventHandler):
+#     """Handle using an inventory item."""
+
+#     TITLE = "Select an item to use"
+
+#     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
+#         if item.consumable:
+#             # Return the action for the selected item.
+#             return item.consumable.get_action(self.engine.player)
+#         elif item.equippable:
+#             return EquipAction(self.engine.player, item)
+#         else:
+#             return None
 
 class InventoryActivateHandler(InventoryEventHandler):
-    """Handle using an inventory item."""
+  """Handle using an inventory item."""
 
-    TITLE = "Select an item to use"
+  TITLE = 'Select an item to use'
 
-    def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
-        if item.consumable:
-            # Return the action for the selected item.
-            return item.consumable.get_action(self.engine.player)
-        elif item.equippable:
-            return EquipAction(self.engine.player, item)
-        else:
-            return None
+  def on_item_selected(self):#, item):
+    """Return the action for the selected item"""
+    item = self.filtered_items[self.menu.cursor]
+    if item.consumable:
+      return item.consumable.get_action(self.engine.player)
+    elif item.equippable:
+      return EquipAction(self.engine.player, item)
+    else:
+      return None
 
 
 class InventoryDropHandler(InventoryEventHandler):
@@ -563,8 +676,12 @@ class InventoryDropHandler(InventoryEventHandler):
 
     TITLE = "Select an item to drop"
 
-    def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
+    # def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
+    #     """Drop this item."""
+    #     return DropItemAction(self.engine.player, item)
+    def on_item_selected(self) -> Optional[ActionOrHandler]:
         """Drop this item."""
+        item = self.filtered_items[self.menu.cursor]
         return DropItemAction(self.engine.player, item)
 
 class SelectIndexHandler(AskUserEventHandler):
@@ -603,9 +720,13 @@ class SelectIndexHandler(AskUserEventHandler):
             y += dy * modifier
             # Clamp the cursor index to the map size.
             # x = max(0, min(x, self.engine.game_map.width - 1))
-            x = max(0, min(x,  (viewport[2]-viewport[0]) - 1))
+            viewport_width = viewport[2] - viewport[0]
+            viewport_height = viewport[3] - viewport[1]
+            # print(f'Viewport width: {viewport_width}')
+            # print(f'Viewport height: {viewport_height}')
+            x = max(0, min(x,  viewport_width - 1))
             # y = max(0, min(y, self.engine.game_map.height - 1))
-            y = max(0, min(y, (viewport[3]-viewport[1]) - 1))
+            y = max(0, min(y, viewport_height - 1))
             self.engine.mouse_location = x, y
             return None
         elif key in CONFIRM_KEYS:
@@ -636,6 +757,8 @@ class FireSelectIndexHandler(AskUserEventHandler):
         super().__init__(engine)
         player = self.engine.player
         viewport = self.engine.game_map.get_viewport()
+        # print(f"Player x,y           : {player.x},{player.y}")
+        # print(f"Player x,y[viewport] : {player.x - viewport[0]},{player.y - viewport[1]}")
         engine.mouse_location = player.x - viewport[0], player.y - viewport[1]
         enemies = []
         for enemy in self.engine.game_map.enemies:
