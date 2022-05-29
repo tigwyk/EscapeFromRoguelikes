@@ -609,13 +609,15 @@ class InventoryEventHandler(BasicMenuHandler):
 
     min_width = len(self.TITLE) + 6
     for i in self.filtered_items:
-      is_equipped = engine.player.equipment.item_is_equipped(i.equippable.equipment_type)
-      item_name = i.name
-      if is_equipped:
-        item_name += ' (E)'
-      options.append(item_name)
-      if len(item_name) > min_width:
-        min_width = len(item_name)
+        is_equipped = False
+        if i.equippable:
+            is_equipped = engine.player.equipment.item_is_equipped(i.equippable.equipment_type)
+        item_name = i.name
+        if is_equipped:
+            item_name += ' (E)'
+        options.append(item_name)
+        if len(item_name) > min_width:
+            min_width = len(item_name)
 
     super().__init__(engine, options, width=min_width + 2)
 
@@ -971,7 +973,7 @@ class MainGameEventHandler(EventHandler):
 class GameOverEventHandler(EventHandler):
     def __init__(self, engine: Engine):
         super().__init__(engine)
-        PostMortemViewer(engine)
+        #PostMortemViewer(engine)
 
     def on_quit(self) -> None:
         """Handle exiting out of a finished game."""
