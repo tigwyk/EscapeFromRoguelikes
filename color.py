@@ -4,6 +4,7 @@ red = (0xFF, 0x0, 0x0)
 green = (0x0, 0xFF, 0x0)
 blue = (0x0,0x0,0xFF)
 yellow = (0xFF, 0xDF, 0x0)
+purple = (75, 0, 130)
 
 player_atk = (0xE0, 0xE0, 0xE0)
 enemy_atk = (0xFF, 0xC0, 0xC0)
@@ -32,7 +33,7 @@ window_border_dark = (75, 0, 130)
 menu_title = (255, 255, 63)
 menu_text = white
 menu_background = black
-menu_selected_background = blue
+menu_selected_background = purple
 
 roubles_add_text = green
 roubles_remove_text = red
