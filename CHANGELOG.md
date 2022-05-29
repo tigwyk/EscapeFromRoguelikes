@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.1](https://github.com/tigwyk/EscapeFromRoguelikes/compare/v0.2.0...v0.2.1) (2022-05-29)
+
+
+### Bug Fixes
+
+* Accounting for non-equippable items in inventory ([533d1bb](https://github.com/tigwyk/EscapeFromRoguelikes/commit/533d1bb2469c27362dd82f047de5bef8bc75526e))
+
 ## [0.2.0](https://github.com/tigwyk/EscapeFromRoguelikes/compare/v0.1.20...v0.2.0) (2022-05-23)
 
 
