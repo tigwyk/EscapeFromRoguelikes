@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/tigwyk/EscapeFromRoguelikes/compare/v0.2.1...v0.3.0) (2022-06-05)
+
+
+### Features
+
+* Added post-mortem viewer on player death ([1964ae8](https://github.com/tigwyk/EscapeFromRoguelikes/commit/1964ae84cd683c81c3640b265862c22ec3e6eafb))
+
 ### [0.2.1](https://github.com/tigwyk/EscapeFromRoguelikes/compare/v0.2.0...v0.2.1) (2022-05-29)
 
 
