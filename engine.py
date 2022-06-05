@@ -19,6 +19,7 @@ from message_log import MessageLog
 import render_functions
 from equipment_types import EquipmentType
 from sound import Sound
+from input_handlers import PostMortemViewer
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -34,6 +35,7 @@ class Engine:
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
+        self.mortem_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
         self.game_rules = None
@@ -320,8 +322,9 @@ class Engine:
             post_mortem.write(post_mortem_header_text)
             post_mortem.writelines(post_mortem_lines)
             post_mortem.close()
-            self.display_postmortem_log(save_filename)
+            self.mortem_log.add_message(post_mortem_header_text)
+            for mortem_line in post_mortem_lines:                
+                self.mortem_log.add_message(mortem_line)
+            self.mortem_path = save_filename
 
-    def display_postmortem_log(self, filename):
-        pass
                 
