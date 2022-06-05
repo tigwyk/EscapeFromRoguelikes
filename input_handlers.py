@@ -86,6 +86,11 @@ LOOK_KEYS = {
     tcod.event.K_CLEAR,
 }
 
+QUIT_KEYS = {
+    tcod.event.K_ESCAPE,
+    tcod.event.K_q,
+}
+
 ActionOrHandler = Union[Action, "BaseEventHandler"]
 """An event handler return value which can trigger an action or switch active handlers.
 
@@ -150,7 +155,8 @@ class EventHandler(BaseEventHandler):
             # A valid action was performed.
             if not self.engine.player.is_alive:
                 # The player was killed sometime during or after the action.
-                return GameOverEventHandler(self.engine)
+                # return GameOverEventHandler(self.engine)
+                return PostMortemViewer(self.engine)
             elif self.engine.player.level.requires_level_up:
                 return LevelUpEventHandler(self.engine)
             return MainGameEventHandler(self.engine)  # Return to the main handler.
@@ -1075,26 +1081,26 @@ class PostMortemViewer(EventHandler):
     def on_render(self, console: tcod.Console) -> None:
         super().on_render(console)  # Draw the main state as the background.
 
-        log_console = tcod.Console(console.width - 6, console.height - 6)
+        postmortem_console = tcod.Console(console.width - 6, console.height - 6)
 
         # Draw a frame with a custom banner title.
-        log_console.draw_frame(0, 0, log_console.width, log_console.height)
-        log_console.print_box(
-            0, 0, log_console.width, 1, "┤Post-Mortem├", alignment=tcod.CENTER
+        postmortem_console.draw_frame(0, 0, postmortem_console.width, postmortem_console.height)
+        postmortem_console.print_box(
+            0, 0, postmortem_console.width, 1, "┤Post-Mortem [Escape twice to Quit]├", alignment=tcod.CENTER
         )
 
         # Render the message log using the cursor parameter.
-        self.engine.message_log.render_messages(
-            log_console,
+        self.engine.mortem_log.render_messages(
+            postmortem_console,
             1,
             1,
-            log_console.width - 2,
-            log_console.height - 2,
-            self.engine.message_log.messages[: self.cursor + 1],
+            postmortem_console.width - 2,
+            postmortem_console.height - 2,
+            self.engine.mortem_log.messages[: self.cursor + 1],
         )
-        log_console.blit(console, 3, 3)
+        postmortem_console.blit(console, 3, 3)
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[MainGameEventHandler]:
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[GameOverEventHandler]:
         # Fancy conditional movement to make it feel right.
         if event.sym in CURSOR_Y_KEYS:
             adjust = CURSOR_Y_KEYS[event.sym]
@@ -1111,6 +1117,7 @@ class PostMortemViewer(EventHandler):
             self.cursor = 0  # Move directly to the top message.
         elif event.sym == tcod.event.K_END:
             self.cursor = self.log_length - 1  # Move directly to the last message.
-        else:  # Any other key moves back to the main game state.
-            return MainGameEventHandler(self.engine)
+        elif event.sym in QUIT_KEYS:  # Any other key moves back to the main game state.
+            # return MainGameEventHandler(self.engine)
+            return GameOverEventHandler(self.engine)
         return None
