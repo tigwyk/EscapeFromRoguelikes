@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from components.base_component import BaseComponent
+from input_handlers import ShopInventoryPurchaseHandler
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -23,6 +24,9 @@ class Shop(BaseComponent):
 
         self.engine.message_log.add_message(f"{item.name} lands at your feet.")
     
+    def sell_handler(self) -> None:
+        return ShopInventoryPurchaseHandler(self.engine)
+
     def sell(self, item: Item) -> None:
         """
         Removes an item from the shop inventory and restores it to the game map, at the player's current location.

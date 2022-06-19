@@ -283,9 +283,9 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
-            if self.target_actor.shop:
-                print("Found a shopkeeper, can't attack")
-                return BuyAction(self.entity)
+            if hasattr(self.target_actor, 'shop'):
+                raise exceptions.Impossible("You can't attack a shopkeeper.")
+                # return BuyAction(self.entity)
             else:
                 return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
@@ -300,5 +300,5 @@ class BuyAction(Action):
         if(not self.shopkeep):
             raise exceptions.Impossible("There's no shopkeeper.")
         else:
-            return None
+            return self.shopkeep.shop.sell_handler()
             # return input_handlers.ShopInventoryPurchaseHandler(self.engine)
