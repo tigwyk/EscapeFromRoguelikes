@@ -1,4 +1,4 @@
-from components.ai import HostileEnemy, HostileHumanEnemy, BaseAI
+from components.ai import HostileEnemy, HostileHumanEnemy, BaseAI, PacifistEnemy
 from components import consumable, equippable, ammo_container, roles
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -9,6 +9,7 @@ from components.lore import Lore
 from components.lightsource import LightSource
 from components.effects import Knockback, ChainLightning
 from components.skills import Skills
+from components.shop import Shop
 
 from skill import handguns, shotguns, rifles, medical, blades
 from entity import Actor, Item, Entity, Container
@@ -116,13 +117,14 @@ shopkeep1 = Actor(
     char="K",
     color=(102,0,153),
     name="ShopKeeper",
-    ai_cls=BaseAI,
+    ai_cls=PacifistEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=1000, base_defense=0, base_power=30),
     inventory=Inventory(capacity=50),
     level=Level(xp_given=35),
     currency=Currency(roubles=5),
     skills=Skills(base_learn_bonus=1),
+    shop=Shop(capacity=5),
 )
 
 

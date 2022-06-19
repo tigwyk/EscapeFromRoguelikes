@@ -198,7 +198,9 @@ def place_overworld_entities(overworld: GameMap, floor_number: int,) -> None:
         item_chances, number_of_items, floor_number
     )
 
-    for entity in monsters + items:
+    shopkeepers: List[Entity] = [entity_factories.shopkeep1]
+
+    for entity in monsters + items + shopkeepers:
         x = random.randint(1, overworld.width-1)
         y = random.randint(1, overworld.height-1)
 

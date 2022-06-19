@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import math
 from time import time
+from components.skills import Skills
 from russian_names import RussianNames
 from camera import Camera
 import random
@@ -26,6 +27,8 @@ if TYPE_CHECKING:
     from components.ammo_container import AmmoContainer
     from components.lore import Lore
     from components.roles import Role
+    from components.skills import Skills
+    from components.shop import Shop
     from maps import GameMap
     from faction import Faction
 
@@ -128,8 +131,9 @@ class Actor(Entity):
         gen_name: bool = False,
         gen_kit: bool = False,
         light_source=None,
-        skills=None,
-        visibility=5
+        skills: Skills = None,
+        visibility=5,
+        shop: Shop = None,
     ):
         super().__init__(
             x=x,
@@ -176,6 +180,10 @@ class Actor(Entity):
             self.skills.parent = self
 
         self.visibility = visibility
+
+        if(shop):
+            self.shop = shop
+            self.shop.parent = self
 
         # if(gen_name):
         #     self.name = self.generate_russian_name()
@@ -225,6 +233,7 @@ class Item(Entity):
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
         ammo_container: Optional[AmmoContainer] = None,
+        cost: Optional[int] = 0,
     ):
         super().__init__(
             x=x,
@@ -250,6 +259,8 @@ class Item(Entity):
 
         if self.ammo_container:
             self.ammo_container.parent = self
+        
+        self.cost = cost
 
 
 class Container(Entity):

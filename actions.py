@@ -283,7 +283,22 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
-            # if(self.entity.equipment and self.entity.equipment.item_is_equipped(EquipmentType.MELEE_WEAPON)):
-            return MeleeAction(self.entity, self.dx, self.dy).perform()
+            if self.target_actor.shop:
+                print("Found a shopkeeper, can't attack")
+                return BuyAction(self.entity)
+            else:
+                return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()
+
+class BuyAction(Action):
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+        self.shopkeep = entity
+
+    def perform(self) -> None:
+        if(not self.shopkeep):
+            raise exceptions.Impossible("There's no shopkeeper.")
+        else:
+            return None
+            # return input_handlers.ShopInventoryPurchaseHandler(self.engine)
