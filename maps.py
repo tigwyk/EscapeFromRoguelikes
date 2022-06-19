@@ -305,8 +305,8 @@ class GameWorld:
         from procgen import generate_random_overworld
         """Randomly generate a new world with some water, swamps, hills, some objects etc"""
 
-        random_map_width = randint(self.min_map_width+1, self.min_map_width+128)
-        random_map_height = randint(self.min_map_height+1, self.min_map_height+128)
+        random_map_width = randint(self.min_map_width+1, self.min_map_width+32)
+        random_map_height = randint(self.min_map_height+1, self.min_map_height+32)
 
         self.engine.game_map = generate_random_overworld(
             map_width=random_map_width,
@@ -319,8 +319,8 @@ class GameWorld:
 
         self.current_floor += 1
 
-        random_map_width = randint(self.min_map_width+1, self.min_map_width+128)
-        random_map_height = randint(self.min_map_height+1, self.min_map_height+128)
+        random_map_width = randint(self.min_map_width+1, self.min_map_width+32)
+        random_map_height = randint(self.min_map_height+1, self.min_map_height+32)
         
         if(self.current_floor % 3):
             self.engine.game_map = generate_dungeon(
